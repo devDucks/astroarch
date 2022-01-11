@@ -37,7 +37,7 @@ We will procede with moving the arch iso to the SD card
 - `mkdir arch-install && cd arch-install`
 - `mkdir boot`
 - `mkdir root`
-- `wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz`
+- `wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz`
 - `sudo mount /dev/mmcblk0p1 boot/`
 - `sudo mount /dev/mmcblk0p2 root/`
 - `bsdtar -xpf ArchLinuxARM-rpi-armv7-latest.tar.gz -C root`
