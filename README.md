@@ -48,3 +48,8 @@ We will procede with moving the arch iso to the SD card
 - `sudo umount boot/ root/`
 
 Congratz! Your SD card is ready, insert it into your raspberry and boot it!
+
+## First boot
+
+Connect your raspberry pi to your netowork via an ethernet cable, you can ssh into it after the boot using `ssh alarm@IP_OF_YOUR_RASPBERRY` the password will
+be `root`
