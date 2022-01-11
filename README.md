@@ -31,4 +31,20 @@ with `enter` otherwise add 1 to the number annotated before and use it in this s
 At this point the SD card is ready!
 
 ## Burn the iso to the SD card
-TODO
+
+We will procede with moving the arch iso to the SD card
+
+- `mkdir arch-install && cd arch-install`
+- `mkdir boot`
+- `mkdir root`
+- `wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz`
+- `sudo mount /dev/mmcblk0p1 boot/`
+- `sudo mount /dev/mmcblk0p2 root/`
+- `bsdtar -xpf ArchLinuxARM-rpi-armv7-latest.tar.gz -C root`
+- `sudo mv root/boot/* boot`
+- `sudo sed -i 's/mmcblk0/mmcblk1/g' root/etc/fstab`
+- `sudo sed -i 's#PARTUUID=${uuid}#/dev/mmcblk1#g' boot/boot.txt`
+- edit the file `root/etc/fstab` adding the following line `/dev/mmcblk1p2  /       ext4    defaults        0       0`
+- `sudo umount boot/ root/`
+
+Congratz! Your SD card is ready, insert it into your raspberry and boot it!
