@@ -11,7 +11,7 @@ After you burned the .img file to your SD, insert it and boot the system, you'll
 
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
-noVNC is installed and it will start by default, if your pi is wired to your network, once you find your raspberry pi IP, connect to it through your browser typing `http://RASPBERRY_IP:8000/vnc.html` otherwise, if you are connected to the hotspot, type `http://10.42.0.1:8000/vnc.html`, you won't be prompted by any password! Welcome to astro arch!
+noVNC is installed and it will start by default, if your pi is wired to your network, once you find your raspberry pi IP, connect to it through your browser typing `http://RASPBERRY_IP:8080/vnc.html` otherwise, if you are connected to the hotspot, type `http://10.42.0.1:8080/vnc.html`, you won't be prompted by any password! Welcome to astro arch!
 
 
 # Software available
