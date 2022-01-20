@@ -15,4 +15,26 @@ source $ZSH/oh-my-zsh.sh
 EDITOR=nano
 
 # Alias section
-alias update-astroarch='cd /home/astronaut/.astroarch && git pull origin main'
+alias update-astroarch='cd /home/astronaut/.astroarch && git pull origin main & cd ..'
+
+function update-indi() {
+    cd ~/.build/indi && git checkout v1.9.4
+    mkdir -p ~/.build/indi-core
+    cd ~/.build/indi-core
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ~/.build/indi
+    make -j4
+    sudo make install
+    cd ~/
+    rm -rf ~/.build/indi-core
+}
+
+function update-indi-drivers() {
+    cd ~/.build/indi-3rdparty && git checkout v1.9.4
+    mkdir -p ~/.build/build-indi-3rdparty
+    cd ~/.build/build-indi-3rdparty
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ~/.build/indi-3rdparty
+    make -j4
+    sudo make install
+    cd ~/
+    rm -rf ~/.build/build-indi-3rd-party
+}
