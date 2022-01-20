@@ -1,0 +1,14 @@
+# Symlink this file to /etc/systemd/system/multi-user.target.wants/novnc.service
+[Unit]
+Description=noVNC Service
+After=network.target
+
+[Service]
+Type=idle
+DynamicUser=yes
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/novnc --listen 8080 --vnc localhost:5900
+
+[Install]
+WantedBy=multi-user.target
