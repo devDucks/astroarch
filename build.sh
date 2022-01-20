@@ -1,8 +1,8 @@
 # Install yay
-git clone https://aur.archlinux.org/yay.git
-chown -R alarm:alarm yay/
+cd /home/astronaut
+su astronaut -c "git clone https://aur.archlinux.org/yay.git"
 cd yay/
-su alarm -c "makepkg -s"
+su astronaut -c "makepkg -s"
 pacman -U yay*.tar.xz --noconfirm
 cd .. && rm -rf yay/
 
@@ -19,7 +19,7 @@ chown astronaut:astronaut .oh-my-zsh/
 #sed -i 's/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 #sed -i 's/#autologin-session=/autologin-session=lxqt/g' /etc/lightdm/lightdm.conf
 #sed -i 's/#autologin-guest=false/autologin-guest=false/g' /etc/lightdm/lightdm.conf
-groupadd -r autologin
+#groupadd -r autologin
 #gpasswd -a astronaut autologin
 su astronaut -c "yay -S --noremovemake --nodiffmenu --answerclean 4 gsc"
 su astronaut -c "yay -S realvnc-vnc-server novnc"
