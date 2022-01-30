@@ -10,23 +10,17 @@ cd .. && rm -rf yay/
 chsh -s /usr/bin/zsh astronaut
 rm /home/astronaut/.bash*
 cd /home/astronaut
-sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 chown astronaut:astronaut .oh-my-zsh/
 # copy a zsh config for astronaut
+ln -s /home/astronaut/.astroarch/configs/.zshrc
 
-# Configure lightDM for autologin
-#sed -i 's/#autologin-user=/autologin-user=astronaut/g' /etc/lightdm/lightdm.conf
-#sed -i 's/#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
-#sed -i 's/#autologin-session=/autologin-session=lxqt/g' /etc/lightdm/lightdm.conf
-#sed -i 's/#autologin-guest=false/autologin-guest=false/g' /etc/lightdm/lightdm.conf
-#groupadd -r autologin
-#gpasswd -a astronaut autologin
 su astronaut -c "yay -S --noremovemake --nodiffmenu --answerclean 4 gsc"
-su astronaut -c "yay -S realvnc-vnc-server novnc"
+su astronaut -c "yay -S novnc"
 
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
 
 # Enable now all services
-systemctl enable sddm.service novnc.service vncserver-x11-serviced.service
+systemctl enable sddm.service novnc.service
