@@ -10,7 +10,7 @@ passwd astronaut
 
 su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/astronaut/.astroarch"
 
-pacman -Syu base-devel go zsh lxqt sddm networkmanager xf86-video-dummy \
+pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dummy \
        network-manager-applet networkmanager-qt chromium xorg alacritty \
        cmake cfitsio fftw gsl libjpeg-turbo libnova libtheora libusb boost \
        libraw libgphoto2 libftdi libdc1394 libavc1394 \
