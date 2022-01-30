@@ -16,7 +16,7 @@ pacman -Syu base-devel go zsh lxqt sddm networkmanager xf86-video-dummy \
        libraw libgphoto2 libftdi libdc1394 libavc1394 \
        ffmpeg gpsd breeze-icons hicolor-icon-theme knewstuff \
        knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
-       qt5-websockets qtkeychain stellarsolver \
+       qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
        extra-cmake-modules kf5 eigen --noconfirm
 
 # Allow wheelers to sudo
