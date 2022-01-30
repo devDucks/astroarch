@@ -8,14 +8,14 @@ zstyle ':omz:update' mode disabled
 ENABLE_CORRECTION="true"
 HIST_STAMPS="yyyy-mm-dd"
 
-plugins=(git)
+plugins=(git archlinux)
 
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
 
 # Alias section
-alias update-astroarch='cd /home/astronaut/.astroarch && git pull origin main & cd ..'
+alias update-astroarch='cd /home/astronaut/.astroarch && git pull origin main & cd -'
 
 function update-indi() {
     cd ~/.build/indi && git checkout v1.9.4
