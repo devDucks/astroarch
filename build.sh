@@ -13,10 +13,13 @@ cd /home/astronaut
 ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 chown astronaut:astronaut .oh-my-zsh/
 # copy a zsh config for astronaut
-ln -s /home/astronaut/.astroarch/configs/.zshrc
+ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
 su astronaut -c "yay -S --noremovemake --nodiffmenu --answerclean 4 gsc"
 su astronaut -c "yay -S novnc"
+
+# make a dir to store sddm config
+mkdir /etc/sddm.conf.d
 
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
