@@ -21,9 +21,12 @@ su astronaut -c "yay -S novnc"
 # make a dir to store sddm config
 mkdir /etc/sddm.conf.d
 
+# Create the hotspot
+nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
+
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
 
 # Enable now all services
-systemctl enable sddm.service novnc.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service
