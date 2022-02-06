@@ -42,7 +42,7 @@ rm /usr/lib/systemd/system/novnc.service
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
 ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user/default.target.wants/x11vnc.service
-ln -s /home/astronaut/.config/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
+ln -s /home/astronaut/.configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 
 # Enable now all services
 systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service
