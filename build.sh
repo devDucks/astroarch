@@ -19,10 +19,14 @@ su astronaut -c "yay -S --noremovemake --nodiffmenu --answerclean 4 gsc"
 su astronaut -c "yay -S novnc"
 
 # prepare folder for user services
-su astronaut -c "mkdir -p /home/astronaut/.config/systemd/userd"
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user"
 
 # make a dir to store sddm config
 mkdir /etc/sddm.conf.d
+
+# Start NetworkManager and sleep to create the hotspot
+systemctl start NetworkManager
+sleep 5
 
 # Create the hotspot and set autoconnect to true
 nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
@@ -37,8 +41,11 @@ rm /usr/lib/systemd/system/x11vnc.service
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
-ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user/x11vnc.service
+ln -s /home/astronaut/.config/systemd/user/default.target.wants/x11vnc.service /home/astronaut/.astroarch/systemd/x11vnc.service
 
 # Enable now all services
 systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service
-su astronaut -c "systemctl --user enable x11vnc.service"
+
+# Take sudoers to the original state
+#sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+#sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
