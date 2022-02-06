@@ -24,6 +24,9 @@ mkdir /etc/sddm.conf.d
 # Create the hotspot
 nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
 
+# Create Xauthority for x11vnc
+su astronaut -c "touch /home/astronaut/.Xauthority"
+
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
