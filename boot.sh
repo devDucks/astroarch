@@ -18,7 +18,7 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
        knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
        qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
        extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
-       dhcp dnsmasq --noconfirm
+       dhcp dnsmasq x11vnc --noconfirm
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
