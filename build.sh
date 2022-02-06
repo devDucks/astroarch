@@ -51,3 +51,6 @@ systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.servic
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+
+# Link wallpaper
+ln -s /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures
