@@ -21,15 +21,20 @@ su astronaut -c "yay -S novnc"
 # make a dir to store sddm config
 mkdir /etc/sddm.conf.d
 
-# Create the hotspot
+# Create the hotspot and set autoconnect to true
 nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
+sed -i 's/autoconnect=false/autoconnect=true/g' /etc/NetworkManager/system-connections/Hotspot.nmconnection
 
 # Create Xauthority for x11vnc
 su astronaut -c "touch /home/astronaut/.Xauthority"
 
+# Remove default systemd services that we will override
+rm /usr/lib/systemd/system/x11vnc.service
+
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
+ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /usr/lib/systemd/system/x11vnc.service
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service x11vnc.service
