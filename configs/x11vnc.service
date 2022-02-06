@@ -1,4 +1,4 @@
-# symlink this to /usr/lib/systemd/system/x11vnc.service
+# symlink this to /home/astronaut/.config/systemd/user/x11vnc.service
 [Unit]
 Description=VNC Server for X11
 Requires=graphical.target
@@ -8,4 +8,4 @@ After=graphical.target
 ExecStart=x11vnc -wait 50 -noxdamage -auth /home/astronaut/.Xauthority -display :0 -forever -shared -ncache 10
 
 [Install]
-WantedBy=graphical.target
+WantedBy=default.target
