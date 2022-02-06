@@ -1,0 +1,11 @@
+# symlink this to /usr/lib/systemd/system/x11vnc.service
+[Unit]
+Description=VNC Server for X11
+Requires=graphical.target
+After=graphical.target
+
+[Service]
+ExecStart=x11vnc -wait 50 -noxdamage -auth guess -display :0 -forever -ncache 10
+
+[Install]
+WantedBy=graphical.target
