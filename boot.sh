@@ -20,8 +20,8 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
        extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
        dhcp dnsmasq --noconfirm
 
-# Allow wheelers to sudo
-sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+# Allow wheelers to sudo without password to install packages
+sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 
 # Run now the build script
 bash /home/astronaut/.astroarch/build.sh
