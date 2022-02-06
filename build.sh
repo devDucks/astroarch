@@ -30,7 +30,7 @@ sleep 5
 
 # Create the hotspot and set autoconnect to true
 nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
-sed -i 's/autoconnect=false/autoconnect=true/g' /etc/NetworkManager/system-connections/Hotspot.nmconnection
+sed -i 's/autoconnect=false/autoconnect=true/g' /etc/NetworkManager/system-connections/Hotspot.nmconnlection
 
 # Create Xauthority for x11vnc
 su astronaut -c "touch /home/astronaut/.Xauthority"
@@ -42,6 +42,7 @@ rm /usr/lib/systemd/system/novnc.service
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
 ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user/default.target.wants/x11vnc.service
+ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user
 ln -s /home/astronaut/.configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 
 # Enable now all services
