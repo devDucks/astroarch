@@ -5,7 +5,7 @@ Requires=graphical.target
 After=graphical.target
 
 [Service]
-ExecStart=x11vnc -wait 50 -noxdamage -auth guess -display :0 -forever -ncache 10
+ExecStart=x11vnc -wait 50 -noxdamage -auth /home/astronaut/.Xauthority -display :0 -forever -shared -ncache 10
 
 [Install]
 WantedBy=graphical.target
