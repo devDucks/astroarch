@@ -53,3 +53,8 @@ Congratz! Your SD card is ready, insert it into your raspberry and boot it!
 
 Connect your raspberry pi to your netowork via an ethernet cable, you can ssh into it after the boot using `ssh alarm@IP_OF_YOUR_RASPBERRY` the password will
 be `alarm`
+
+You'll be droppen into `alarm` shell and now we can proceed:
+- become sudo with `su -` the password is `root`
+- type `curl https://raw.githubusercontent.com/MattBlack85/astroarch/main/boot.sh > boot.sh`
+- type `bash boot.sh`
