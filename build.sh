@@ -19,7 +19,7 @@ su astronaut -c "yay -S --noremovemake --nodiffmenu --answerclean 4 gsc"
 su astronaut -c "yay -S novnc"
 
 # prepare folder for user services
-su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user"
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
 
 # make a dir to store sddm config
 mkdir /etc/sddm.conf.d
@@ -35,17 +35,18 @@ sed -i 's/autoconnect=false/autoconnect=true/g' /etc/NetworkManager/system-conne
 # Create Xauthority for x11vnc
 su astronaut -c "touch /home/astronaut/.Xauthority"
 
-# Remove default systemd services that we will override
-rm /usr/lib/systemd/system/x11vnc.service
+# Remove eventually existing systemd configs we are going to substitute
+rm /usr/lib/systemd/system/novnc.service
 
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
-ln -s /home/astronaut/.astroarch/systemd/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
-ln -s /home/astronaut/.config/systemd/user/default.target.wants/x11vnc.service /home/astronaut/.astroarch/systemd/x11vnc.service
+ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
+ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user/default.target.wants/x11vnc.service
+ln -s /home/astronaut/.config/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 
 # Enable now all services
 systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service
 
 # Take sudoers to the original state
-#sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
-#sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
