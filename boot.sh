@@ -18,7 +18,7 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
        knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
        qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
        extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
-       dhcp --noconfirm
+       dhcp dnsmasq --noconfirm
 
 # Allow wheelers to sudo
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
