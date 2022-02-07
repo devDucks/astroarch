@@ -1,12 +1,13 @@
 Welcome to the astroarch wiki!
 
 # Download
-Please use this link to download astroarch tar gzipped img file => https://drive.google.com/file/d/1AykyUU6CjtIQWEIxDWG10vCpIx-JbSpI
+Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1hhK6QcWSeWs6hxp8druG3SFIDBTWpeUs
+
 # Burn the img to an SD
 TODO
 
 # First boot
-After you burned the .img file to your SD, insert it and boot the system, you'll be logged in as user `astronaut`, the password (for sudoing and similar things) is `astro`
+After you burned the .img file to your SD, IT IS VERY IMPORTANT YOU EXPAND THE ROOT PARTITION to cover your entire SD size, you can use tools like `gparted`, after expansion, insert the SD card into the pi and boot the system, you'll be logged in as user `astronaut`, the password (for sudoing and similar things) is `astro`
 
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
@@ -21,7 +22,7 @@ the following software will be available, by category
 
 ### OS
 - alacritty (terminal)
-- lxQt (Desktop environment)
+- KDE Plasma (Desktop environment)
 - pacman (package manager, this is **NOT** debian based and pacman instead of apt is your package manager
 - NetworkManager (to manage networks)
 
