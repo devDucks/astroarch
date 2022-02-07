@@ -19,6 +19,8 @@ the following software will be available, by category
 
 ### Astronomical
 - Kstars
+- phd2
+- indi drivers (all of them) 
 
 ### OS
 - alacritty (terminal)
@@ -27,7 +29,7 @@ the following software will be available, by category
 - NetworkManager (to manage networks)
 
 ### Connectivity
-- x11vncserver
+- x11vnc
 - noVNC
 
 # Reporting issues
