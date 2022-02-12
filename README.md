@@ -63,4 +63,12 @@ After a while you'll be prompted to pick a new password, insert one and type it 
 ## Repackaging .img file
 
 Once astroarch has been fully bootstrapped the image can be repackaged to be distributed.
-TODO
+A very important step is to override the `init=` kernel boot param so that after a flash the system will be automagically expanded to fill
+the entire SD card, without this astroarch won't be able to fully start as the root partition will be as big as the data it contains.
+
+Insert the SD card into your computer and mount the boot partition, to give you an idea, we are pretending we still have the folder arch-install on the computer:
+
+- `cd arch-install`
+- `sudo mount /dev/mmcblk0p1 boot/`
+- `sudo sed -i 's|setenv bootargs|setenv bootargs init=/home/astronaut/.astroarch/init_resize.sh|' boot/boot.txt`
+- `cd boot && sudo ./mkscr && cd -`
