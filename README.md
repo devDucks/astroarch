@@ -43,7 +43,9 @@ We will proceed with moving the arch iso to the SD card
 - `bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C root`
 - `sudo mv root/boot/* boot`
 - `sudo sed -i 's/mmcblk0/mmcblk1/g' root/etc/fstab`
-- edit the file `root/etc/fstab` adding the following line `/dev/mmcblk1p2  /       ext4    defaults        0       0`
+-  edit the file `root/etc/fstab` adding the following line `/dev/mmcblk1p2  /       ext4    defaults        0       0`
+-  `sudo sed -i 's|setenv bootargs|setenv bootargs init=/home/astronaut/.astroarch/init_resize.sh|' boot/boot.txt`
+-  `cd boot && sudo ./mkscr && cd -`
 - `sudo umount boot/ root/`
 
 Congratz! Your SD card is ready, insert it into your raspberry and boot it!
