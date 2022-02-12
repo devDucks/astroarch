@@ -1,7 +1,7 @@
 Welcome to the astroarch wiki!
 
 # Download
-Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1tL8-oMda5z64xLzRTR_bH3V96MBzzaD-/
+Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1m0E4djuKNA18L7J39SL5SKnbri3J-sOd/
 
 # Burn the img to an SD
 TODO
