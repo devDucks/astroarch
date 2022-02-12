@@ -2,7 +2,6 @@
 
 reboot_pi () {
   echo "Unmounting /boot before rebooting"	
-  mount /boot -o remout,ro
   umount /boot
   echo "Remounting / in RO mode"
   mount / -o remount
@@ -158,7 +157,7 @@ mount /boot
 mount / -o remount,ro
 
 sed -i 's| init=/home/astronaut/\.astroarch/init_resize\.sh||' /boot/boot.txt
-cd /boot && ./mkscr
+cd /boot && ./mkscr && cd /
 
 mount /boot -o remount,ro
 sync
