@@ -43,7 +43,6 @@ We will proceed with moving the arch iso to the SD card
 - `bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C root`
 - `sudo mv root/boot/* boot`
 - `sudo sed -i 's/mmcblk0/mmcblk1/g' root/etc/fstab`
-- `sudo sed -i 's#PARTUUID=${uuid}#/dev/mmcblk1#g' boot/boot.txt`
 - edit the file `root/etc/fstab` adding the following line `/dev/mmcblk1p2  /       ext4    defaults        0       0`
 - `sudo umount boot/ root/`
 
