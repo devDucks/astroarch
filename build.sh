@@ -46,7 +46,7 @@ ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/
 ln -s /home/astronaut/.astroarch/configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -54,3 +54,11 @@ sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 # Link wallpaper
 ln -s /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures
+
+# config hostnames
+echo "astroarch" > /etc/hostname
+echo "127.0.0.1          localhost" >> /etc/hosts
+echo "127.0.1.1          astroarch" >> /etc/hosts
+
+# Reboot and enjoy now
+reboot
