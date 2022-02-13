@@ -30,12 +30,20 @@ function update-indi() {
 }
 
 function update-indi-drivers() {
-    cd ~/.build/indi-3rdparty && git checkout v1.9.4
-    mkdir -p ~/.build/build-indi-3rdparty
-    cd ~/.build/build-indi-3rdparty
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ~/.build/indi-3rdparty
+    cd ~/.buildastro
+    git clone https://github.com/indilib/indi-3rdparty
+    mkdir -p ~/.buildastro/build-indi-3rdparty
+    mkdir -p ~/.buildastro/build-indi-3rdparty-libs
+    cd ~/.buildastro/build-indi-3rdparty-libs
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DBUILD_LIBS=1 ~/.buildastro/indi-3rdparty
+    make -j4
+    sudo make install
+    cd ~/.buildastro/build-indi-3rdparty
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ~/.buildastro/indi-3rdparty
     make -j4
     sudo make install
     cd ~/
-    rm -rf ~/.build/build-indi-3rd-party
+    rm -rf ~/.buildastro/build-indi-3rdparty
+    rm -rf ~/.buildastro/build-indi-3rdparty-libs
+    rm -rf ~/.buildastro/indi-3rdparty
 }
