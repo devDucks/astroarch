@@ -49,7 +49,7 @@ sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: AL
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 # Link wallpaper
-ln -s /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures
+ln -s /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/bubble.jpg
 
 # config hostnames
 echo "astroarch" > /etc/hostname
