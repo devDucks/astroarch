@@ -21,7 +21,7 @@ sleep 5
 # Create the hotspot and set autoconnect to true
 nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
 sed -i 's/autoconnect=false/autoconnect=true/g' /etc/NetworkManager/system-connections/Hotspot.nmconnection
-nmcli connection modify AstroArch connection.autoconnect-priority -100
+nmcli connection modify Hotspot connection.autoconnect-priority -100
 
 # Create Xauthority for x11vnc
 su astronaut -c "touch /home/astronaut/.Xauthority"
