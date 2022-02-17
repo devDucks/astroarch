@@ -4,7 +4,7 @@ Welcome to the astroarch wiki!
 Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1EEmsgQ-JScYmqHu-qJfzJs-SLXYq5Yk0/
 
 # Burn the img to an SD
-TODO
+If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/)
 
 # First boot
 After you burned the .img file to your SD, IT IS VERY IMPORTANT YOU EXPAND THE ROOT PARTITION to cover your entire SD size, you can use tools like `gparted`, after expansion, insert the SD card into the pi and boot the system, you'll be logged in as user `astronaut`, the password (for sudoing and similar things) is `astro`
