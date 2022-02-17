@@ -1,0 +1,14 @@
+[Unit]
+Description=Extend root partition and resize ext4 file system
+After=local-fs.target
+Wants=local-fs.target
+
+[Service]
+Environment=ROOT_DISK=/dev/mmcblk1
+Environment=ROOT_PARTITION=2
+ExecStart=/bin/bash -c "/usr/bin/growpart -N \${ROOT_DISK} \${ROOT_PARTITION} && /usr/bin/growpart \${ROOT_DISK} \${ROOT_PARTITION} || exit 0"
+ExecStop=/bin/bash -c "/sbin/resize2fs \${ROOT_DISK}\p${ROOT_PARTITION} || exit 0"
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

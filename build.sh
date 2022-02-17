@@ -44,9 +44,9 @@ ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/n
 ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user/default.target.wants/x11vnc.service
 ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user
 ln -s /home/astronaut/.astroarch/configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
-
+ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service resize_once.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

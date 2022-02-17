@@ -11,14 +11,15 @@ passwd astronaut
 su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/astronaut/.astroarch"
 
 pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-       network-manager-applet networkmanager-qt chromium xorg alacritty \
-       cmake cfitsio fftw gsl libjpeg-turbo libnova libtheora libusb boost \
-       libraw libgphoto2 libftdi libdc1394 libavc1394 \
-       ffmpeg gpsd breeze-icons hicolor-icon-theme knewstuff \
-       knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
-       qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
-       extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
-       dhcp dnsmasq x11vnc gedit dolphin uboot-tools usbtools --noconfirm
+	network-manager-applet networkmanager-qt chromium xorg alacritty \
+	cmake cfitsio fftw gsl libjpeg-turbo libnova libtheora libusb boost \
+	libraw libgphoto2 libftdi libdc1394 libavc1394 \
+	ffmpeg gpsd breeze-icons hicolor-icon-theme knewstuff \
+	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
+	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
+	extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
+	dhcp dnsmasq x11vnc gedit dolphin uboot-tools usbtools \
+	cloud-guest-utils --noconfirm
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
