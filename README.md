@@ -1,8 +1,11 @@
 # astroarch
 
 This is the main bag to build an aarch64 ISO using arch linux that will be focused around astronomical software like kstars and indi.
-You won't probably (very very probably) want to build the ISO from scratch using this repo but rather downloading a ready one that can be burned to a SD card,
-in case you really want to try, the next sections will guide you through the entire procedure.
+
+**You won't probably (very very probably) want to build the ISO from scratch using this repo but rather downloading a ready one that can be burned to a SD card.
+You can find the guide with the link [HERE](https://github.com/MattBlack85/astroarch/GUIDE.md)**
+
+In case you really want to try, the next sections will guide you through the entire procedure.
 
 The guide is for the raspberry pi aarhc64 version of arch linux but it should work with any version.
 
