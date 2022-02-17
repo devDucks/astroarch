@@ -20,7 +20,7 @@ The next commands assume that after `type X` an `enter` is given to confirm the 
 - type `n` then `p` then `1`, when prompted for the first sector press `enter`, when prompted for the last sector type `+256M` (some guides report `100M` but from
 personal experience that is not enough)
 - type `t` and then type `0c` to modify the just created partition to `W95FAT LBA`
-- type `p` and take note of the number under `End` this will be used as starting point for the next partition
+- type `n` then `p` and take note of the number under `End` this will be used as starting point for the next partition
 - type `n` then `p` then `2`, when prompted for the `First sector` check if the default value is bigger than the number you noted before, if it's bigger confirm
 with `enter` otherwise add 1 to the number annotated before and use it in this step
 - confirm the `Last sector` with enter
