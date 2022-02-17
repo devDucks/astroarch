@@ -8,9 +8,6 @@ chown astronaut:astronaut .oh-my-zsh/
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
-su astronaut -c "yay -S --noremovemake --nodiffmenu --answerclean 4 gsc"
-su astronaut -c "yay -S novnc"
-
 # prepare folder for user services
 su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
 
@@ -49,6 +46,7 @@ sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: AL
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 # Link wallpaper
+mkdir -p /home/astronaut/Pictures
 ln -s /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/bubble.jpg
 
 # config hostnames
