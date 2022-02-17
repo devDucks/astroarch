@@ -33,7 +33,7 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
 	extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
 	dhcp dnsmasq x11vnc gedit dolphin uboot-tools usbutils \
-	cloud-guest-utils samba yay --noconfirm
+	cloud-guest-utils samba yay python-numpy websockify novnc--noconfirm
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
