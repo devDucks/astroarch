@@ -5,7 +5,7 @@ sed -i 's/#ParallelDownloads = 5/ParallelDownloads=5/g' /etc/pacman.conf
 cat <<EOF >> /etc/pacman.conf
 [astroarch]
 SigLevel = Optional TrustAll
-Server = http://astroarch.astromatto.com:9000/$arch
+Server = http://astroarch.astromatto.com:9000/\$arch
 EOF
 
 # Bootstrap pacman-key
