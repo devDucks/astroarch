@@ -42,7 +42,7 @@ ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system
 ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service resize_once.service nmb.service smb.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
