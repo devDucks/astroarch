@@ -50,6 +50,7 @@ su astronaut -c "mkdir -p /home/astronaut/Pictures"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/bubble.jpg"
 
 # Copy desktop icons
+su astronaut -c "mkdir -p /home/astronaut/Desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/Alacritty.desktop /home/astronaut/Desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.kstars.desktop /home/astronaut/Desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/phd2.desktop /home/astronaut/Desktop"
