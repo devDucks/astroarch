@@ -37,6 +37,8 @@ ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/
 ln -s /home/astronaut/.astroarch/configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
+cp /home/astronaut/.astroarch/systemd/change_wallpaper_once.service /home/astronaut/.config/systemd/user
+ln -s /home/astronaut/.config/systemd/user/change_wallpaper_once.service /home/astronaut/.config/systemd/user/default.target.wants/change_wallpaper_once.service
 
 # Enable now all services
 systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
