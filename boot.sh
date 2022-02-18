@@ -1,12 +1,8 @@
 # Parallelize pacman download to 5
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads=5/g' /etc/pacman.conf
 
-# Add astroarch pacman repo to pacman.conf
-cat <<EOF >> /etc/pacman.conf
-[astroarch]
-SigLevel = Optional TrustAll
-Server = http://astroarch.astromatto.com:9000/\$arch
-EOF
+# Add astroarch pacman repo to pacman.conf (it must go first)
+sed -i 's|\[core\]|\[astroarch\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
 
 # Bootstrap pacman-key
 pacman-key --init && pacman-key --populate archlinuxarm
@@ -33,7 +29,10 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
 	extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
 	dhcp dnsmasq x11vnc gedit dolphin uboot-tools usbutils \
-	cloud-guest-utils samba yay python-numpy websockify novnc --noconfirm
+	cloud-guest-utils samba yay python-numpy websockify novnc \
+	astrometry.net erfa gsc python-astropy python-extension-helpers \
+	python-pyerfa python-sphinx-automodapi libindi indi-3rdparty-libs \
+	indi-3rdparty-drivers kstars --noconfirm
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
