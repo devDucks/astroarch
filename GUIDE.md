@@ -1,7 +1,7 @@
 Welcome to the astroarch wiki!
 
 # Download
-Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1EEmsgQ-JScYmqHu-qJfzJs-SLXYq5Yk0/
+Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1eIpsQyOQkVFmrjqBkHscJvhBpHzVH_rK/
 
 # Burn the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/)
