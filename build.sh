@@ -46,13 +46,21 @@ sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: AL
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 # Link wallpaper
-mkdir -p /home/astronaut/Pictures
-ln -s /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/bubble.jpg
+su astronaut -c "mkdir -p /home/astronaut/Pictures"
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/bubble.jpg"
+
+# Copy desktop icons
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/Alacritty.desktop /home/astronaut/Desktop"
+su astrinaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.kstars.desktop /home/astronaut/Desktop"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/phd2.desktop /home/astronaut/Desktop"
 
 # config hostnames
 echo "astroarch" > /etc/hostname
 echo "127.0.0.1          localhost" >> /etc/hosts
 echo "127.0.1.1          astroarch" >> /etc/hosts
+
+# Temp QHY fix, firmware under archlinux is in /usr/lib/firmware and not /lib/firmware, if works, make it part of package compilation
+sed -i 's|/lib/firmware|/usr/lib/firmware|g' /usr/lib/udev/rules.d/85-qhyccd.rules
 
 # Reboot and enjoy now
 reboot
