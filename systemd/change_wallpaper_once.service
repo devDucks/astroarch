@@ -5,7 +5,8 @@ Requires=graphical.target
 After=graphical.target
 
 [Service]
-ExecStart=zsh /home/astronaut/.astroarch/scripts/wallpaper.sh || exit 0
+ExecStart=/usr/bin/sleep 30
+ExecStop=/usr/bin/zsh /home/astronaut/.astroarch/scripts/wallpaper.sh || exit 0
 Type=oneshot
 
 [Install]
