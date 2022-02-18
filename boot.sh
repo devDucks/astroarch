@@ -32,7 +32,7 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
 	cloud-guest-utils samba yay python-numpy websockify novnc \
 	astrometry.net erfa gsc python-astropy python-extension-helpers \
 	python-pyerfa python-sphinx-automodapi libindi indi-3rdparty-libs \
-	indi-3rdparty-drivers kstars --noconfirm
+	indi-3rdparty-drivers kstars phd2 --noconfirm
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
