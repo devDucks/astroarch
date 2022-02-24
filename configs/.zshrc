@@ -5,7 +5,7 @@ ZSH_THEME="robbyrussell"
 
 zstyle ':omz:update' mode disabled
 
-ENABLE_CORRECTION="true"
+ENABLE_CORRECTION="false"
 HIST_STAMPS="yyyy-mm-dd"
 
 plugins=(git archlinux)
