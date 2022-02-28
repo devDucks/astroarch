@@ -15,7 +15,7 @@ pacman -S wget sudo git --noconfirm
 
 # create user astro with home, add it to wheel
 useradd -G wheel -m astronaut
-passwd astronaut
+echo "astronaut:astronomy" | chpasswd
 
 # Pull the brain repo, this will be used for scripting out the final image
 su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/astronaut/.astroarch"
