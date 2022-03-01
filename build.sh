@@ -67,9 +67,6 @@ echo "astroarch" > /etc/hostname
 echo "127.0.0.1          localhost" >> /etc/hosts
 echo "127.0.1.1          astroarch" >> /etc/hosts
 
-# Temp QHY fix, firmware under archlinux is in /usr/lib/firmware and not /lib/firmware, if works, make it part of package compilation
-sed -i 's|/lib/firmware|/usr/lib/firmware|g' /usr/lib/udev/rules.d/85-qhyccd.rules
-
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
