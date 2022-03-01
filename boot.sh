@@ -15,27 +15,27 @@ pacman -S wget sudo git --noconfirm
 
 # create user astro with home, add it to wheel
 useradd -G wheel -m astronaut
-echo "astronaut:astronomy" | chpasswd
+echo "astronaut:astro" | chpasswd
 
 # Pull the brain repo, this will be used for scripting out the final image
 su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/astronaut/.astroarch"
 
 pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt chromium xorg alacritty \
-	cmake cfitsio fftw gsl libjpeg-turbo libnova libtheora libusb boost \
-	libraw libgphoto2 libftdi libdc1394 libavc1394 \
-	ffmpeg gpsd breeze-icons hicolor-icon-theme knewstuff \
+	gpsd breeze-icons hicolor-icon-theme knewstuff linux-rpi linux-rpi-headers \
 	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
 	extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
 	dhcp dnsmasq x11vnc gedit dolphin uboot-tools usbutils \
 	cloud-guest-utils samba yay python-numpy websockify novnc \
-	astrometry.net erfa gsc python-astropy python-extension-helpers \
-	python-pyerfa python-sphinx-automodapi libindi indi-3rdparty-libs \
-	indi-3rdparty-drivers kstars phd2 wxgtk2 wxgtk-common --noconfirm
+	astrometry.net gsc python-astropy python-extension-helpers \
+	python-pyerfa python-sphinx-automodapi kstars phd2 --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+
+# Add astronaut to uucp for serial device ownership
+usermod -G uucp astronaut
 
 # Run now the build script
 bash /home/astronaut/.astroarch/build.sh
