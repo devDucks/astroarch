@@ -36,7 +36,7 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 
 # Add astronaut to uucp for serial device ownership
-usermod -G uucp astronaut
+usermod -aG uucp astronaut
 
 # Run now the build script
 bash /home/astronaut/.astroarch/build.sh
