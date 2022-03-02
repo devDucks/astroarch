@@ -25,11 +25,12 @@ pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dumm
 	gpsd breeze-icons hicolor-icon-theme knewstuff linux-rpi linux-rpi-headers \
 	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
-	extra-cmake-modules kf5 eigen inetutils xplanet plasma-nm \
-	dhcp dnsmasq x11vnc gedit dolphin uboot-tools usbutils \
-	cloud-guest-utils samba yay python-numpy websockify novnc \
-	astrometry.net gsc python-astropy python-extension-helpers \
-	python-pyerfa python-sphinx-automodapi kstars phd2 --noconfirm --ask 4
+	inetutils xplanet plasma-nm dhcp dnsmasq x11vnc gedit \
+	dolphin uboot-tools usbutils cloud-guest-utils samba yay \
+	python-numpy websockify novnc astrometry.net gsc \
+	python-astropy python-extension-helpers \
+	python-pyerfa python-sphinx-automodapi kstars phd2 \
+	indi-3rdparty-libs indi-3rdparty-drivers --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
