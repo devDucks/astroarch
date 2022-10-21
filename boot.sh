@@ -2,7 +2,7 @@
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads=5/g' /etc/pacman.conf
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
-sed -i 's|\[core\]|\[astroarch\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
+sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
 
 # Bootstrap pacman-key
 pacman-key --init && pacman-key --populate archlinuxarm
