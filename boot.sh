@@ -26,14 +26,12 @@ locale-gen
 
 pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt chromium xorg alacritty \
-	gpsd breeze-icons hicolor-icon-theme knewstuff linux-rpi linux-rpi-headers \
+	gpsd breeze-icons hicolor-icon-theme knewstuff \
 	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
-	inetutils xplanet plasma-nm dhcp dnsmasq x11vnc gedit \
-	dolphin uboot-tools usbutils cloud-guest-utils samba yay \
-	python-numpy websockify novnc astrometry.net gsc \
-	python-astropy python-extension-helpers \
-	python-pyerfa python-sphinx-automodapi kstars phd2 \
+	xplanet plasma-nm dhcp dnsmasq x11vnc gedit plasma-systemmonitor \
+	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
+	websockify novnc astrometry.net gsc kstars phd2 \
 	indi-3rdparty-libs indi-3rdparty-drivers --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
