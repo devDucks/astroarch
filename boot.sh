@@ -20,6 +20,10 @@ echo "astronaut:astro" | chpasswd
 # Pull the brain repo, this will be used for scripting out the final image
 su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/astronaut/.astroarch"
 
+# Uncomment en_US UTF8 and generate locale files
+sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+
 pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt chromium xorg alacritty \
 	gpsd breeze-icons hicolor-icon-theme knewstuff linux-rpi linux-rpi-headers \
