@@ -24,7 +24,8 @@ su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/as
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
-pacman -Syu base-devel go zsh plasma-desktop sddm networkmanager xf86-video-dummy \
+pacman -Syu base-devel pipewire-jack ttf-freefont pipewire-media-session \
+        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt chromium xorg alacritty \
 	gpsd breeze-icons hicolor-icon-theme knewstuff \
 	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
