@@ -5,6 +5,9 @@ cd /home/astronaut
 ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 chown astronaut:astronaut .oh-my-zsh/
 
+# Set the samba pass
+(echo astro; echo astro) | smbpasswd -s -a astronaut
+
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
