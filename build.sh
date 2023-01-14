@@ -6,7 +6,10 @@ ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent
 chown astronaut:astronaut .oh-my-zsh/
 
 # Set the samba pass
+ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
+systemctl start smb
 (echo astro; echo astro) | smbpasswd -s -a astronaut
+systemctl stop smb
 
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
@@ -39,7 +42,6 @@ ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/
 ln -s /home/astronaut/.astroarch/systemd/x11vnc.service /home/astronaut/.config/systemd/user
 ln -s /home/astronaut/.astroarch/configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
-ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
 
 # Enable oneshot script to set the bubble nebula wallpaper
 su astronaut -c "cp /home/astronaut/.astroarch/systemd/change_wallpaper_once.service /home/astronaut/.config/systemd/user"
