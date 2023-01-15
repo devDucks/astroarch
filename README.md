@@ -7,7 +7,10 @@ You can find the guide with the link [HERE](https://github.com/MattBlack85/astro
 
 In case you really want to try, the next sections will guide you through the entire procedure.
 
-The guide is for the raspberry pi aarhc64 version of arch linux but it should work with any version.
+The guide is for the raspberry pi aarch64 version of arch linux but it should work with any version.
+
+If you are preparing a raspberry pi image be aware of one big issue, the raspberry pi 4B comes into multiple flavours, rev < 1.5 have a final number on the CPU ending in B0T while rev 1.5 ends with C0T.
+ArchLinux ARM standard iso does not work out of the boc for the C0T model and there are some tweaks to do, these tewaks must be taken into account also when repackaging the iso
 
 # How to build the ISO
 
@@ -61,17 +64,12 @@ You'll be dropped into `alarm` shell and now we can proceed:
 - type `curl https://raw.githubusercontent.com/MattBlack85/astroarch/main/boot.sh > boot.sh`
 - type `bash boot.sh`
 
-After a while you'll be prompted to pick a new password, insert one and type it again on the second prompt, this will be the password for user `astronaut`
+This is the only thing required, the rest of the procedure is fully automated!
 
 ## Repackaging .img file
 
-Once astroarch has been fully bootstrapped the image can be repackaged to be distributed.
-A very important step is to override the `init=` kernel boot param so that after a flash the system will be automagically expanded to fill
-the entire SD card, without this astroarch won't be able to fully start as the root partition will be as big as the data it contains.
+Once astroarch has been fully bootstrapped the image can be repackaged to be distributed, before do so there is a one last step to achieve, the resize_once service must be enabled before repackaging cause otherwise the partition won't be expanded on the first boot, run `sudo systemctl enable resize_once`
 
-Insert the SD card into your computer and mount the boot partition, to give you an idea, we are pretending we still have the folder arch-install on the computer:
-
-- `cd arch-install`
-- `sudo mount /dev/mmcblk0p1 boot/`
-- `sudo sed -i 's|setenv bootargs|setenv bootargs init=/home/astronaut/.astroarch/init_resize.sh|' boot/boot.txt`
-- `cd boot && sudo ./mkscr && cd -`
+Shutdown the raspberry pi, take the card and insert it into another pc, then using `pishrink` follow these steps:
+- `sudo dd if=/dev/mmcblk0 of=astroarch.img bs=4M status=progress` this will take a snapshot of the SD card and crete a .img file
+- `sudo ./pishrink.sh -z astroarch.img astroarch-X.X.X.img.gz`
