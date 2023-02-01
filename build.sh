@@ -68,6 +68,11 @@ su astronaut -c "cp /home/astronaut/.astroarch/desktop/Alacritty.desktop /home/a
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.kstars.desktop /home/astronaut/Desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/phd2.desktop /home/astronaut/Desktop"
 
+# Remove actual novnc icons
+rm -r /usr/share/webapps/novnc/app/images/icons
+# Link custom novnc icons folder
+ln -s /home/astronaut/.astroarch/assets/icons /usr/share/webapps/novnc/app/images/icons
+
 # config hostnames
 echo "astroarch" > /etc/hostname
 echo "127.0.0.1          localhost" >> /etc/hosts
