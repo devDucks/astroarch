@@ -69,9 +69,9 @@ su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.kstars.desktop /h
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/phd2.desktop /home/astronaut/Desktop"
 
 # Remove actual novnc icons
-rm -r /usr/share/webapps/novnc/app/images/icons
-# Link custom novnc icons folder
-ln -s /home/astronaut/.astroarch/assets/icons /usr/share/webapps/novnc/app/images/icons
+rm -r /usr/share/webapps/novnc/app/images/icons/*
+# Copy custom novnc icons folder
+cp -r /home/astronaut/.astroarch/assets/icons/* /usr/share/webapps/novnc/app/images/icons
 
 # config hostnames
 echo "astroarch" > /etc/hostname
