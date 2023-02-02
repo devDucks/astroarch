@@ -9,7 +9,7 @@ there is nothing I shall explain to you :)
 
 # First boot
 After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
-this likely means that the SD partition has not been expanded on the first boot, to solve this issue just **reboot your raspberry pi by unplugging it from the power**
+this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output! 
 
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
