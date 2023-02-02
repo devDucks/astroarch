@@ -9,9 +9,6 @@ In case you really want to try, the next sections will guide you through the ent
 
 The guide is for the raspberry pi aarch64 version of arch linux but it should work with any version.
 
-If you are preparing a raspberry pi image be aware of one big issue, the raspberry pi 4B comes into multiple flavours, rev < 1.5 have a final number on the CPU ending in B0T while rev 1.5 ends with C0T.
-ArchLinux ARM standard iso does not work out of the boc for the C0T model and there are some tweaks to do, these tewaks must be taken into account also when repackaging the iso
-
 # How to build the ISO
 
 
