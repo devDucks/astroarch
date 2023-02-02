@@ -32,7 +32,7 @@ the following software will be available, by category
 - indi drivers (all of them) 
 
 ### OS
-- alacritty (terminal) **TO BE DEPRECATED IN 1.4**
+- alacritty (terminal) **TO BE DEPRECATED IN 1.5**
 - KDE Plasma (Desktop environment)
 - pacman (package manager, this is **NOT** debian based and pacman instead of apt is your package manager
 - NetworkManager (to manage networks)
