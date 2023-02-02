@@ -1,4 +1,4 @@
-Welcome to the astroarch wiki!
+Welcome to the AstroArch wiki!
 
 # Download
 Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1jYBeKFioCXWDqEf0wk0shj0Dn7eJ8dcX/
@@ -29,7 +29,8 @@ the following software will be available, by category
 ### Astronomical
 - Kstars
 - phd2
-- indi drivers (all of them) 
+- indi drivers (all of them)
+- astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor) 
 
 ### OS
 - alacritty (terminal) **TO BE DEPRECATED IN 1.5**
@@ -42,4 +43,4 @@ the following software will be available, by category
 - noVNC
 
 # Reporting issues
-AstroArch is actually in a beta state, things seems to work and look pretty stable. However should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
+AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
