@@ -1,4 +1,4 @@
-# Welcome to the AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64 and Manjaro and all Arch derived distros
+# Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64 and Manjaro and all Arch derived distros
 ![astroarch](https://user-images.githubusercontent.com/4163222/216557489-08221a7f-d835-4837-a219-1bc73f01f9c3.png)
 
 
@@ -12,7 +12,7 @@ Server = http://astroarch.astromatto.com:9000/$arch
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
 
 # Download
-Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1jYBeKFioCXWDqEf0wk0shj0Dn7eJ8dcX/
+Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1jYBeKFioCXWDqEf0wk0shj0Dn7eJ8dcX/
 
 # Burn the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
@@ -20,7 +20,8 @@ there is nothing I shall explain to you :)
 
 # First boot
 After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
-this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output! 
+this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output!
+Once you are logged in the first thing you should do is update the system, open the terminal and type `update-astroarch` command
 
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
