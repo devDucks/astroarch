@@ -1,72 +1,55 @@
-# astroarch
+Welcome to the AstroArch! AstroPhotography on ArchLinux for Raspberry Pis/x64 and Manjaro and all Arch derived distros
 
-This is the main bag to build an aarch64 ISO using arch linux that will be focused around astronomical software like kstars and indi.
+If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
+```
+[astromatto]
+SigLevel = Optional TrustAll
+Server = http://astroarch.astromatto.com:9000/$arch
+```
 
-**You won't probably (very very probably) want to build the ISO from scratch using this repo but rather downloading a ready one that can be burned to a SD card.
-You can find the guide with the link [HERE](https://github.com/MattBlack85/astroarch/blob/main/GUIDE.md)**
+Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
 
-In case you really want to try, the next sections will guide you through the entire procedure.
+# Download
+Please use this link to download astroarch gzipped img file => https://drive.google.com/file/d/1jYBeKFioCXWDqEf0wk0shj0Dn7eJ8dcX/
 
-The guide is for the raspberry pi aarch64 version of arch linux but it should work with any version.
+# Burn the img to an SD
+If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
+there is nothing I shall explain to you :)
 
-# How to build the ISO
+# First boot
+After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
+this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output! 
+
+# Connecting via browser (noVNC)
+By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
+
+noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the follwing methods:
+- **http://astroarch.local:8080/vnc.html**
+- if the previous method doesn't work, find your raspberry pi IP, connect to it through your browser typing `http://RASPBERRY_IP:8080/vnc.html`
+ 
+otherwise, if you want to connect to its hotspot, find the WiFi network `AstroArch` (the pass is `astronomy`) and type in your browser `http://10.42.0.1:8080/vnc.html`
+
+Welcome to astro arch!
 
 
-## Prepare the SD card
-Insert the SD card into your PC and check under which device name it presents itself (it may be `/dev/sdX` or `/dev/mmcblkX`), the guide will assume
-it's `/dev/mmcblk0`, if your PC mounts the card automatically **you need to unmount it before proceeding**
+# Software available
+the following software will be available, by category
 
-The next commands assume that after `type X` an `enter` is given to confirm the command
+### Astronomical
+- Kstars
+- phd2
+- indi drivers (all of them)
+- astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor) 
 
-- Run fdisk typing `sudo fdisk /dev/mmcblk0`
-- type `o` this will wipe all the existing partitions from the card
-- type `n` then `p` then `1`, when prompted for the first sector press `enter`, when prompted for the last sector type `+256M` (some guides report `100M` but from
-personal experience that is not enough)
-- type `t` and then type `0c` to modify the just created partition to `W95FAT LBA`
-- type `n` then `p` and take note of the number under `End` this will be used as starting point for the next partition
-- type `n` then `p` then `2`, when prompted for the `First sector` check if the default value is bigger than the number you noted before, if it's bigger confirm
-with `enter` otherwise add 1 to the number annotated before and use it in this step
-- confirm the `Last sector` with enter
-- type `w` to write the changes to the card, this will also exit fdisk.
-- type `sudo mkfs.vfat /dev/mmcblk0p1` (/dev/sdX1 for sd like devices)
-- type `sudo mkfs.ext4 /dev/mmcblk0p2`
+### OS
+- alacritty (terminal) **TO BE DEPRECATED IN 1.5**
+- KDE Plasma (Desktop environment)
+- pacman (package manager, this is **NOT** debian based and pacman instead of apt is your package manager
+- NetworkManager (to manage networks)
 
-At this point the SD card is ready!
+### Connectivity
+- x11vnc
+- noVNC
 
-## Burn the iso to the SD card
-
-We will proceed with moving the arch iso to the SD card
-
-- `mkdir arch-install && cd arch-install`
-- `mkdir boot`
-- `mkdir root`
-- `wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz`
-- `sudo mount /dev/mmcblk0p1 boot/`
-- `sudo mount /dev/mmcblk0p2 root/`
-- `bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C root`
-- `sudo mv root/boot/* boot`
-- `sudo sed -i 's/mmcblk0/mmcblk1/g' root/etc/fstab`
--  edit the file `root/etc/fstab` adding the following line `/dev/mmcblk1p2  /       ext4    defaults        0       0`
-- `sudo umount boot/ root/`
-
-Congratz! Your SD card is ready, insert it into your raspberry and boot it!
-
-## First boot
-
-Connect your raspberry pi to your netowork via an ethernet cable, you can ssh into it after the boot using `ssh alarm@IP_OF_YOUR_RASPBERRY` the password will
-be `alarm`
-
-You'll be dropped into `alarm` shell and now we can proceed:
-- become sudo with `su -` the password is `root`
-- type `curl https://raw.githubusercontent.com/MattBlack85/astroarch/main/boot.sh > boot.sh`
-- type `bash boot.sh`
-
-This is the only thing required, the rest of the procedure is fully automated!
-
-## Repackaging .img file
-
-Once astroarch has been fully bootstrapped the image can be repackaged to be distributed, before do so there is a one last step to achieve, the resize_once service must be enabled before repackaging cause otherwise the partition won't be expanded on the first boot, run `sudo systemctl enable resize_once`
-
-Shutdown the raspberry pi, take the card and insert it into another pc, then using `pishrink` follow these steps:
-- `sudo dd if=/dev/mmcblk0 of=astroarch.img bs=4M status=progress` this will take a snapshot of the SD card and crete a .img file
-- `sudo ./pishrink.sh -z astroarch.img astroarch-X.X.X.img.gz`
+# Reporting issues
+AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
