@@ -39,6 +39,7 @@ the following software will be available, by category
 - Kstars
 - phd2
 - indi drivers (all of them)
+- most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor) 
 
 ### OS
