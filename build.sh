@@ -64,9 +64,12 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astro
 
 # Copy desktop icons
 su astronaut -c "mkdir -p /home/astronaut/Desktop"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/Alacritty.desktop /home/astronaut/Desktop"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut/Desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.kstars.desktop /home/astronaut/Desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/phd2.desktop /home/astronaut/Desktop"
+
+# Make the icons executable so there will be no ! on the first boot
+chmod +x /home/astronaut/Desktop/*
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
