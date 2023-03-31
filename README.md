@@ -1,8 +1,8 @@
-# Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64 and Manjaro and all Arch derived distros
+# Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64, Manjaro and all Arch derived distros
 ![astroarch](https://user-images.githubusercontent.com/4163222/216557489-08221a7f-d835-4837-a219-1bc73f01f9c3.png)
 
 
-If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
+If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
 ```
 [astromatto]
 SigLevel = Optional TrustAll
@@ -11,12 +11,31 @@ Server = http://astroarch.astromatto.com:9000/$arch
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
 
+<br />
+
+# ⚠️ BE SURE TO READ THE FOLLOWING SECTION AT LEAST BEFORE STARTING ASTROARCH ⚠️
+**AstroArch doesn't support yet HDMI, it means it works only via VNC and if you plug a monitor, you won't see the desktop although the system may be functional.**
+
+**After acknowledging this fact, enjoy the rest of the read 🤓**
+
+<br />
+<br />
+<br />
+
+
 # Download
 Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1jYBeKFioCXWDqEf0wk0shj0Dn7eJ8dcX/
 
 # Burn the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
 there is nothing I shall explain to you :)
+
+# Useful commands
+The followings are some useful commands that you can run from the terminal so you don't have to deal with complicated stuff by yourself if you don't want to:
+ - `update-astroarch` => this command will update system packages (including kstars, indi, etc. if there are new versions) and will pull any fix for astroarch itself, additionally will update the astroarch configuration that may bring in more commands etc.
+ - `astro-rollback-indi` => rollback automatically indi to the previous version
+ - `astro-rollback-kstars` => rollback automatically indi to the previous version
+ - `astro-rollback-full` => rollback automatically indi and kstars to the previous version
 
 # First boot
 After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
@@ -39,9 +58,10 @@ Welcome to astro arch!
 the following software will be available, by category
 
 ### Astronomical
-- Kstars
-- phd2
-- indi drivers (all of them)
+- Kstars 3.6.3
+- phd2 2.6.11dev4
+- indi libs 2.0.0 **(all of them)**
+- indi drivers 2.0.0 **(all of them)**
 - most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor) 
 
