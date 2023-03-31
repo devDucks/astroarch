@@ -26,7 +26,7 @@ locale-gen
 
 pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
         zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-	network-manager-applet networkmanager-qt chromium xorg alacritty \
+	network-manager-applet networkmanager-qt chromium xorg konsole \
 	gpsd breeze-icons hicolor-icon-theme knewstuff \
 	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
