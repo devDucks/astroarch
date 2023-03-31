@@ -60,8 +60,9 @@ function update-astroarch()
     fi;
 
     # Update always keyring first, than all of the other packages
-    sudo pacman -Syu archlinux-keyring
+    sudo pacman -Fy
+    sudo pacman -S archlinux-keyring --noconfirm
 
     # Now upgrade all system packages
-    sudo pacman -Syu
+    sudo pacman -Syu --noconfirm
 }
