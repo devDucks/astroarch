@@ -3,8 +3,8 @@ bash /home/astronaut/.astroarch/scripts/1.4.sh
 
 # Apply changes for 1.5
 sudo pacman -Fy
-sudo pacman -R alacritty
-sudo pacman -S konsole
+sudo pacman -R alacritty --noconfirm
+sudo pacman -S konsole --noconfirm
 
 # Add Konsole icon to desktop and remove Alacritty one
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut/Desktop"
