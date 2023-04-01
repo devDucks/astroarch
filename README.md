@@ -23,8 +23,15 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 <br />
 
 
+# If you are coming from version 1.3.1
+Version **1.3.1** is the first image released, if you have that image and you never run `update-astroarch`, please download the new image (see the link below) as there is a small breaking change with the terminal.
+
+If you had **1.3.1** and updated, you should be able to go to **1.5.0** by updating directly using `update-astroarch`.
+
+If it is the first time you download the .img you are good to go
+
 # Download
-Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1jYBeKFioCXWDqEf0wk0shj0Dn7eJ8dcX/
+Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1KHSfrismTYFnyXq8FygNCtA_XaJvQPDi/view?usp=share_link
 
 # Burn the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
