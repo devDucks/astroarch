@@ -24,9 +24,9 @@ function astro-rollback-indi()
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
-    wget -O indi-3rdparty-drivers-1.9.9-3-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-drivers-1.9.9-3-aarch64.pkg.tar.xz
-    wget -O libindi-1.9.9-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/libindi-1.9.9-1-aarch64.pkg.tar.xz
-    wget -O indi-3rdparty-libs-1.9.9-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-libs-1.9.9-1-aarch64.pkg.tar.xz
+    wget -O indi-3rdparty-drivers-2.0.0-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-drivers-2.0.0-1-aarch64.pkg.tar.xz
+    wget -O libindi-2.0.0-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/libindi-2.0.0-1-aarch64.pkg.tar.xz
+    wget -O indi-3rdparty-libs-2.0.0-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-libs-2.0.0-1-aarch64.pkg.tar.xz
     sudo pacman -U libindi* indi* --noconfirm
     cd - > /dev/null 2>&1
     rm -rf ~/.rollback/*
@@ -37,7 +37,7 @@ function astro-rollback-kstars()
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
-    wget -O kstars-3.6.2-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/kstars-3.6.2-1-aarch64.pkg.tar.xz
+    wget -O kstars-3.6.3-1-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/kstars-3.6.3-1-aarch64.pkg.tar.xz
     sudo pacman -U kstars* --noconfirm
     cd - > /dev/null 2>&1
     rm -rf ~/.rollback/*
