@@ -3,7 +3,7 @@
 # Check for rsync installation
 check_rsync=$(pacman -Q | grep -c rsync)
 if [ $check_rsync -eq 0 ]; then
-    sudo pacman -S rsync --noconfirm
+    sudo pacman -Su rsync --noconfirm
     echo "rsync installed"
 fi
 
