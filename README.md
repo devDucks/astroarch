@@ -1,4 +1,10 @@
 # Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64, Manjaro and all Arch derived distros
+
+[![Discord chat][discord-badge]][discord-url]
+
+[discord-badge]: https://img.shields.io/discord/1100468635086106706
+[discord-url]: https://discord.gg/uJEQCZKBT8
+
 ![astroarch](https://user-images.githubusercontent.com/4163222/216557489-08221a7f-d835-4837-a219-1bc73f01f9c3.png)
 
 
