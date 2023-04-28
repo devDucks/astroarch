@@ -30,3 +30,21 @@ if [ $check_astromonitor -eq 0 ]; then
 	sudo rm /usr/local/bin/astromonitor
     fi
 fi
+
+check_i2c=$(pacman -Q | grep -c i2c-tools)
+
+if [ $check_i2c -eq 0 ]; then
+    sudo pacman -S indiserver-ui --noconfirm
+    echo "i2c-tools installed"
+fi
+
+dtcheck=$(cat /boot/config.txt | grep -c dtparam=i2c_arm=on)
+dtoverlaycheck=$(cat /boot/config.txt | grep -c dtoverlay=i2c-rtc)
+
+if [ $dtcheck -eq 0 ]; then
+    sudo sh -c "echo dtparam=i2c_arm=on >> /boot/config.txt"
+fi
+
+if [ $dtoverlaycheck -eq 0 ]; then
+    sudo sh -c "echo dtoverlay=i2c-rtc >> /boot/config.txt"
+fi
