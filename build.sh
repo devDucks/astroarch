@@ -85,5 +85,11 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
+# If we are on a raspberry let's adjust /boot/config.txt
+if [ $(cat /proc/cpuinfo | grep -c Raspberry) -eq 0 ]; then
+    echo dtparam=i2c_arm=on >> /boot/config.txt
+    echo dtoverlay=i2c-rtc >> /boot/config.txt
+fi
+
 # Reboot and enjoy now
 reboot
