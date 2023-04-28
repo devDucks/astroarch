@@ -19,3 +19,14 @@ if [ $check_astrodmx -eq 0 ]; then
     echo "AstroDMx installed"
     ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture
 fi
+
+check_astromonitor=$(pacman -Q | grep -c astromonitor)
+
+if [ $check_astromonitor -eq 0 ]; then
+    sudo pacman -S astromonitor --noconfirm
+    echo "astromonitor installed"
+    if [ -f /usr/local/bin/astromonitor ]; then
+	echo "Dropping legacy astromonitor"
+	sudo rm /usr/local/bin/astromonitor
+    fi
+fi
