@@ -71,15 +71,15 @@ Welcome to astro arch!
 the following software will be available, by category
 
 ### Astronomical
-- Kstars 3.6.3
+- Kstars 3.6.4
 - phd2 2.6.11dev4
-- indi libs 2.0.0 **(all of them)**
-- indi drivers 2.0.0 **(all of them)**
+- indi libs 2.0.1 **(all of them)**
+- indi drivers 2.0.1 **(all of them)**
 - most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor) 
 
 ### OS
-- alacritty (terminal) **TO BE DEPRECATED IN 1.5**
+- Konsole (terminal)
 - KDE Plasma (Desktop environment)
 - pacman (package manager, this is **NOT** debian based and pacman instead of apt is your package manager
 - NetworkManager (to manage networks)
