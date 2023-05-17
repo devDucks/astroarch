@@ -34,7 +34,8 @@ fi
 check_i2c=$(pacman -Q | grep -c i2c-tools)
 
 if [ $check_i2c -eq 0 ]; then
-    sudo pacman -S indiserver-ui --noconfirm
+    sudo pacman -S i2c-tools --noconfirm
+    sudo sh -c "echo i2c-dev > /etc/modules-load.d/raspberrypi.conf"
     echo "i2c-tools installed"
 fi
 
