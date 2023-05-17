@@ -48,3 +48,11 @@ fi
 if [ $dtoverlaycheck -eq 0 ]; then
     sudo sh -c "echo dtoverlay=i2c-rtc >> /boot/config.txt"
 fi
+
+# libssl 1.1
+check_libssl=$(pacman -Q | grep -c openssl-1.1)
+
+if [ $check_libssl -eq 0 ]; then
+    sudo pacman -S openssl-1.1 --noconfirm
+    echo "libssl 1.1 installed"
+fi
