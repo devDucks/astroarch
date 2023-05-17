@@ -1,6 +1,6 @@
 # Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64, Manjaro and all Arch derived distros
 
-[![Discord chat][discord-badge]][discord-url]
+[![Discord chat][discord-badge]][discord-url] <= Join us on discord!
 
 [discord-badge]: https://img.shields.io/discord/1100468635086106706?logo=discord&style=flat-square
 [discord-url]: https://discord.gg/uJEQCZKBT8
@@ -8,14 +8,18 @@
 ![astroarch](https://user-images.githubusercontent.com/4163222/216557489-08221a7f-d835-4837-a219-1bc73f01f9c3.png)
 
 
-If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
-```
-[astromatto]
-SigLevel = Optional TrustAll
-Server = http://astroarch.astromatto.com:9000/$arch
-```
-
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
+ - [IMPORTANT NOTES BEFORE YOU START (SERIOUSLY, READ THEM!)](#%EF%B8%8F-be-sure-to-read-the-following-section-at-least-before-starting-astroarch-%EF%B8%8F)
+ - [if you are coming from version 1.3.1](#if-you-are-coming-from-version-131)
+ - [Download](#download)
+ - [Flash the image to SD](#flash-the-img-to-an-sd)
+ - [Useful commands](#useful-commands)
+ - [On first boot - things to know](#first-boot)
+ - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
+ - [List of available software](#software-available)
+ - [reporting problems](#reporting-issues)
+ - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
+
 
 <br />
 
@@ -36,10 +40,18 @@ If you had **1.3.1** and updated, you should be able to go to **1.5.0** by updat
 
 If it is the first time you download the .img you are good to go
 
+# Use only the astro packages mantained for AstroArch on PC and mini PC
+If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
+```
+[astromatto]
+SigLevel = Optional TrustAll
+Server = http://astroarch.astromatto.com:9000/$arch
+```
+
 # Download
 Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1KHSfrismTYFnyXq8FygNCtA_XaJvQPDi/view?usp=share_link
 
-# Burn the img to an SD
+# Flash the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
 there is nothing I shall explain to you :)
 
