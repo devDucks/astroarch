@@ -108,7 +108,7 @@ Adding a RTC to AstroArch is easy from version 1.6.
 First, wire your RTC to your pi, open a terminal and type `sudo i2cdetect -y 1` you should see a similar table, take note of the number for the next steps
 ![i2cdetect](https://github.com/devDucks/astroarch/assets/4163222/147f90ed-6f56-43ab-900b-0ad0c44f919c)
 
-Now find the line `dtoverlay=i2c_rtc` in `/boot/config.txt` and modify it by adding a comma and the name of your RTC device, in my case for the ds3231 will be `dtoverlay=i2c_rtc,ds3231`
+Now find the line `dtoverlay=i2c-rtc` in `/boot/config.txt` and modify it by adding a comma and the name of your RTC device, in my case for the ds3231 will be `dtoverlay=i2c-rtc,ds3231`
 
 Reboot your Raspberry PI and if you type again `sudo i2cdetect -y 1` you should now see a `UU` instead of the number, this means the kernel module for your RTC has been loaded correctly.
 
@@ -116,7 +116,7 @@ That's all you need! We just enabled automatic modules to setup the system time 
 
 Reboot your PI and you should have the time automatically synchronized when it starts!
 
-If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c_rtc,xxxx`
+If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c-rtc,xxxx`
 
 # My time is not syncing from the network, what should I do?
 Some users have been reporting that the system time is not syncing whit the network, I am not sure where this problem comes from but it seems related to `timesyncd` (the utility used to sync network time) and a mobile internet network.
