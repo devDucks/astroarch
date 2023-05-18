@@ -18,6 +18,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
+ - [The time is not syncing from the network, how can I fix it?](#my-time-is-not-syncing-from-the-network-what-should-i-do)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
 
@@ -89,7 +90,8 @@ the following software will be available, by category
 - indi libs 2.0.1 **(all of them)**
 - indi drivers 2.0.1 **(all of them)**
 - most of the widefield indexes for plate solving
-- astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor) 
+- astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor)
+- AstroDMx (a capture software like FireCapture)
 
 ### OS
 - Konsole (terminal)
@@ -110,36 +112,22 @@ Now find the line `dtoverlay=i2c_rtc` in `/boot/config.txt` and modify it by add
 
 Reboot your Raspberry PI and if you type again `sudo i2cdetect -y 1` you should now see a `UU` instead of the number, this means the kernel module for your RTC has been loaded correctly.
 
-The last step that remains is to enable the RTC on boot, to do so we need to create a script and a systemd oneshot job (next stesp are taken from the awesome script by @grubernd you can find [here](https://gist.github.com/grubernd/aed721614b36aaa31fd97ef5ab1ec6be) 
-
-First let's make sure the folder to hold the script is there, run `mkdir -p /usr/lib/systemd/scripts/`
-
-Then create with nano the script file with `sudo nano /usr/lib/systemd/scripts/rtc`
-
-Now paste the following content into the file and change `NAME` with your device name (e.g. ds3231) and `NUMBER` with a `0x` followed by the number yo noted in the first step (e.g. `0x68`)
-```bash
-#!/bin/bash
-# create an i2c device
-# set systemclock from external i2c-rtc
-echo NAME NUMER > /sys/class/i2c-adapter/i2c-1/new_device
-hwclock -s
-```
-
-Now we need to create a systemd oneshot job, create the systemd unit file with `sudo nano /etc/systemd/system/rtc.service` and paste the following content into it
-
-```systemd
-[Unit]
-Description=RTClock
-Before=network.target
- 
-[Service]
-ExecStart=/usr/lib/systemd/scripts/rtc
-Type=oneshot
-[Install]
-WantedBy=multi-user.target
-```
+That's all you need! We just enabled automatic modules to setup the system time from the RTC if it's present! No more steps are required!
 
 Reboot your PI and you should have the time automatically synchronized when it starts!
+
+If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c_rtc,xxxx`
+
+# My time is not syncing from the network, what should I do?
+Some users have been reporting that the system time is not syncing whit the network, I am not sure where this problem comes from but it seems related to `timesyncd` (the utility used to sync network time) and a mobile internet network.
+
+Should you have this problem, please following the next steps
+```shell
+sudo systemctl disable --now systemd-timesyncd
+sudo pacman -S ntp
+sudo systemctl enable --now ntpd
+```
+Follow this [guide](https://wiki.archlinux.org/title/Network_Time_Protocol_daemon) at section 2.1 to setup the ntp servers and your clock should star tto sync again after a reboot
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
