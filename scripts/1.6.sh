@@ -9,7 +9,6 @@ check_indiui=$(pacman -Q | grep -c indiserver-ui)
 if [ $check_indiui -eq 0 ]; then
     sudo pacman -S indiserver-ui --noconfirm
     echo "indiserver-ui installed"
-    ln -s /usr/share/applications/indiserver-ui.desktop /home/astronaut/Desktop/
 fi
 
 check_astrodmx=$(pacman -Q | grep -c astro_dmx)
@@ -17,7 +16,6 @@ check_astrodmx=$(pacman -Q | grep -c astro_dmx)
 if [ $check_astrodmx -eq 0 ]; then
     sudo pacman -S astro_dmx --noconfirm
     echo "AstroDMx installed"
-    ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture
 fi
 
 check_astromonitor=$(pacman -Q | grep -c astromonitor)
