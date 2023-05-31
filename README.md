@@ -1,4 +1,4 @@
-# Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pis/x64, Manjaro and all Arch derived distros
+# Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pi, PC and mini PC (works also on Manjaro and all Arch derived distros)
 
 [![Discord chat][discord-badge]][discord-url] <= Join us on discord!
 
