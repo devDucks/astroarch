@@ -38,7 +38,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 # If you are coming from version 1.3.1
 Version **1.3.1** is the first image released, if you have that image and you never run `update-astroarch`, please download the new image (see the link below) as there is a small breaking change with the terminal.
 
-If you had **1.3.1** and updated, you should be able to go to **1.5.0** by updating directly using `update-astroarch`.
+If you had **1.3.1** and updated, you should be able to go to **1.6.0** by updating directly using `update-astroarch`.
 
 If it is the first time you download the .img you are good to go
 
