@@ -10,7 +10,7 @@
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
  - [IMPORTANT NOTES BEFORE YOU START (SERIOUSLY, READ THEM!)](#%EF%B8%8F-be-sure-to-read-the-following-section-at-least-before-starting-astroarch-%EF%B8%8F)
- - [if you are coming from version 1.3.1](#if-you-are-coming-from-version-131)
+ - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [Useful commands](#useful-commands)
@@ -35,12 +35,10 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 <br />
 
 
-# If you are coming from version 1.3.1
-Version **1.3.1** is the first image released, if you have that image and you never run `update-astroarch`, please download the new image (see the link below) as there is a small breaking change with the terminal.
-
-If you had **1.3.1** and updated, you should be able to go to **1.6.0** by updating directly using `update-astroarch`.
-
-If it is the first time you download the .img you are good to go
+# Passwords
+To save you some time, here the default password you will need for AstroArch:
+ - the user password for `astronaut` (which is the user used to login or for ssh) is `astro`
+ - the password for the `AstroArch` WiFi hotspot is `astronomy`
 
 # Use only the astro packages mantained for AstroArch on PC and mini PC
 If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
