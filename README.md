@@ -16,6 +16,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Useful commands](#useful-commands)
  - [On first boot - things to know](#first-boot)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
+ - [How can I boot from USB/SDD?](#boot-from-external-disk)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [The time is not syncing from the network, how can I fix it?](#my-time-is-not-syncing-from-the-network-what-should-i-do)
@@ -77,6 +78,15 @@ noVNC is installed and it will start by default, if your pi is wired to your net
 otherwise, if you want to connect to its hotspot, find the WiFi network `AstroArch` (the pass is `astronomy`) and type in your browser `http://10.42.0.1:8080/vnc.html`
 
 Welcome to astro arch!
+
+# Boot from external disk
+If you want to use a USB or a SDD to boot AstroArch, follow the next steps (maybe one day I will ship 2 different images for SD/USB+SDD):
+1) flash the image to the USB/HDD/SDD the same way you would flash to a SD card
+2) insert your disk into your PC and you should see 2 partitions (not sure on Windows you can see the root partition which is an ext4)
+3) in the smallest one EDIT the file cmdline.txt and replace mmcblk0p2 with sda2
+4) in the biggest partition open the file /etc/fstab and replace mcblk0p1with sda1 and mmcblk0p2 with sda2
+5) remove your disk from your PC And plug into the raspberry
+6) boot and enjoy :)
 
 
 # Software available
