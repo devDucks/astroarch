@@ -50,7 +50,7 @@ Server = http://astroarch.astromatto.com:9000/$arch
 ```
 
 # Download
-Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1KHSfrismTYFnyXq8FygNCtA_XaJvQPDi/view?usp=share_link
+Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/16PIVjSv3SlXbfLGU75egr8toXrrJN-yc/view
 
 # Flash the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
@@ -86,7 +86,11 @@ If you want to use a USB or a SDD to boot AstroArch, follow the next steps (mayb
 3) in the smallest one EDIT the file cmdline.txt and replace mmcblk0p2 with sda2
 4) in the biggest partition open the file /etc/fstab and replace mcblk0p1with sda1 and mmcblk0p2 with sda2
 5) remove your disk from your PC And plug into the raspberry
-6) boot and enjoy :)
+6) edit the file /etc/systemd/system/resize_once.service - Change the line 7 from /dev/mmcblk0 to /dev/sda
+7) On the line ExecStop there is a \p, drop the p and save the file
+8) run in the terminal `sudo systemctl daemon-reload`
+9) run in the terminal `sudo systemctl start resize_once`
+10) boot and enjoy :)
 
 
 # Software available
