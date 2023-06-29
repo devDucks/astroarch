@@ -85,12 +85,13 @@ If you want to use a USB or a SDD to boot AstroArch, follow the next steps (mayb
 2) insert your disk into your PC and you should see 2 partitions (not sure on Windows you can see the root partition which is an ext4)
 3) in the smallest one EDIT the file cmdline.txt and replace mmcblk0p2 with sda2
 4) in the biggest partition open the file /etc/fstab and replace mcblk0p1with sda1 and mmcblk0p2 with sda2
-5) remove your disk from your PC And plug into the raspberry
-6) edit the file /etc/systemd/system/resize_once.service - Change the line 7 from /dev/mmcblk0 to /dev/sda
+5) remove your disk from your PC and plug into the raspberry, boot it up
+6) edit the file `/etc/systemd/system/resize_once.service` - change the line 7 from /dev/mmcblk0 to /dev/sda
 7) On the line ExecStop there is a \p, drop the p and save the file
 8) run in the terminal `sudo systemctl daemon-reload`
 9) run in the terminal `sudo systemctl start resize_once`
-10) boot and enjoy :)
+
+The partition is extended now and you can boot from your external device
 
 
 # Software available
