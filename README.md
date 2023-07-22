@@ -79,6 +79,40 @@ otherwise, if you want to connect to its hotspot, find the WiFi network `AstroAr
 
 Welcome to astro arch!
 
+# Adding swap
+By default astroarch don't have swap, for prevent issues about memory space you can add a swap file and enable it, we will set swappiness to 10 don't use swap file if RAM space is ok.
+In this example we make a 2GB swapfile 
+```
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile 
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo echo "vm.swappiness = 10" | sudo tee -a  /etc/sysctl.d/99-swappiness.conf
+sudo sysctl -p
+```
+
+Check swappiness
+```
+$ cat /proc/sys/vm/swappiness
+10
+```
+Check if Swap is enabled
+```
+free -h
+```
+Output should be something like this on Swap row :
+```
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           3.7Gi       1.4Gi       1.1Gi        88Mi       1.3Gi       2.3Gi
+Swap:          2.0Gi          0B       2.0Gi
+```
+Make permanent swapfile on system
+```
+$ sudo echo "/swapfile   none    swap    sw              0       0" | sudo tee -a  /etc/fstab
+```
+
+
 # Boot from external disk
 If you want to use a USB or a SDD to boot AstroArch, follow the next steps (maybe one day I will ship 2 different images for SD/USB+SDD):
 1) flash the image to the USB/HDD/SDD the same way you would flash to a SD card
