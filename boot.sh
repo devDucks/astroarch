@@ -30,11 +30,11 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	gpsd breeze-icons hicolor-icon-theme knewstuff \
 	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
-	xplanet plasma-nm dhcp dnsmasq x11vnc gedit plasma-systemmonitor \
+	xplanet plasma-nm dhcp dnsmasq x11vnc kate plasma-systemmonitor \
 	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
 	websockify novnc astrometry.net gsc kstars phd2 \
 	indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
-	i2c-tools indiserver-ui astro_dmx openssl-1.1 --noconfirm --ask 4
+	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox ntp --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
