@@ -35,6 +35,10 @@ su astronaut -c "touch /home/astronaut/.Xauthority"
 # Remove eventually existing systemd configs we are going to substitute
 rm /usr/lib/systemd/system/novnc.service
 
+# Disable systemd-timesyncd and enable ntp
+systemctl disable systemd-timesyncd
+systemctl enable ntpd
+
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
