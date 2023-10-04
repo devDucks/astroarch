@@ -33,6 +33,13 @@ with `enter` otherwise add 1 to the number annotated before and use it in this s
 
 At this point the SD card is ready!
 
+## Raspberry Pi 4 C0 (sd issue on boot)
+BE AWARE AND READ THIS!
+If you have a recent model marked as C0 (look here https://archlinuxarm.org/forum/viewtopic.php?f=67&t=15422&start=20)
+You need to tweak 2 things to be able to boot:
+ 1) You don't need to do the sed command from the next step and you don't need to add the second entry in `/etc/fstab`
+ 2) you additionally need to edit `/boot/boot.txt`, edit the two lines starting with `booti` changing `fdt_addr_r` to `fdt_addr`
+
 ## Burn the iso to the SD card
 
 We will proceed with moving the arch iso to the SD card
