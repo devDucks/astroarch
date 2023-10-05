@@ -93,6 +93,7 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/ast
 if [ $(cat /proc/cpuinfo | grep -c Raspberry) -eq 1 ]; then
     echo dtparam=i2c_arm=on >> /boot/config.txt
     echo dtoverlay=i2c-rtc >> /boot/config.txt
+    echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
 fi
 
 # Reboot and enjoy now
