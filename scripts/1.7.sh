@@ -7,40 +7,50 @@ bash /home/astronaut/.astroarch/scripts/1.6.sh
 check_kate=$(pacman -Q | grep -c kate)
 
 if [ $check_kate -eq 0 ]; then
-    echo "====================\nKate not found... Installing"
+    echo "===================="
+    echo "Kate not found... Installing"
     sudo pacman -S kate --noconfirm
-    echo "Kate installed\n===================="
+    echo "Kate installed"
+    echo"===================="
 
     check_gedit=$(pacman -Q | grep -c gedit)
     if [ $check_gedit -eq 1 ]; then
-	echo "====================\nFound gedit, removing..."
+	echo "===================="
+	echo "Found gedit, removing..."
 	sudo pacman -Rcs gedit --noconfirm
-	echo "gedit removed\n===================="
+	echo "gedit removed"
+	echo "===================="
     fi
 fi
 
 check_ntp=$(pacman -Q | grep -c ntp)
 if [ $check_ntp -eq 0 ]; then
-    echo "====================\nNTP not found"
+    echo "===================="
+    echo "NTP not found, installing..."
     echo "Disabling tymesyncd"
     sudo systemctl disable --now systemd-timesyncd
     echo "Installing NTP..."
     sudo pacman -S ntp --noconfirm
     sudo systemctl enable --now ntpd
-    echo "NTP installed and enabled\n===================="
+    echo "NTP installed and enabled"
+    echo "===================="
 fi
 
 check_motd=$(ls /etc/profile.d | grep -c aa_motd)
 if [ $check_motd -eq 0 ]; then
-    echo "====================\nAdding motd!"
+    echo "===================="
+    echo "Adding motd!"
     sudo pacman -S fortune-mod cowsay --noconfirm
     sudo ln -s /home/astronaut/.astroarch/scripts/aa_motd.sh /etc/profile.d/aa_motd.sh
     echo "MOTD added, hope you like it!"
+    echo "===================="
 fi
 
 check_arandr=$(pacman -Q | grep -c arandr)
 if [ $check_arandr -eq 0 ]; then
-    echo "====================\nInstalling arandr!"
+    echo "===================="
+    echo "Installing arandr!"
     sudo pacman -S arandr --noconfirm
-    echo "Arandr installed\n===================="
+    echo "Arandr installed"
+    echo "===================="
 fi
