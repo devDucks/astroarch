@@ -54,3 +54,21 @@ if [ $check_arandr -eq 0 ]; then
     echo "Arandr installed"
     echo "===================="
 fi
+
+check_neofetch=$(pacman -Q | grep -c neofetch)
+if [ $check_neofetch -eq 0 ]; then
+    echo "===================="
+    echo "Installing neofetch!"
+    sudo pacman -S neofetch --noconfirm
+    echo "neofetch installed"
+    echo "===================="
+fi
+
+check_pacman_contrib=$(pacman -Q | grep -c pacman-contrib)
+if [ $check_pacman_contrib -eq 0 ]; then
+    echo "===================="
+    echo "Installing pacman-contrib!"
+    sudo pacman -S pacman-contrib --noconfirm
+    echo "pacman-contrib installed"
+    echo "===================="
+fi
