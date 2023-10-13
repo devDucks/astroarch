@@ -19,6 +19,9 @@ EDITOR=nano
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
 alias astro-rollback-full='astro-rollback-indi && astro-rollback-kstars'
 
+# Run aa_motd.sh
+bash /home/astronaut/.astroarch/scripts/aa_motd.sh
+
 function astro-rollback-indi()
 {
     setopt localoptions rmstarsilent
