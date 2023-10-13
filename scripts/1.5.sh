@@ -4,7 +4,7 @@
 bash /home/astronaut/.astroarch/scripts/1.4.sh
 
 # Apply changes for 1.5
-sudo pacman -Fy
+sudo pacman -Sy
 
 # Check for alacritty installation
 check_alacritty=$(pacman -Q | grep -c alacritty)
