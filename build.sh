@@ -96,5 +96,8 @@ if [ $(cat /proc/cpuinfo | grep -c Raspberry) -eq 1 ]; then
     echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
 fi
 
+# Disable Kwallet by default
+su astronaut -c "echo [Wallet]\nEnabled=false > /home/astronaut/.config/kwalletrc"
+
 # Reboot and enjoy now
 reboot

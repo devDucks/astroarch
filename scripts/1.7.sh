@@ -72,3 +72,12 @@ if [ $check_pacman_contrib -eq 0 ]; then
     echo "pacman-contrib installed"
     echo "===================="
 fi
+
+check_kwallet=$(ls /home/astronaut/.config | grep -c kwalletrc)
+if [ $check_kwallet -eq 0 ]; then
+    echo "===================="
+    echo "Disabling kwallet!"
+    echo "[Wallet]\nEnabled=false" > /home/astronaut/.config/kwalletrc
+    echo "Kwallet disabled!"
+    echo "===================="
+fi
