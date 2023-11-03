@@ -38,7 +38,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	websockify novnc astrometry.net gsc kstars phd2 \
 	indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
 	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox ntp \
-	fortune-mod cowsay pacman-contrib arandr --noconfirm --ask 4
+	fortune-mod cowsay pacman-contrib arandr neofetch --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
