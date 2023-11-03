@@ -10,7 +10,7 @@
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
  - [IMPORTANT NOTES BEFORE YOU START (SERIOUSLY, READ THEM!)](#%EF%B8%8F-be-sure-to-read-the-following-section-at-least-before-starting-astroarch-%EF%B8%8F)
- - [Kstars hours is not correct, how can I fix it?](#set-timezone-in-kstars)
+ - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
