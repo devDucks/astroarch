@@ -26,9 +26,9 @@ locale-gen
 
 pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
         zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-	network-manager-applet networkmanager-qt chromium xorg konsole \
-	gpsd breeze-icons hicolor-icon-theme knewstuff \
-	knotifyconfig kplotting qt5-datavis3d qt5-quickcontrols \
+	network-manager-applet networkmanager-qt5 chromium xorg konsole \
+	gpsd breeze-icons hicolor-icon-theme knewstuff5 \
+	knotifyconfig5 kplotting5 qt5-datavis3d qt5-quickcontrols \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
 	xplanet plasma-nm dhcp dnsmasq x11vnc kate plasma-systemmonitor \
 	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
