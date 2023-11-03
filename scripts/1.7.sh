@@ -36,16 +36,6 @@ if [ $check_ntp -eq 0 ]; then
     echo "===================="
 fi
 
-check_motd=$(ls /etc/profile.d | grep -c aa_motd)
-if [ $check_motd -eq 0 ]; then
-    echo "===================="
-    echo "Adding motd!"
-    sudo pacman -S fortune-mod cowsay --noconfirm
-    sudo ln -s /home/astronaut/.astroarch/scripts/aa_motd.sh /etc/profile.d/aa_motd.sh
-    echo "MOTD added, hope you like it!"
-    echo "===================="
-fi
-
 check_arandr=$(pacman -Q | grep -c arandr)
 if [ $check_arandr -eq 0 ]; then
     echo "===================="
