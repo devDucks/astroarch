@@ -97,7 +97,7 @@ if [ $(cat /proc/cpuinfo | grep -c Raspberry) -eq 1 ]; then
 fi
 
 # Disable Kwallet by default
-su astronaut -c "echo [Wallet]\nEnabled=false > /home/astronaut/.config/kwalletrc"
+su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
 # Reboot and enjoy now
 reboot
