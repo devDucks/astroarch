@@ -20,7 +20,6 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How can I boot from USB/SDD?](#boot-from-external-disk)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
- - [The time is not syncing from the network, how can I fix it?](#my-time-is-not-syncing-from-the-network-what-should-i-do)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
 
@@ -168,16 +167,6 @@ Reboot your PI and you should have the time automatically synchronized when it s
 
 If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c-rtc,xxxx`
 
-# My time is not syncing from the network, what should I do?
-Some users have been reporting that the system time is not syncing whit the network, I am not sure where this problem comes from but it seems related to `timesyncd` (the utility used to sync network time) and a mobile internet network.
-
-Should you have this problem, please following the next steps
-```shell
-sudo systemctl disable --now systemd-timesyncd
-sudo pacman -S ntp
-sudo systemctl enable --now ntpd
-```
-Follow this [guide](https://wiki.archlinux.org/title/Network_Time_Protocol_daemon) at section 2.1 to setup the ntp servers and your clock should star tto sync again after a reboot
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
