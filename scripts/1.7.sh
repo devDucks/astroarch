@@ -23,16 +23,16 @@ if [ $check_kate -eq 0 ]; then
     fi
 fi
 
-check_ntp=$(pacman -Q | grep -c ntp)
-if [ $check_ntp -eq 0 ]; then
+check_chrony=$(pacman -Q | grep -c chrony)
+if [ $check_chrony -eq 0 ]; then
     echo "===================="
-    echo "NTP not found, installing..."
+    echo "Chrony not found, installing..."
     echo "Disabling tymesyncd"
     sudo systemctl disable --now systemd-timesyncd
-    echo "Installing NTP..."
-    sudo pacman -S ntp --noconfirm
-    sudo systemctl enable --now ntpd
-    echo "NTP installed and enabled"
+    echo "Installing Chrony..."
+    sudo pacman -S chrony --noconfirm
+    sudo systemctl enable --now chronyd
+    echo "Chrony installed and enabled"
     echo "===================="
 fi
 
