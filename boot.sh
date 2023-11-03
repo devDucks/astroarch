@@ -1,3 +1,6 @@
+# Exit on the first error, if any
+set -e
+
 # Parallelize pacman download to 5
 sed -i 's/#ParallelDownloads = 5/ParallelDownloads=5/g' /etc/pacman.conf
 
