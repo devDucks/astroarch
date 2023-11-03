@@ -90,7 +90,8 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
 # If we are on a raspberry let's adjust /boot/config.txt
-if [ $(cat /proc/cpuinfo | grep -c Raspberry) -eq 1 ]; then
+raspi=$(cat /proc/cpuinfo | grep -c Raspberry)
+if [ $raspi -eq 1 ]; then
     echo dtparam=i2c_arm=on >> /boot/config.txt
     echo dtoverlay=i2c-rtc >> /boot/config.txt
     echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
