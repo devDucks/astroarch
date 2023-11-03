@@ -10,6 +10,7 @@
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
  - [IMPORTANT NOTES BEFORE YOU START (SERIOUSLY, READ THEM!)](#%EF%B8%8F-be-sure-to-read-the-following-section-at-least-before-starting-astroarch-%EF%B8%8F)
+ - [Kstars hours is not correct, how can I fix it?](#set-timezone-in-kstars)
  - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
@@ -35,6 +36,9 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 <br />
 <br />
 
+
+# Set timezone
+Do not forget to set the right timezone! to do so run `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
 
 # Passwords
 To save you some time, here the default password you will need for AstroArch:
