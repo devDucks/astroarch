@@ -37,7 +37,7 @@ rm /usr/lib/systemd/system/novnc.service
 
 # Disable systemd-timesyncd and enable ntp
 systemctl disable systemd-timesyncd
-systemctl enable ntpd
+systemctl enable chronyd
 
 # Symlink now files
 ln -s /home/astronaut/.astroarch/systemd/autologin.conf /etc/sddm.conf.d/autologin.conf
