@@ -37,7 +37,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
 	websockify novnc astrometry.net gsc kstars phd2 \
 	indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
-	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox ntp \
+	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
 	fortune-mod cowsay pacman-contrib arandr neofetch --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
