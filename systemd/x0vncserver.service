@@ -7,7 +7,7 @@ After=display-manager.service
 Type=simple
 ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment XAUTHORITY=$(find /var/run/sddm/ -type f)"
 Environment=HOME=/root
-ExecStart=x0vncserver -display :0 -rfbauth /root/.vnc/passwd
+ExecStart=x0vncserver -display :0 -SecurityTypes None
 Restart=on-failure
 RestartSec=500ms
 
