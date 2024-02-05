@@ -1,8 +1,9 @@
 polkit.addRule(function(action, subject) {
-if (action.id == "org.freedesktop.login1.power-off" ||
-action.id == "org.freedesktop.login1.reboot" ||
-action.id == "org.freedesktop.login1.hibernate" ||
-action.id == "org.freedesktop.login1.suspend") {
-return polkit.Result.YES;
-}
+    if (action.id == "org.freedesktop.login1.power-off" ||
+        action.id == "org.freedesktop.login1.reboot" ||
+        action.id == "org.freedesktop.login1.hibernate" ||
+        action.id == "org.freedesktop.login1.suspend")
+    {
+        return polkit.Result.YES;
+    }
 });
