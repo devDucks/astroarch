@@ -1,0 +1,15 @@
+[Unit]
+Description=Remote desktop service (VNC) for :0 display
+Requires=display-manager.service
+After=display-manager.service
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment XAUTHORITY=$(find /var/run/sddm/ -type f)"
+Environment=HOME=/root
+ExecStart=x0vncserver -display :0 -rfbauth /root/.vnc/passwd
+Restart=on-failure
+RestartSec=500ms
+
+[Install]
+WantedBy=multi-user.target
