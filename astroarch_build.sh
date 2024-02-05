@@ -2,6 +2,7 @@
 set -e
 
 # try to identify the platform TODO: IF pieces that may differ depending on the platform
+# FIXME: doesn't work on fresh downloaded ArchLinuxARM images as it report the code for the CPU
 raspi=$(cat /proc/cpuinfo | grep -c Raspberry)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
@@ -88,11 +89,8 @@ nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
 nmcli connection modify Hotspot connection.autoconnect-priority -100
 nmcli connection modify Hotspot connection.autoconnect true
 
-# Create Xauthority for x11vnc
-su astronaut -c "touch /home/astronaut/.Xauthority"
-
 # Remove eventually existing systemd configs we are going to substitute
-rm /usr/lib/systemd/system/novnc.service
+rm -f /usr/lib/systemd/system/novnc.service
 
 # Disable systemd-timesyncd and enable ntp
 systemctl disable systemd-timesyncd
@@ -105,10 +103,12 @@ ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system
 ln -s /home/astronaut/.astroarch/configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
-ln -s /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/99-polkit-power.rules
 
-# Set vncpassword
-vncpasswd astro
+# Copy the polkit script to allow rebooting, shutting down with no errors
+cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
+
+# Enable vncserver
+systemctl enable x0vncserver
 
 # Enable oneshot script to set the bubble nebula wallpaper
 su astronaut -c "cp /home/astronaut/.astroarch/systemd/change_wallpaper_once.service /home/astronaut/.config/systemd/user"
@@ -152,22 +152,15 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
 # If we are on a raspberry let's adjust /boot/config.txt
-if [ $raspi -eq 1 ]; then
-    echo dtparam=i2c_arm=on >> /boot/config.txt
-    echo dtparam=audio=on >> /boot/config.txt
-    echo display_auto_detect=1 >> /boot/config.txt
-    echo dtoverlay=vc4-kms-v3d >> /boot/config.txt
-    echo max_framebuffers=2 >> /boot/config.txt
-    echo disable_overscan=1 >> /boot/config.txt
-    echo otg_mode=1 >> /boot/config.txt
-    echo arm_boost=1 >> /boot/config.txt
-    echo gpu_mem=256 >> /boot/config.txt
-    echo disable_splash=1 >> /boot/config.txt
-    echo 3dtparam=krnbt=on >> /boot/config.txt
-    echo hdmi_drive=2 >> /boot/config.txt
-    echo dtoverlay=i2c-rtc >> /boot/config.txt
-    echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
-fi
+echo dtparam=i2c_arm=on >> /boot/config.txt
+echo dtparam=audio=on >> /boot/config.txt
+echo disable_overscan=1 >> /boot/config.txt
+echo gpu_mem=256 >> /boot/config.txt
+echo disable_splash=1 >> /boot/config.txt
+echo 3dtparam=krnbt=on >> /boot/config.txt
+echo hdmi_drive=2 >> /boot/config.txt
+echo dtoverlay=i2c-rtc >> /boot/config.txt
+echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
