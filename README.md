@@ -22,6 +22,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
+ - [How to make a GPS dongle working?](#using-a-gps-dongle)
 
 
 <br />
@@ -134,10 +135,10 @@ The partition is extended now and you can boot from your external device
 the following software will be available, by category
 
 ### Astronomical
-- Kstars 3.6.5
-- phd2 2.6.11dev4
-- indi libs 2.0.2 **(all of them)**
-- indi drivers 2.0.2 **(all of them)**
+- Kstars 3.6.9
+- phd2 2.6.13dev1
+- indi libs 2.0.6 **(all of them)**
+- indi drivers 2.0.6 **(all of them)**
 - most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor)
 - AstroDMx (a capture software like FireCapture)
@@ -149,7 +150,7 @@ the following software will be available, by category
 - NetworkManager (to manage networks)
 
 ### Connectivity
-- x11vnc
+- tigervnc (x0vncserver)
 - noVNC
 
 # How to add a RTC
@@ -167,6 +168,8 @@ Reboot your PI and you should have the time automatically synchronized when it s
 
 If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c-rtc,xxxx`
 
+# Using a GPS dongle
+TODO
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
