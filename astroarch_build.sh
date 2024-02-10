@@ -25,7 +25,7 @@ useradd -G wheel -m astronaut
 echo "astronaut:astro" | chpasswd
 
 # Pull the brain repo, this will be used for scripting out the final image
-su astronaut -c "git clone https://github.com/MattBlack85/astroarch.git /home/astronaut/.astroarch"
+su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astronaut/.astroarch"
 
 # Uncomment en_US UTF8 and generate locale files
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
@@ -39,12 +39,13 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
 	xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
 	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
-	websockify novnc astrometry.net gsc kstars phd2 \
+	websockify novnc astrometry.net gsc kstars phd2 packagekit-qt5 \
 	indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
 	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
-	fortune-mod cowsay pacman-contrib arandr neofetch --noconfirm --ask 4
+	fortune-mod cowsay pacman-contrib arandr neofetch \
+	astromonitor --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
