@@ -53,6 +53,8 @@ SigLevel = Optional TrustAll
 Server = http://astroarch.astromatto.com:9000/$arch
 ```
 
+after that run `sudo pacman -Sy && sudo pacman -S kstars phd2 indi-3rdparty-drivers stellarsolver`
+
 # Download
 Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1A0QXxVALT0iZ9pXmOD9_c2AotuZZQ2wj/view
 
