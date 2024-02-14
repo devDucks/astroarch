@@ -9,6 +9,7 @@
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
+ - [What Raspberry is suuported?](#what-raspberry-version-is-supported)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
@@ -23,6 +24,8 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
 
+# What Raspberry version is supported?
+AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 3` `Raspberry Pi 4` and of course `Raspberry Pi 5`
 
 # Set timezone
 Do not forget to set the right timezone! to do so run `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
