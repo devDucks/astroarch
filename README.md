@@ -119,16 +119,13 @@ $ sudo echo "/swapfile   none    swap    sw              0       0" | sudo tee -
 
 
 # Boot from external disk
-If you want to use a USB or a SDD to boot AstroArch, follow the next steps (maybe one day I will ship 2 different images for SD/USB+SDD):
+If you want to use a USB or a SDD to boot AstroArch, follow the next steps:
 1) flash the image to the USB/HDD/SDD the same way you would flash to a SD card
-2) insert your disk into your PC and you should see 2 partitions (not sure on Windows you can see the root partition which is an ext4)
-3) in the smallest one EDIT the file cmdline.txt and replace mmcblk0p2 with sda2
-4) in the biggest partition open the file /etc/fstab and replace mcblk0p1with sda1 and mmcblk0p2 with sda2
-5) remove your disk from your PC and plug into the raspberry, boot it up
-6) edit the file `/etc/systemd/system/resize_once.service` - change the line 7 from /dev/mmcblk0 to /dev/sda
-7) On the line ExecStop there is a \p, drop the p and save the file
-8) run in the terminal `sudo systemctl daemon-reload`
-9) run in the terminal `sudo systemctl start resize_once`
+2) plug the disk into the raspberry, boot it up
+3) edit (highly recommended via SSH) the file `/etc/systemd/system/resize_once.service` - change the line 7 from `/dev/mmcblk0` to `/dev/sda` or to `/dev/nvme0n1` depending on your media
+4) THIS STEP IS NEEDED ONLY FOR USB OR HDD, not for NVMe disks! => On the line ExecStop there is a \p, drop the p and save the file
+5) run in the terminal `sudo systemctl daemon-reload`
+6) run in the terminal `sudo systemctl start resize_once`
 
 The partition is extended now and you can boot from your external device
 
@@ -150,6 +147,7 @@ the following software will be available, by category
 - KDE Plasma (Desktop environment)
 - pacman (package manager, this is **NOT** debian based and pacman instead of apt is your package manager
 - NetworkManager (to manage networks)
+- Discovery (to install other packages)
 
 ### Connectivity
 - tigervnc (x0vncserver)
