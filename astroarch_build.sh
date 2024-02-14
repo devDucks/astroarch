@@ -45,7 +45,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -77,9 +77,6 @@ systemctl stop smb
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
-# prepare folder for user services
-su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
-
 # make a dir to store sddm config
 mkdir /etc/sddm.conf.d
 
@@ -103,19 +100,20 @@ systemctl enable chronyd
 ln -s /home/astronaut/.astroarch/configs/kde_settings.conf /etc/sddm.conf.d/kde_settings.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
-ln -s /home/astronaut/.astroarch/configs/20-headless.conf /usr/share/X11/xorg.conf.d/20-headless.conf
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
+
+# Copy xorg config
+cp /home/astronaut/.astroarch/configs/xorg.conf /usr/share/X11/
+
+# Copy v3d X config
+cp /home/astronaut/.astroarch/configs/99-v3d.conf /usr/share/X11/xorg.conf.d
 
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 
 # Enable vncserver
 systemctl enable x0vncserver
-
-# Enable oneshot script to set the bubble nebula wallpaper
-su astronaut -c "cp /home/astronaut/.astroarch/systemd/change_wallpaper_once.service /home/astronaut/.config/systemd/user"
-su astronaut -c "ln -s /home/astronaut/.config/systemd/user/change_wallpaper_once.service /home/astronaut/.config/systemd/user/default.target.wants/change_wallpaper_once.service"
 
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
@@ -127,22 +125,21 @@ systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.servic
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
-# Link wallpaper
-su astronaut -c "mkdir -p /home/astronaut/Pictures"
-su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/bubble.jpg"
+# Copy wallpapers
+su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/wallpapers"
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/astronaut/Pictures/wallpapers"
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
 # Copy desktop icons
 su astronaut -c "mkdir -p /home/astronaut/Desktop"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut/Desktop"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/org.kde.kstars.desktop /home/astronaut/Desktop"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/phd2.desktop /home/astronaut/Desktop"
+su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
+su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
 su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
-
-# Make the icons executable so there will be no ! on the first boot
-chmod +x /home/astronaut/Desktop/*
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
+
 # Copy custom novnc icons folder
 cp -r /home/astronaut/.astroarch/assets/icons/* /usr/share/webapps/novnc/app/images/icons
 
@@ -164,6 +161,10 @@ echo 3dtparam=krnbt=on >> /boot/config.txt
 echo hdmi_drive=2 >> /boot/config.txt
 echo dtoverlay=i2c-rtc >> /boot/config.txt
 echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
+echo dtoverlay=vc4-fkms-v3d >> /boot/config.txt
+echo max_framebuffers=2 >> /boot/config.txt
+echo framebuffer_depth=24 >> /boot/config.txt
+
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
