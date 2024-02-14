@@ -39,7 +39,7 @@ If you have a recent model marked as C0 (look here https://archlinuxarm.org/foru
 You need to tweak 2 things to be able to boot:
  1) You don't need to do the sed command from the next step and you don't need to add the second entry in `/etc/fstab`
  2) you additionally need to edit `/boot/boot.txt`, edit the two lines starting with `booti` changing `fdt_addr_r` to `fdt_addr`
- 3) run `sudo ./mkscr within the `boot/` folder after 2 otherwise the changes won't be written into the bootloader
+ 3) run `sudo ./mkscr` within the `boot/` folder after 2 otherwise the changes won't be written into the bootloader
 
 ## Burn the iso to the SD card
 
