@@ -9,7 +9,6 @@
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
- - [IMPORTANT NOTES BEFORE YOU START (SERIOUSLY, READ THEM!)](#%EF%B8%8F-be-sure-to-read-the-following-section-at-least-before-starting-astroarch-%EF%B8%8F)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
@@ -23,18 +22,6 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
-
-
-<br />
-
-# ⚠️ BE SURE TO READ THE FOLLOWING SECTION AT LEAST BEFORE STARTING ASTROARCH ⚠️
-**AstroArch doesn't support yet HDMI, it means it works only via VNC and if you plug a monitor, you won't see the desktop although the system may be functional.**
-
-**After acknowledging this fact, enjoy the rest of the read 🤓**
-
-<br />
-<br />
-<br />
 
 
 # Set timezone
