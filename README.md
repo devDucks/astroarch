@@ -5,7 +5,7 @@
 [discord-badge]: https://img.shields.io/discord/1100468635086106706?logo=discord&style=flat-square
 [discord-url]: https://discord.gg/uJEQCZKBT8
 
-![astroarch](https://user-images.githubusercontent.com/4163222/216557489-08221a7f-d835-4837-a219-1bc73f01f9c3.png)
+![astroarch](https://github.com/devDucks/astroarch/assets/4163222/d26c8d0b-a5ad-404b-8c2d-ef0a04f2f19a)
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
