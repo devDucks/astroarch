@@ -71,10 +71,35 @@ You'll be dropped into `alarm` shell and now we can proceed:
 
 This is the only thing required, the rest of the procedure is fully automated!
 
+## Manual steps to finalize the image
+After reboot, few final steps may be made to improve further the final image, mainly:
+- Use PARTUUID in `/etc/fstab` so that the image can start with every media attached (SD, USB, HDD, SDD)
+  Dump the following table into `/etc/fstab`, to know the partition id simply run `sudo blkid` and look for PARTUUID values
+  ```
+  # Static information about the filesystems.
+  # See fstab(5) for details.
+
+  # <file system> <dir> <type> <options> <dump> <pass>
+  PARTUUID=XXXXXXX-01  /boot   vfat    defaults,noexec,nodev,showexec        0       0
+  PARTUUID=XXXXXXX-02  /       ext4    rw,realtime                           0       1
+  ```
+- Set the theme to dark breeze
+- Set a wallpaper
+- Edit `/boot/cmdline.txt` replacing the default content with
+  ```
+  root=PARTUUID=cafd14b5-02 rw rootwait console=serial0,115200 console=tty1 selinux=0 quiet splash plymouth.ignore-serial-consoles smsc95xx.turbo_mode=N dwc_otg.lpm_enable=0 usbhid.mousepoll=8 audit=0 rootfstype=ext4 fsck.repair=yes
+  ```
+- start Kstars without acknowledging any message, start ekos simulator, go to the guiding tab and download the most common indexes
+- enable the resize script to do its magic on the user's first boot - run `sudo systemctl enable resize_once`
+
+Now the raspberry can be turned off and the image packaging can start
+
 ## Repackaging .img file
 
-Once astroarch has been fully bootstrapped the image can be repackaged to be distributed, before do so there is a one last step to achieve, the resize_once service must be enabled before repackaging cause otherwise the partition won't be expanded on the first boot, run `sudo systemctl enable resize_once`
+Once astroarch has been fully bootstrapped the image can be repackaged to be distributed
 
-Shutdown the raspberry pi, take the card and insert it into another pc, then using `pishrink` follow these steps:
-- `sudo dd if=/dev/mmcblk0 of=astroarch.img bs=4M status=progress` this will take a snapshot of the SD card and crete a .img file
-- `sudo ./pishrink.sh -z astroarch.img astroarch-X.X.X.img.gz`
+Using `pishrink` follow these steps:
+- create a .img file of the SD card with `sudo dd if=/dev/mmcblk0 of=astroarch.img bs=8M status=progress` (if mmcblk0 is not the raspberry SD card, change accordingly)
+- `sudo ./pishrink.sh -za astroarch.img astroarch-X.X.X.img.gz`
+
+the gzipped image is ready to be distributed and can be flashed on other media
