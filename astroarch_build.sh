@@ -165,6 +165,10 @@ echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
 sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g' /boot/config.txt
 sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
 
+# Pi5 only settings should go here
+echo [pi5] >> /boot/config.txt
+echo dtparam=rtc_bbat_vchg=3000000 >> /boot/config.txt
+
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
