@@ -9,7 +9,7 @@
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
- - [What Raspberry is suuported?](#what-raspberry-version-is-supported)
+ - [What Raspberry is supported?](#what-raspberry-version-is-supported)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
