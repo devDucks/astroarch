@@ -61,6 +61,12 @@ sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
 
+# Make all necessary folders
+mkdir /etc/sddm.conf.d
+su astronaut -c "mkdir -p /home/astronaut/.config"
+su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
+su astronaut -c "mkdir -p /home/astronaut/Desktop"
+
 # install oh-my-zsh and set the default shell to zsh
 chsh -s /usr/bin/zsh astronaut
 rm /home/astronaut/.bash*
@@ -77,9 +83,6 @@ systemctl stop smb
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
-# make a dir to store sddm config
-mkdir /etc/sddm.conf.d
-
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
 sleep 5
@@ -92,7 +95,7 @@ nmcli connection modify Hotspot connection.autoconnect true
 # Remove eventually existing systemd configs we are going to substitute
 rm -f /usr/lib/systemd/system/novnc.service
 
-# Disable systemd-timesyncd and enable ntp
+# Disable systemd-timesyncd and enable chronyd
 systemctl disable systemd-timesyncd
 systemctl enable chronyd
 
@@ -119,20 +122,18 @@ systemctl enable x0vncserver
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service systemd-timesyncd.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 # Copy wallpapers
-su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/wallpapers"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/astronaut/Pictures/wallpapers"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
 # Copy desktop icons
-su astronaut -c "mkdir -p /home/astronaut/Desktop"
 su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
 su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
 su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
@@ -161,10 +162,8 @@ echo 3dtparam=krnbt=on >> /boot/config.txt
 echo hdmi_drive=2 >> /boot/config.txt
 echo dtoverlay=i2c-rtc >> /boot/config.txt
 echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
-echo dtoverlay=vc4-fkms-v3d >> /boot/config.txt
-echo max_framebuffers=2 >> /boot/config.txt
-echo framebuffer_depth=24 >> /boot/config.txt
-
+sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g' /boot/config.txt
+sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
