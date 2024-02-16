@@ -88,9 +88,11 @@ systemctl start NetworkManager
 sleep 5
 
 # Create the hotspot and set autoconnect to true
-nmcli device wifi hotspot ifname wlan0 ssid AstroArch password "astronomy"
-nmcli connection modify Hotspot connection.autoconnect-priority -100
-nmcli connection modify Hotspot connection.autoconnect true
+nmcli connection add type wifi ifname wlan0 con-name Hotspot autoconnect yes ssid AstroArch
+nmcli connection modify Hotspot connection.autoconnect-priority -100;
+nmcli connection modify Hotspot 802-11-wireless.mode ap ipv4.method shared
+nmcli connection modify Hotspot wifi-sec.key-mgmt wpa-psk;
+nmcli connection modify Hotspot wifi-sec.psk "astronomy"
 
 # Remove eventually existing systemd configs we are going to substitute
 rm -f /usr/lib/systemd/system/novnc.service
