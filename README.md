@@ -17,7 +17,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Useful commands](#useful-commands)
  - [On first boot - things to know](#first-boot)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
- - [How can I boot from USB/SDD?](#boot-from-external-disk)
+ - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [reporting problems](#reporting-issues)
@@ -108,16 +108,8 @@ $ sudo echo "/swapfile   none    swap    sw              0       0" | sudo tee -
 ```
 
 
-# Boot from external disk
-If you want to use a USB or a SDD to boot AstroArch, follow the next steps:
-1) flash the image to the USB/HDD/SDD the same way you would flash to a SD card
-2) plug the disk into the raspberry, boot it up
-3) edit (highly recommended via SSH) the file `/etc/systemd/system/resize_once.service` - change the line 7 from `/dev/mmcblk0` to `/dev/sda` or to `/dev/nvme0n1` depending on your media
-4) THIS STEP IS NEEDED ONLY FOR USB OR HDD, not for NVMe disks! => On the line ExecStop there is a \p, drop the p and save the file
-5) run in the terminal `sudo systemctl daemon-reload`
-6) run in the terminal `sudo systemctl start resize_once`
-
-The partition is extended now and you can boot from your external device
+# Boot from external disk (USB, HDD, SSD, NVME)
+If you want to use an alternative media to boot AstroArch, just flash the image to your support and it will work out of the box! No special steps are required
 
 
 # Software available
