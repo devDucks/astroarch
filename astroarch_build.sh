@@ -109,10 +109,10 @@ ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
 
 # Copy xorg config
-cp /home/astronaut/.astroarch/configs/xorg.conf /usr/share/X11/
+cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
 
 # Copy v3d X config
-cp /home/astronaut/.astroarch/configs/99-v3d.conf /usr/share/X11/xorg.conf.d
+cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
