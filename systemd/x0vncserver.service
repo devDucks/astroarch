@@ -2,6 +2,7 @@
 Description=Remote desktop service (VNC) for :0 display
 Requires=display-manager.service
 After=display-manager.service
+After=network-online.target
 
 [Service]
 Type=simple
