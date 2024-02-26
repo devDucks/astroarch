@@ -24,9 +24,9 @@ fi
 growpart -N ${ROOT_DISK} ${ROOT_PARTITION} && growpart ${ROOT_DISK} ${ROOT_PARTITION} || exit 0
 
 # Resize the root partition to full available space
-if [ $MEDIA == "other"]; then
+if [ $MEDIA == "other" ]; then
     resize2fs ${ROOT_DISK}p${ROOT_PARTITION} || exit 0
-elif [ $MEDIA = "usb" ]; then
+elif [ $MEDIA == "usb" ]; then
     resize2fs ${ROOT_DISK}${ROOT_PARTITION} || exit 0
 else
     echo "unknown media $MEDIA, erroring" && exit 3
