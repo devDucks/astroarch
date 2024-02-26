@@ -10,7 +10,7 @@ if [ $(echo $partition | grep -c sda) -eq 1 ]; then
     ROOT_DISK=$(echo | sed 's/[0-9]//g')
     ROOT_PARTITION=$(echo $partition | grep -Eo [0-9]+)
     MEDIA=usb
-elif [ $(echo $partition | egrep  '(mmcblk|nvme)' ) -eq 1 ] ]; then
+elif [ $(echo $partition | grep -cE "(mmcblk|nvme)" ) -eq 1 ] ]; then
     ROOT_DISK=$(echo $partition | cut -d "p" -f1)
     ROOT_PARTITION=$(echo $partition | cut -d "p" -f2)
     MEDIA=other
