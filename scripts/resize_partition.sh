@@ -21,13 +21,13 @@ if [ -z $ROOT_DISK ] || [ -z $ROOT_PARTITION ] || [ -z $MEDIA ]; then
 fi
 
 # Run now growpart on the root disk to grow the partition
-growpart -N ${ROOT_DISK} ${ROOT_PARTITION} && growpart ${ROOT_DISK} ${ROOT_PARTITION} || exit 0
+growpart -N $ROOT_DISK $ROOT_PARTITION && growpart $ROOT_DISK $ROOT_PARTITION || exit 0
 
 # Resize the root partition to full available space
 if [ $MEDIA == "other" ]; then
-    resize2fs ${ROOT_DISK}p${ROOT_PARTITION} || exit 0
+    resize2fs $ROOT_DISKp$ROOT_PARTITION || exit 0
 elif [ $MEDIA == "usb" ]; then
-    resize2fs ${ROOT_DISK}${ROOT_PARTITION} || exit 0
+    resize2fs $ROOT_DISK$ROOT_PARTITION || exit 0
 else
     echo "unknown media $MEDIA, erroring" && exit 3
 fi
