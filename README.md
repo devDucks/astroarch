@@ -135,6 +135,10 @@ the following software will be available, by category
 - tigervnc (x0vncserver)
 - noVNC
 
+### Browser
+- chromium (like chrome, but without google tracking code)
+- firefox
+
 # How to add a RTC
 Adding a RTC to AstroArch is easy from version 1.6.
 First, wire your RTC to your pi, open a terminal and type `sudo i2cdetect -y 1` you should see a similar table, take note of the number for the next steps
