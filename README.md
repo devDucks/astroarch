@@ -33,7 +33,7 @@ Do not forget to set the right timezone! to do so run `sudo timedatectl set-time
 # Passwords
 To save you some time, here the default password you will need for AstroArch:
  - the user password for `astronaut` (which is the user used to login or for ssh) is `astro`
- - the password for the `AstroArch` WiFi hotspot is `astronomy`
+ - the password for the `AstroArch-XXXXXXX` WiFi hotspot is `astronomy`
 
 # Use only the astro packages mantained for AstroArch on PC and mini PC
 If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
