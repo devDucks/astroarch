@@ -1,0 +1,12 @@
+[Unit]
+Description=Create an AP with a semi random name
+After=NetworkManager-wait-online.service
+Wants=NetworkManager-wait-online.service
+
+[Service]
+ExecStart=/bin/bash /home/astronaut/.astroarch/scripts/create_ap.sh
+ExecStop=/bin/systemctl disable create_ap.service
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
