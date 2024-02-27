@@ -25,3 +25,4 @@ Additionally, be aware that it is very likely that 1.7 will break after 2024-03-
 ### Changed
 - the default wallpaper is now a slideshow
 - resizing partition at first boot now works with every media automatically
+- the access point now has a small prefix e.g `AstroArch-XXXXX` where X are random chars
