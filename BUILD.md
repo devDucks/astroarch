@@ -20,8 +20,8 @@ The next commands assume that after `type X` an `enter` is given to confirm the 
 
 - Run fdisk typing `sudo fdisk /dev/mmcblk0`
 - type `o` this will wipe all the existing partitions from the card
-- type `n` then `p` then `1`, when prompted for the first sector press `enter`, when prompted for the last sector type `+256M` (some guides report `100M` but from
-personal experience that is not enough)
+- type `n` then `p` then `1`, when prompted for the first sector press `enter`, when prompted for the last sector type `+512M` (some guides report `100M` but from
+personal experience that is not enough as after all updates the boot partition will be full)
 - type `t` and then type `0c` to modify the just created partition to `W95FAT LBA`
 - type `n` then `p` and take note of the number under `End` this will be used as starting point for the next partition
 - type `n` then `p` then `2`, when prompted for the `First sector` check if the default value is bigger than the number you noted before, if it's bigger confirm
