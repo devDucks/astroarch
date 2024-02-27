@@ -87,13 +87,6 @@ ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 systemctl start NetworkManager
 sleep 5
 
-# Create the hotspot and set autoconnect to true
-nmcli connection add type wifi ifname wlan0 con-name Hotspot autoconnect yes ssid AstroArch
-nmcli connection modify Hotspot connection.autoconnect-priority -100;
-nmcli connection modify Hotspot 802-11-wireless.mode ap ipv4.method shared
-nmcli connection modify Hotspot wifi-sec.key-mgmt wpa-psk;
-nmcli connection modify Hotspot wifi-sec.psk "astronomy"
-
 # Remove eventually existing systemd configs we are going to substitute
 rm -f /usr/lib/systemd/system/novnc.service
 
@@ -116,6 +109,9 @@ cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
+
+# Copy the systemd unit to create the AP the first boot
+cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
 # Enable vncserver
 systemctl enable x0vncserver
