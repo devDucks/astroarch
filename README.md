@@ -9,6 +9,7 @@
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
+ - [Quick video intro](#quick-video-intro-to-astroarch)
  - [What Raspberry is supported?](#what-raspberry-version-is-supported)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [what are the passwords for the user and the hotspot?](#passwords)
@@ -159,3 +160,9 @@ TODO
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
+
+# Quick video intro to AstroArch
+
+https://github.com/devDucks/astroarch/assets/4163222/27bb0842-2db0-4db7-83e5-c513c8e02f5a
+
+
