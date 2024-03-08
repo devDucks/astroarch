@@ -26,7 +26,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
 
 # What Raspberry version is supported?
-AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 3` `Raspberry Pi 4` and of course `Raspberry Pi 5`
+AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
 
 # Set timezone
 Do not forget to set the right timezone! to do so run `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
