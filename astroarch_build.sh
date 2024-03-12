@@ -1,9 +1,8 @@
 # Exit on the first error, if any
 set -e
 
-# try to identify the platform TODO: IF pieces that may differ depending on the platform
-# FIXME: doesn't work on fresh downloaded ArchLinuxARM images as it report the code for the CPU
-#raspi=$(cat /proc/cpuinfo | grep -c Raspberry)
+# Grab the OS architecture for further forked logic
+ARCH=$(uname -m)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
 sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\n|g' /etc/pacman.conf
