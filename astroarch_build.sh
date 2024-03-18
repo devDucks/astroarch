@@ -118,8 +118,14 @@ systemctl enable x0vncserver
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
+# GPS copy gps config & configure chrony
+rm /etc/default/gpsd
+cp /home/astronaut/.astroarch/configs/gpsd
+echo 'refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' >> /etc/chrony.conf
+echo 'driftfile /var/lib/chrony/drift' >> /etc/chrony.conf
+
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service gpsd.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

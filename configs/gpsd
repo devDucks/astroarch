@@ -1,0 +1,5 @@
+#Default settings for gpsd.
+START_DAEMON="false"
+GPSD_OPTIONS="-n"
+DEVICES="/dev/ttyACM0"
+USBAUTO="false"
