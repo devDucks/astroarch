@@ -44,7 +44,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm vsftpd --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -120,12 +120,17 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.c
 
 # GPS copy gps config & configure chrony
 rm /etc/default/gpsd
-cp /home/astronaut/.astroarch/configs/gpsd
+cp /home/astronaut/.astroarch/configs/gpsd /etc/default/
 echo 'refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' >> /etc/chrony.conf
 echo 'driftfile /var/lib/chrony/drift' >> /etc/chrony.conf
 
+# Configuration Very Secure FTP Daemon
+rm  /etc/vsftpd.conf
+cp /home/astronaut/.astroarch/configs/vsftpd.conf  /etc/
+cp /home/astronaut/.astroarch/configs/vsftpd.chroot_list /etc/
+
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service gpsd.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service gpsd.service vsftpd.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
