@@ -180,14 +180,6 @@ echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
 sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g' /boot/config.txt
 sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
 
-# Add plymouth /boot/cmdline.tx
-echo " quiet splash plymouth.ignore-serial-consoles" >> /boot/cmdline.txt
-
-# Set image AstroArch at boot splash
-cp /home/astronaut/.astroarch/assets/icons/astroarch600x600.png /usr/share/plymouth/themes/spinner/background-tile.png
-cp /home/astronaut/.astroarch/assets/icons/astroarch600x600.png /usr/share/plymouth/themes/spinner/bgrt-fallback.png
-plymouth-set-default-theme -R bgrt
-
 # Pi5 only settings should go here
 echo [pi5] >> /boot/config.txt
 echo dtparam=rtc_bbat_vchg=3000000 >> /boot/config.txt
