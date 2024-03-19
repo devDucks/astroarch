@@ -44,7 +44,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm vsftpd --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm vsftpd bluez bluez-utils bluez-hid2hci bluedevil --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -129,8 +129,14 @@ rm  /etc/vsftpd.conf
 cp /home/astronaut/.astroarch/configs/vsftpd.conf  /etc/
 cp /home/astronaut/.astroarch/configs/vsftpd.chroot_list /etc/
 
+# Bluetooch
+sed -i 's/#DiscoverableTimeout=0/DiscoverableTimeout=0/g' /etc/bluetooth/main.conf
+sed -i 's/#AlwaysPairable=true/AlwaysPairable=true/g' /etc/bluetooth/main.conf
+sed -i 's/#PairableTimeout=0/PairableTimeout=0/g' /etc/bluetooth/main.conf
+sed -i 's/#AutoEnable=true/AutoEnable=true/g' /etc/bluetooth/main.conf
+
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service gpsd.service vsftpd.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service gpsd.service vsftpd.service bluetooth.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
