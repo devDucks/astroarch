@@ -119,6 +119,10 @@ systemctl enable x0vncserver
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
+# Copy plasma splash
+cp -R /home/astronaut/.astroarch/configs/org.kde.astroarch.desktop /usr/share/plasma/look-and-feel/
+su astronaut -c "cp /home/astronaut/.astroarch/configs/ksplashrc /home/astronaut/.config"
+
 # GPS copy gps config & configure chrony
 rm /etc/default/gpsd
 cp /home/astronaut/.astroarch/configs/gpsd /etc/default/
