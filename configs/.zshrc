@@ -14,8 +14,10 @@ plugins=(git archlinux)
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
-INDI_ROLLBACK_VERSION=2.0.4-1
-KSTARS_ROLLBACK_VERSION=3.6.7-2
+INDI_ROLLBACK_VERSION=2.0.5-1
+INDI_LIBS_ROLLBACK_VERSION=2.0.5-1
+INDI_DRIVERS_ROLLBACK_VERSION=2.0.5-2
+KSTARS_ROLLBACK_VERSION=3.6.8-2
 
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
@@ -29,9 +31,9 @@ function astro-rollback-indi()
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
-    wget -O indi-3rdparty-drivers-${INDI_ROLLBACK_VERSION}-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-drivers-${INDI_ROLLBACK_VERSION}-aarch64.pkg.tar.xz
+    wget -O indi-3rdparty-drivers-${INDI_DRIVERS_ROLLBACK_VERSION}-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-drivers-${INDI_DRIVERS_ROLLBACK_VERSION}-aarch64.pkg.tar.xz
     wget -O libindi-${INDI_ROLLBACK_VERSION}-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/libindi-${INDI_ROLLBACK_VERSION}-aarch64.pkg.tar.xz
-    wget -O indi-3rdparty-libs-${INDI_ROLLBACK_VERSION}-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-libs-${INDI_ROLLBACK_VERSION}-aarch64.pkg.tar.xz
+    wget -O indi-3rdparty-libs-${INDI_LIBS_ROLLBACK_VERSION}-aarch64.pkg.tar.xz http://astromatto.com:9000/aarch64/indi-3rdparty-libs-${INDI_LIBS_ROLLBACK_VERSION}-aarch64.pkg.tar.xz
     sudo pacman -U libindi* indi* --noconfirm
     cd - > /dev/null 2>&1
     rm -rf ~/.rollback/*
