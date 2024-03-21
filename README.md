@@ -59,6 +59,8 @@ The followings are some useful commands that you can run from the terminal so yo
  - `astro-rollback-indi` => rollback automatically indi to the previous version
  - `astro-rollback-kstars` => rollback automatically indi to the previous version
  - `astro-rollback-full` => rollback automatically indi and kstars to the previous version
+ - `use-astro-bleeding-edge` => install bleeding edge packages for Kstars and INDI
+ - `use-astro-stable` => install stable  packages for Kstars and INDI
 
 # First boot
 After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
