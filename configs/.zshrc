@@ -26,6 +26,17 @@ alias astro-rollback-full='astro-rollback-indi && astro-rollback-kstars'
 # Run aa_motd.sh
 bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
+function use-astro-bleeding-edge()
+{
+    sudo pacman -Sy && yes | sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
+}
+
+function use-astro-stable()
+{
+    sudo pacman -Sy && yes | sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
+}
+
+
 function astro-rollback-indi()
 {
     setopt localoptions rmstarsilent
