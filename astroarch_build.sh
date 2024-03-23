@@ -44,7 +44,8 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm vsftpd plymouth \
+	bluez bluez-utils bluez-hid2hci bluedevil --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -118,8 +119,29 @@ systemctl enable x0vncserver
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
+# Copy plasma splash
+cp -R /home/astronaut/.astroarch/configs/org.kde.astroarch.desktop /usr/share/plasma/look-and-feel/
+su astronaut -c "cp /home/astronaut/.astroarch/configs/ksplashrc /home/astronaut/.config"
+
+# GPS copy gps config & configure chrony
+rm /etc/default/gpsd
+cp /home/astronaut/.astroarch/configs/gpsd /etc/default/
+echo 'refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' >> /etc/chrony.conf
+echo 'driftfile /var/lib/chrony/drift' >> /etc/chrony.conf
+
+# Configuration Very Secure FTP Daemon
+rm  /etc/vsftpd.conf
+cp /home/astronaut/.astroarch/configs/vsftpd.conf  /etc/
+cp /home/astronaut/.astroarch/configs/vsftpd.chroot_list /etc/
+
+# Bluetooch
+sed -i 's/#DiscoverableTimeout=0/DiscoverableTimeout=0/g' /etc/bluetooth/main.conf
+sed -i 's/#AlwaysPairable=true/AlwaysPairable=true/g' /etc/bluetooth/main.conf
+sed -i 's/#PairableTimeout=0/PairableTimeout=0/g' /etc/bluetooth/main.conf
+sed -i 's/#AutoEnable=true/AutoEnable=true/g' /etc/bluetooth/main.conf
+
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service gpsd.service vsftpd.service bluetooth.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -161,6 +183,14 @@ echo dtoverlay=i2c-rtc >> /boot/config.txt
 echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
 sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g' /boot/config.txt
 sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
+
+# Add plymouth /boot/cmdline.tx
+echo " quiet splash plymouth.ignore-serial-consoles" >> /boot/cmdline.txt
+
+# Set image AstroArch at boot splash
+cp /home/astronaut/.astroarch/assets/icons/astroarch600x600.png /usr/share/plymouth/themes/spinner/background-tile.png
+cp /home/astronaut/.astroarch/assets/icons/astroarch600x600.png /usr/share/plymouth/themes/spinner/bgrt-fallback.png
+plymouth-set-default-theme -R bgrt
 
 # Pi5 only settings should go here
 echo [pi5] >> /boot/config.txt
