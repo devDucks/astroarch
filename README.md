@@ -47,7 +47,7 @@ Server = http://astroarch.astromatto.com:9000/$arch
 after that run `sudo pacman -Sy && sudo pacman -S kstars phd2 indi-3rdparty-drivers stellarsolver`
 
 # Download
-Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1vzjsdnsjHVAxAyEpe2_x1QqqdAXlll5u/view
+Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/111VLsfO-G9PiHvtZUz7PRrjngkYxyHPc/view
 
 # Flash the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
