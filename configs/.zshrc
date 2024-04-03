@@ -28,12 +28,12 @@ bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
 function use-astro-bleeding-edge()
 {
-    sudo pacman -Sy && yes | sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
+    sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
 }
 
 function use-astro-stable()
 {
-    sudo pacman -Sy && yes | sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
+    sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
 }
 
 
@@ -77,10 +77,12 @@ function update-astroarch()
 	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
     fi;
 
-    # Update always keyring first, than all of the other packages
+    # Update the repo content
     sudo pacman -Sy
+
+    # Update always keyring first, than all of the other packages
     sudo pacman -S archlinux-keyring --noconfirm
 
-    # Now upgrade all system packages
-    sudo pacman -Syu --noconfirm
+    # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
+    sudo pacman -Syu
 }
