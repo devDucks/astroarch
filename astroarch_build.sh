@@ -30,7 +30,7 @@ su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astro
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
-pacman -Syu base-devel pipewire-jack gnu-free-fonts pipewire-media-session \
+pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
         zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt5 chromium xorg konsole \
 	gpsd breeze-icons hicolor-icon-theme knewstuff5 tigervnc \
