@@ -91,6 +91,7 @@ After reboot, few final steps may be made to improve further the final image, ma
   ```
 - start Kstars without acknowledging any message, start ekos simulator, go to the guiding tab and download the most common indexes
 - enable the resize script to do its magic on the user's first boot - run `sudo systemctl enable resize_once`
+- enable the access point script to do its magic on the user's first boot - run `sudo systemctl enable create_ap`
 
 Now the raspberry can be turned off and the image packaging can start
 
