@@ -11,22 +11,35 @@
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
  - [Quick video intro](#quick-video-intro-to-astroarch)
  - [What Raspberry is supported?](#what-raspberry-version-is-supported)
- - [Kstars hours is not correct, how can I fix it?](#set-timezone)
- - [what are the passwords for the user and the hotspot?](#passwords)
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
- - [Useful commands](#useful-commands)
  - [On first boot - things to know](#first-boot)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
  - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
+ - [Kstars hours is not correct, how can I fix it?](#set-timezone)
+ - [What are the passwords for the user and the hotspot?](#passwords)
+ - [Useful commands](#useful-commands)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
+ - [How to make a GPS dongle working?](#using-a-gps-dongle)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
- - [How to make a GPS dongle working?](#using-a-gps-dongle)
+
 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
+
+# Download
+Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/111VLsfO-G9PiHvtZUz7PRrjngkYxyHPc/view
+
+# Flash the img to an SD
+If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
+there is nothing I shall explain to you :)
+
+# First boot
+After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
+this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output!
+Once you are logged in the first thing you should do is update the system, open the terminal and type `update-astroarch` command
 
 # Set timezone
 Do not forget to set the right timezone! to do so run `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
@@ -46,13 +59,6 @@ Server = http://astroarch.astromatto.com:9000/$arch
 
 after that run `sudo pacman -Sy && sudo pacman -S kstars phd2 indi-3rdparty-drivers stellarsolver`
 
-# Download
-Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/111VLsfO-G9PiHvtZUz7PRrjngkYxyHPc/view
-
-# Flash the img to an SD
-If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
-there is nothing I shall explain to you :)
-
 # Useful commands
 The followings are some useful commands that you can run from the terminal so you don't have to deal with complicated stuff by yourself if you don't want to:
  - `update-astroarch` => this command will update system packages (including kstars, indi, etc. if there are new versions) and will pull any fix for astroarch itself, additionally will update the astroarch configuration that may bring in more commands etc.
@@ -62,18 +68,13 @@ The followings are some useful commands that you can run from the terminal so yo
  - `use-astro-bleeding-edge` => install bleeding edge packages for Kstars and INDI
  - `use-astro-stable` => install stable  packages for Kstars and INDI
 
-# First boot
-After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
-this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output!
-Once you are logged in the first thing you should do is update the system, open the terminal and type `update-astroarch` command
-
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
 noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the follwing methods:
 - **http://astroarch.local:8080/vnc.html**
 - if the previous method doesn't work, find your raspberry pi IP, connect to it through your browser typing `http://RASPBERRY_IP:8080/vnc.html`
- 
+
 otherwise, if you want to connect to its hotspot, find the WiFi network `AstroArch` (the pass is `astronomy`) and type in your browser `http://10.42.0.1:8080/vnc.html`
 
 Welcome to astro arch!
@@ -109,7 +110,6 @@ Make permanent swapfile on system
 ```
 $ sudo echo "/swapfile   none    swap    sw              0       0" | sudo tee -a  /etc/fstab
 ```
-
 
 # Boot from external disk (USB, HDD, SSD, NVME)
 If you want to use an alternative media to boot AstroArch, just flash the image to your support and it will work out of the box! No special steps are required
