@@ -159,7 +159,12 @@ Reboot your PI and you should have the time automatically synchronized when it s
 If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c-rtc,xxxx`
 
 # Using a GPS dongle
-TODO
+To use a GPS dongle you just need to plug your device and enable the gpsd service which is disabled by default. So the only requested command is `sudo systemctl enable gpsd --now`
+and the service will be autostart after at every boot.
+
+ADDITIONAL CONSIDERATIONS (use these as guidelines):
+- If you have trouble getting a signal fix you may need to shield your USB3 cables (they interfere with the GPS signal)
+- if the device is not recognized (this is highly unlikely on ArchLinux) you may edit `/etc/gpsd` and you may hardcode the device path on the line `DEVICES=""` with `DEVICES="/dev/gps0"` - we discourage using `ttyXXX` as it may point at other serial devices after a reboot
 
 # How to enable bluetooth
 By default there are no packages to enabling bluetooth, to install them and enabling bluetooth functionalities run the following commands:
