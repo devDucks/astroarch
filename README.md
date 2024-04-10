@@ -15,6 +15,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [On first boot - things to know](#first-boot)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
+ - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
  - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [What are the passwords for the user and the hotspot?](#passwords)
@@ -49,6 +50,9 @@ Do not forget to set the right timezone! to do so run `sudo timedatectl set-time
 To save you some time, here the default password you will need for AstroArch:
  - the user password for `astronaut` (which is the user used to login or for ssh) is `astro`
  - the password for the `AstroArch-XXXXXXX` WiFi hotspot is `astronomy`
+
+# How can I use a raspberry camera
+AstroArch finally supports raspberry cameras via indi pylibcamera, to install it and having fun with it just run `sudo pacman -S indi-pylibcamera`
 
 # Use only the astro packages mantained for AstroArch on PC and mini PC
 If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
