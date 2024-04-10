@@ -15,6 +15,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [On first boot - things to know](#first-boot)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
+ - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
  - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
  - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
@@ -83,6 +84,16 @@ noVNC is installed and it will start by default, if your pi is wired to your net
 otherwise, if you want to connect to its hotspot, find the WiFi network `AstroArch` (the pass is `astronomy`) and type in your browser `http://10.42.0.1:8080/vnc.html`
 
 Welcome to astro arch!
+
+# Connecting via VNC client
+If you trust me, this should be always the preferred way to connect usig VNC. noVNC goes through the browser and is less fluid and performant than a real VNC client.
+You can use whatever VNC client you prefer, there should be no issue.
+
+The address is `astroarch.local` (or the IP if you prefer) and the port is 5900
+
+Few VNC client suggestions (work an all platforms):
+- TigerVNC (https://tigervnc.org/)
+- RealVNC (https://www.realvnc.com/en/)
 
 # Adding swap
 By default astroarch don't have swap, for prevent issues about memory space you can add a swap file and enable it, we will set swappiness to 10 don't use swap file if RAM space is ok.
