@@ -19,6 +19,8 @@ INDI_LIBS_ROLLBACK_VERSION=2.0.7-1
 INDI_DRIVERS_ROLLBACK_VERSION=2.0.7-1
 KSTARS_ROLLBACK_VERSION=3.7.0-1
 
+EXTRA_ZSH=$HOME/extra.zsh
+
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
 alias astro-rollback-full='astro-rollback-indi && astro-rollback-kstars'
@@ -86,3 +88,7 @@ function update-astroarch()
     # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
     sudo pacman -Syu
 }
+
+if [ -f $EXTRA_ZSH ]; then
+    source $EXTRA_ZSH
+fi
