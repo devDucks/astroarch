@@ -3,6 +3,9 @@ export ZSH="$HOME/.oh-my-zsh"
 export LC_CTYPE=en_US.UTF-8
 
 ZSH_THEME="af-magic"
+ZSH_CUSTOM=$HOME/.astroarch
+
+EXTRA_ZSH=$HOME/extra.zsh
 
 zstyle ':omz:update' mode disabled
 
@@ -11,6 +14,14 @@ HIST_STAMPS="yyyy-mm-dd"
 
 plugins=(git archlinux)
 
+# Find all plugins and append them to plugins
+for dir in $HOME/.astroarch/plugins/**/*.plugin.zsh; do
+    split=(${(s:/:)dir})
+    last=$split[-1]
+    name=(${(s:.:)last})
+    plugins+=($name[1])
+done;
+
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
@@ -18,8 +29,6 @@ INDI_ROLLBACK_VERSION=2.0.5-1
 INDI_LIBS_ROLLBACK_VERSION=2.0.5-1
 INDI_DRIVERS_ROLLBACK_VERSION=2.0.5-2
 KSTARS_ROLLBACK_VERSION=3.6.8-2
-
-EXTRA_ZSH=$HOME/extra.zsh
 
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
