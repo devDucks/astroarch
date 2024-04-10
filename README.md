@@ -22,6 +22,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
+ - [How to enable bluetooth?](#how-to-enable-bluetooth)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
 
@@ -159,6 +160,15 @@ If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at 
 
 # Using a GPS dongle
 TODO
+
+# How to enable bluetooth
+By default there are no packages to enabling bluetooth, to install them and enabling bluetooth functionalities run the following commands:
+- `sudo pacman -S bluez bluez-utils bluez-hid2hci bluedevil`
+- `sudo sed -i 's/#DiscoverableTimeout=0/DiscoverableTimeout=0/g' /etc/bluetooth/main.conf`
+- `sudo sed -i 's/#AlwaysPairable=true/AlwaysPairable=true/g' /etc/bluetooth/main.conf`
+- `sudo sed -i 's/#PairableTimeout=0/PairableTimeout=0/g' /etc/bluetooth/main.conf`
+- `sudo sed -i 's/#AutoEnable=true/AutoEnable=true/g' /etc/bluetooth/main.conf`
+- `sudo systemctl enable bluetooth --now`
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
