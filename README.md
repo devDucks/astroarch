@@ -25,6 +25,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
  - [How to enable bluetooth?](#how-to-enable-bluetooth)
+ - [Where can I find more packages?](#where-to-find-more-pacakges)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
 
@@ -184,6 +185,16 @@ ADDITIONAL CONSIDERATIONS (use these as guidelines):
 # How to enable bluetooth
 By default there are no packages to enabling bluetooth, to install them and enabling bluetooth functionalities run the following command `bluetooth_on`, this command will install the BT packages and enable the bluetooth daemon to run automatically at boot.
 If you want to disable bluetooth daemon autostart just run `bluetooth_off` and if you want to remove it run `bluetooth_remove`
+
+# Where to find more packages?
+If you want to install more packages you should look what is available here https://archlinuxarm.org/packages - if you find the package there you can easily install it running `sudo pacman -S PACKAGE_NAME`.
+
+If the package you are looking for is not there you may additionally have a look at the AUR https://aur.archlinux.org/ - AUR is a list of packages mantained by the community,
+they are not ready to be installed so they can't be installed with pacman but instead you need `paru` (already installed on AstroArch), if you find your package on the AUR run `paru -S PACKAGE_NAME`
+it will ask you for a review (confirm it) and then it will compile the package for you and install it. Please be patient, some packages are just huges and it may take some time to compile on lower hardware like the raspberry.
+
+What if your package is not in the AUR or the offcial ArchLinux repository? Please let me know, it is not hard to package stuff for ArchLinux and in fact I already do it for few things, I can take a look at the source and if possible I will try to package
+it for Arch so that you may be able to install it using pacman.
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
