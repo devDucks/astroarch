@@ -26,6 +26,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
  - [How to enable bluetooth?](#how-to-enable-bluetooth)
  - [Where can I find more packages?](#where-to-find-more-pacakges)
+ - [How can I install Python packages?](#how-to-install-python-packages)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
 
@@ -195,6 +196,16 @@ it will ask you for a review (confirm it) and then it will compile the package f
 
 What if your package is not in the AUR or the offcial ArchLinux repository? Please let me know, it is not hard to package stuff for ArchLinux and in fact I already do it for few things, I can take a look at the source and if possible I will try to package
 it for Arch so that you may be able to install it using pacman.
+
+# How to install Python packages?
+PLEASE READ THIS CAREFULLY
+
+Python packages via pip installing has changed over time and it now looks way more different than it was years ago, this may looks like a cultural shock if you are coming from more stable distros (Debian and similar) that still didn't catch up with this change but bear with us;
+installing packages via pip globally is not supported anymore by default (sudo pip install) cause it messes up distro packaging. If you try to do so you will see an error message suggesting to use a virtual environment (which, by the way, is a GREAT suggestion).
+Sometimes vietual envs are not simply possible, so there are 3 ways to achieve the wanted result:
+1) install the package via the package manager (pacman) - if the python package you want to install is a common one, there is a big chance it's been packaged for ArchLinux already and you can install it with pacman - BEST WAY
+2) open an issue here on github and let me know what python packages you would like to see available to be installed via `pacman`, it will take few days to few weeks depending on availability but it is doable - RECOMMENDED WAY if 1 is not possible
+3) bypass the pip check and force a global install running `sudo pip install --break-system-packages PACKAGE_NAME` - NOT RECOMMENDED and likely to break other dependencies in the long run, if you do so, we do not offer any support, sorry!
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
