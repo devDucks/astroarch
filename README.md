@@ -20,6 +20,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
  - [What are the passwords for the user and the hotspot?](#passwords)
+ - [Protect VNC with a password](#how-to-protect-vnc-with-password)
  - [Useful commands](#useful-commands)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
@@ -53,6 +54,25 @@ Do not forget to set the right timezone! to do so run `sudo timedatectl set-time
 To save you some time, here the default password you will need for AstroArch:
  - the user password for `astronaut` (which is the user used to login or for ssh) is `astro`
  - the password for the `AstroArch-XXXXXXX` WiFi hotspot is `astronomy`
+
+# How to protect VNC with password
+If you want to add more security to your installation (or maybe you are at a starparty with more users running AstroArch), you may want to add a password to VNC (by default there is no password).
+To do so first set a password running `sudo vncpasswd` and after that edit `/etc/systemd/system/x0vncserver.service` changing the ExecStart line from this
+
+
+```
+ExecStart=x0vncserver -display :0 -SecurityTypes None
+```
+
+
+to this
+
+
+```
+ExecStart=x0vncserver -display:0 -rfbauth /root/.vnc/passwd
+```
+
+Reboot and now you should be prompted to input a password when connecting via VNC
 
 # How can I use a raspberry camera
 AstroArch finally supports raspberry cameras via indi pylibcamera, to install it and having fun with it just run `sudo pacman -S indi-pylibcamera`
