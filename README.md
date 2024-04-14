@@ -199,11 +199,11 @@ If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at 
 # Using a GPS dongle
 To use a GPS dongle, simply plug in your device and activate the GPSD service which is disabled by default. So the only command required is sudo systemctl activate gpsd --now and the service will start automatically after each boot. You can also manually edit /etc/gpsd and hardcode the device path on the DEVICES="" line with DEVICES="/dev/gps0"
 
-Otherwise, simply use the following command 'gps_on' to perform these two operations.
+Otherwise, simply use the following command `gps_on` to perform these two operations.
 
-For users of a GPS dongle models u-blox 7 or VK-162 with a mount using the eqmod module, use the 'gps_ublox_on' command. This helps avoid a conflict between the GPS and the mount.
+For users of a GPS dongle models u-blox 7 or VK-162 with a mount using the eqmod module, use the `gps_ublox_on` command. This helps avoid a conflict between the GPS and the mount.
 
-If you want to disable automatic startup of the GPS daemon, run 'gps_off'.
+If you want to disable automatic startup of the GPS daemon, run `gps_off`.
 
 ADDITIONAL CONSIDERATIONS (use these as guidelines):
 
@@ -217,11 +217,11 @@ If you want to disable bluetooth daemon autostart just run `bluetooth_off` and i
 # How to enable FTP
 Identical to Bluetooth, there is no default package to activate an FTP server.
 
-To install and activate it, run the following command 'ftp_on'. This command will install the Very Secure FTP Daemon package and allow the FTP server to run automatically on startup.
+To install and activate it, run the following command `ftp_on`. This command will install the Very Secure FTP Daemon package and allow the FTP server to run automatically on startup.
 
 To connect from a remote station, use an FTP client such as FileZilla or other. All you need to do is identify yourself with the astronaut user, his password and the IP address where the server is located. You will easily find the IP address of your LAN or WLAN with the ifconfig command in a console. Once connected, you can very quickly transfer your files in both directions.
 
-If you want to disable the automatic start of the FTP server, simply run 'ftp_off' and if you want to remove it, run 'ftp_remove'.
+If you want to disable the automatic start of the FTP server, simply run `ftp_off` and if you want to remove it, run `ftp_remove`.
 
 # Where to find more packages?
 If you want to install more packages you should look what is available here https://archlinuxarm.org/packages - if you find the package there you can easily install it running `sudo pacman -S PACKAGE_NAME`.
