@@ -1,0 +1,49 @@
+- name: "Browsers"
+  description: "Browsers"
+  hidden: false
+  selected: false
+  critical: false
+  expanded: true
+  subgroups:
+    - name: "Chromium"
+      description: "Safe, Faster and stable Browser"
+      selected: false
+      packages:
+       - chromium
+    - name: "Firefox"
+      description: "Private, Safe Browser"
+      selected: true
+      packages:
+       - firefox
+- name: "Astronomy"
+  description: "Astronomy softwares"
+  hidden: false
+  selected: false
+  critical: false
+  expanded: true
+  subgroups:
+    - name: "Phd2"
+      description: "PHD2 is telescope guiding software that simplifies the process of tracking a guide star, letting you concentrate on other aspects of deep-sky imaging or spectroscopy"
+      selected: true
+      packages:
+       - phd2
+    - name: "AstroDMX"
+      description: "AstroDMx Capture is a cross-platform astronomical image capture application"
+      selected: true
+      packages:
+       - astro_dmx
+    - name: "Siril"
+      description: "Siril is an astronomical image processing tool"
+      selected: false
+      packages:
+       - siril
+    - name: "Firecapture"
+      description: "FireCapture is a free JAVA-based software package primarily intended for planetary and lunar image capture"
+      selected: false
+      packages:
+       - firecapture
+    - name: "Rpicam-apps"
+      description: "This is a small suite of libcamera-based applications to drive the cameras on a Raspberry Pi platform"
+      selected: false
+      packages:
+       - rpicam-apps
