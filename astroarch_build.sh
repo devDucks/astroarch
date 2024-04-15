@@ -135,11 +135,15 @@ su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/ast
 su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
 su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
 
+# Copy plasma splash
+cp -R /home/astronaut/.astroarch/configs/org.kde.astroarch.desktop /usr/share/plasma/look-and-feel/
+su astronaut -c "cp /home/astronaut/.astroarch/configs/ksplashrc /home/astronaut/.config"
+
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
 
 # Copy custom novnc icons folder
-cp -r /home/astronaut/.astroarch/assets/icons/* /usr/share/webapps/novnc/app/images/icons
+cp -r /home/astronaut/.astroarch/assets/icons/novnc.imageset/* /usr/share/webapps/novnc/app/images/icons
 
 # config hostnames
 echo "astroarch" > /etc/hostname
@@ -148,6 +152,13 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
+
+# Add plymouth /boot/cmdline.tx
+echo " quiet splash plymouth.ignore-serial-consoles" >> /boot/cmdline.txt
+# Set image AstroArch at boot splash
+cp /home/astronaut/.astroarch/assets/icons/astroarch.imageset/astroarch600x600.png /usr/share/plymouth/themes/spinner/background-tile.png
+cp /home/astronaut/.astroarch/assets/icons/astroarch.imageset/astroarch600x600.png /usr/share/plymouth/themes/spinner/bgrt-fallback.png
+plymouth-set-default-theme -R bgrt
 
 # If we are on a raspberry let's adjust /boot/config.txt
 echo dtparam=i2c_arm=on >> /boot/config.txt
