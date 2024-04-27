@@ -11,6 +11,7 @@
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
  - [Quick video intro](#quick-video-intro-to-astroarch)
  - [What Raspberry is supported?](#what-raspberry-version-is-supported)
+ - [Pi 5 and power supplies](#pi-5-and-power-supplies)
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [On first boot - things to know](#first-boot)
@@ -35,6 +36,24 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
+
+# Pi 5 and power supplies
+The amperage of the 4 USB ports is 1.6 A with the official 27W USB-C Power Supply 5.1V 5A with USB-PD.
+Without USB-PD and 5A, the total power available on the Pi 5's four USB ports is limited to 600 mA. This limitation on the Pi 5 will prevent the proper connections of your devices. Note the Pi 4 does not have this limitation and its maximum amperage is 1.2 A.
+To get the maximum power 1.6 A with an unrecognized power supply (no USB-PD), simply add usb_max_current_enable=1 to the config.txt file.
+To avoid power or connection problems with your devices, please follow these few rules:
+The Pi5 includes 2 USB 3 ports on the left and 2 USB 2 ports on the right. Preferably, connect your devices to USB ports with the same characteristics.
+If you are using an SSD, it must be connected to the USB 3 port at the top.
+If you are using a cooled camera with USB ports, use this ports to connect your focuser, guide camera devices or others. Then connect your camera to one of the two USB 3 ports or the bottom port with an SSD connected to the top port. Be careful to check that the camera is properly powered.
+If you use more than two USB 2 devices, use a powered USB hub that you connect to your Pi5. Same for USB 3.
+Use this command in a terminal to determine the maximum amperage of your devices on the USB ports : sudo lsusb -v | grep -E "^Bus|MaxPower"
+Finally, some USB hubs or webcams cause difficulties. Please read this to resolve your issues:
+https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#known-usb-issues
+
+Useful links on Pi documentation:
+https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#raspberry-pi-5157
+https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#power-supplies-and-raspberry-pi-os
+https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#typical-power-requirements
 
 # Download
 Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/111VLsfO-G9PiHvtZUz7PRrjngkYxyHPc/view
