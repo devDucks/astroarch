@@ -42,7 +42,7 @@ The amperage of the 4 USB ports is 1.6A with the official 27W USB-C Power Supply
 
 Without USB-PD and 5A or 3A, the total power available on the Pi 5's four USB ports is limited to 600mA. This limitation on the Pi 5 will prevent the proper connections of your devices. Note the Pi 4 does not have this limitation and its maximum amperage is 1.2A.
 
-To get the maximum power 1.6A with an unrecognized power supply (no USB-PD) or only 3A, simply add `usb_max_current_enable=1` in the /boot/config.txt file.
+To get the maximum power 1.6A with an unrecognized power supply (no USB-PD) or only 3A, simply add `usb_max_current_enable=1` in the /boot/config.txt file or run the command `power_max_current` in console.
 
 To avoid power or connection problems with your devices, please follow these few rules:
 

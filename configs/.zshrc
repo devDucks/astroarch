@@ -1,3 +1,7 @@
+
+if [[ $UID == 0 || $EUID == 0 ]]; then
+export HOME=/home/astronaut
+fi
 export PATH=/usr/share/GSC/bin:$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export LC_CTYPE=en_US.UTF-8
@@ -74,6 +78,9 @@ function astro-rollback-kstars()
 
 function update-astroarch()
 {
+    if [ $USER != "astronaut" ]; then
+    export USER=astronaut
+    fi
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
