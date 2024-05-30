@@ -5,6 +5,7 @@ fi
 export PATH=/usr/share/GSC/bin:$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export LC_CTYPE=en_US.UTF-8
+export SYSTEMD_TIMEDATED_NTP_SERVICES=chronyd.service
 
 ZSH_THEME="af-magic"
 ZSH_CUSTOM=$HOME/.astroarch
@@ -26,6 +27,7 @@ for dir in $HOME/.astroarch/plugins/**/*.plugin.zsh; do
     plugins+=($name[1])
 done;
 
+ZSH_DISABLE_COMPFIX="true"
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
@@ -96,13 +98,13 @@ function update-astroarch()
     fi;
 
     # Update the repo content
-    sudo pacman -Sy
+    yes | LC_ALL=en_US.UTF-8 sudo pacman -Sy
 
     # Update always keyring first, than all of the other packages
-    sudo pacman -S archlinux-keyring --noconfirm
+    yes | LC_ALL=en_US.UTF-8 sudo pacman -S archlinux-keyring --noconfirm
 
     # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
-    sudo pacman -Syu
+    yes | LC_ALL=en_US.UTF-8 sudo pacman -Syu
 }
 
 if [ -f $EXTRA_ZSH ]; then
