@@ -14,10 +14,10 @@ plugins=(git archlinux)
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
-INDI_ROLLBACK_VERSION=2.0.5-1
-INDI_LIBS_ROLLBACK_VERSION=2.0.5-1
-INDI_DRIVERS_ROLLBACK_VERSION=2.0.5-2
-KSTARS_ROLLBACK_VERSION=3.6.8-2
+INDI_ROLLBACK_VERSION=2.0.7-1
+INDI_LIBS_ROLLBACK_VERSION=2.0.7-1
+INDI_DRIVERS_ROLLBACK_VERSION=2.0.7-1
+KSTARS_ROLLBACK_VERSION=3.7.0-1
 
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
