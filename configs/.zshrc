@@ -1,6 +1,7 @@
 export PATH=/usr/share/GSC/bin:$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export LC_CTYPE=en_US.UTF-8
+export SYSTEMD_TIMEDATED_NTP_SERVICES=chronyd.service
 
 ZSH_THEME="af-magic"
 ZSH_CUSTOM=$HOME/.astroarch
