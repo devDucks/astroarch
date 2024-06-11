@@ -149,6 +149,9 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
+# Set a standard TZ to avoid breaking plasma clock widget
+timedatectl set-timezone Europe/London
+
 # If we are on a raspberry let's adjust /boot/config.txt
 echo dtparam=i2c_arm=on >> /boot/config.txt
 echo dtparam=audio=on >> /boot/config.txt
