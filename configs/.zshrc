@@ -90,13 +90,13 @@ function update-astroarch()
     fi;
 
     # Update the repo content
-    sudo pacman -Sy
+    yes | LC_ALL=en_US.UTF-8 sudo pacman -Sy
 
     # Update always keyring first, than all of the other packages
-    sudo pacman -S archlinux-keyring --noconfirm
+    yes | LC_ALL=en_US.UTF-8 sudo pacman -S archlinux-keyring --noconfirm
 
     # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
-    sudo pacman -Syu
+    yes | LC_ALL=en_US.UTF-8 sudo pacman -Syu
 }
 
 if [ -f $EXTRA_ZSH ]; then
