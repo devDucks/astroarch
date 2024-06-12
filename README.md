@@ -50,6 +50,7 @@ Once you are logged in the first thing you should do is update the system, open 
 
 # Set timezone
 Here a small video that will show you how to set the timezone without the terminal
+
 https://github.com/devDucks/astroarch/assets/4163222/a935b491-5b7a-444d-9f89-a01a279063de
 
 If you want to use the terminal list first the available timezone with `timedatecl list-timezones` and then set the right one with `tsudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
