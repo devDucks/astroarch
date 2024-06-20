@@ -197,7 +197,7 @@ Reboot your PI and you should have the time automatically synchronized when it s
 If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c-rtc,xxxx`
 
 # Using a GPS dongle
-To use a GPS dongle, simply plug in your device and activate the GPSD service which is disabled by default. So the only command required is sudo systemctl activate gpsd --now and the service will start automatically after each boot. You can also manually edit /etc/gpsd and hardcode the device path on the DEVICES="" line with DEVICES="/dev/gps0"
+To use a GPS dongle, simply plug in your device and activate the GPSD service which is disabled by default. So the only command required is sudo systemctl enable gpsd --now and the service will start automatically after each boot. You can also manually edit /etc/gpsd and hardcode the device path on the DEVICES="" line with DEVICES="/dev/gps0"
 
 Otherwise, simply use the following command `gps_on` to perform these two operations.
 
