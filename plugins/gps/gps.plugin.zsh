@@ -41,9 +41,18 @@ function gps_on()
     echo "GPS server turned ON and enabled to autostart at every boot"
 }
 
+function gps_uart_on()
+{
+    sudo sh -c 'echo "dtparam=\""spi=\""on" >> /boot/config.txt'
+    sudo sh -c 'echo "enable_uart=\""1" >> /boot/config.txt'
+    gps_on
+}
+
 function gps_off()
 {
     sudo systemctl disable gpsd.service --now
     echo "GPS server disabled, remember to re-enable it if you want it to start automatically at boot"
+    sudo sh -c 'sed -i "s~dtparam=spi=on~~g" /boot/config.txt'
+    sudo sh -c 'sed -i "s~enable_uart=1~~g" /boot/config.txt'
 }
 
