@@ -43,8 +43,8 @@ function gps_on()
 
 function gps_uart_on()
 {
-    sudo sh -c 'echo "dtparam=\""spi=\""on" >> /boot/config.txt'
-    sudo sh -c 'echo "enable_uart=\""1" >> /boot/config.txt'
+    sudo sh -c 'echo "dtparam=spi=on" >> /boot/config.txt'
+    sudo sh -c 'echo "enable_uart=1" >> /boot/config.txt'
     gps_on
 }
 
