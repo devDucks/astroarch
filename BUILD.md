@@ -87,7 +87,7 @@ After reboot, few final steps may be made to improve further the final image, ma
 - Set a wallpaper
 - Edit `/boot/cmdline.txt` replacing the default content with
   ```
-  root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX rw rootwait console=serial0,115200 console=tty1 fsck.repair=yes
+  root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX rw rootwait console=serial0,115200 console=tty1 fsck.repair=yes plymouth.ignore-serial-consoles video=HDMI-A-1:1920x1080@60D
   ```
 - start Kstars without acknowledging any message, start ekos simulator, go to the guiding tab and download the most common indexes
 - enable the resize script to do its magic on the user's first boot - run `sudo systemctl enable resize_once`
