@@ -151,17 +151,38 @@ $ sudo echo "/swapfile   none    swap    sw              0       0" | sudo tee -
 ```
 
 # Boot from external disk (USB, HDD, SSD, NVME)
-If you want to use an alternative media to boot AstroArch, just flash the image to your support and it will work out of the box! No special steps are required
+If you want to use an alternative media to boot AstroArch, just flash the image to your support and it will work out of the box for USB and SSDs! No special steps are required
 
+If you have a NVMe there are some additional steps to be able to boot from it:
+- install rpi-eeprom with `sudo pacman -S rpi5-eeprom` (or rpi4-eeprom if you have a rasberry4)
+- be sure to run the latest eeprom firmware `sudo rpi-eeprom-update -a`
+- *be sure to read this table https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#boot_order-fields*
+- decide the boot order for your raspberry, bear in mind that the priority goes right to left, so for example, if you want your boot
+  to be something like NVMe first, then USB then SD card the values to put in the `BOOT_ORDER` field would be 641 but since it's reversed we should put 146
+  with a final value (put always the f) of `0xf146`
+- create a new file with the following command 
+```sh
+cat>eeprom.conf<<EOF
+[all]
+BOOT_UART=1
+WAKE_ON_GPIO=0
+POWER_OFF_ON_HALT=1
+BOOT_ORDER=0xf146
+PCIE_PROBE=1
+EOF
+```
+- apply the eeprom settings `sudo rpi-eeprom-config --apply eeprom.conf`
+- remove the eeprom settings created in the previous steps `rm eeprom.conf`
+- the eeprom update requires a reboot, so be sure to reboot your pi
 
 # Software available
 the following software will be available, by category
 
 ### Astronomical
-- Kstars 3.7.1
+- Kstars 3.7.2
 - phd2 2.6.13dev1
-- indi libs 2.0.8 **(all of them)**
-- indi drivers 2.0.8 **(all of them)**
+- indi libs 2.0.9 **(all of them)**
+- indi drivers 2.0.9 **(all of them)**
 - most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor)
 - AstroDMx (a capture software like FireCapture)
@@ -201,7 +222,9 @@ To use a GPS dongle, simply plug in your device and activate the GPSD service wh
 
 Otherwise, simply use the following command `gps_on` to perform these two operations.
 
-For users of a GPS dongle models u-blox 7 or VK-162 with a mount using the eqmod module, use the `gps_ublox_on` command. This helps avoid a conflict between the GPS and the mount.
+For users of a GPS USB dongle models u-blox 7 or VK-162 with a mount using the eqmod module, use the `gps_ublox_on` command. This helps avoid a conflict between the GPS and the mount.
+
+For GPS UART users, use the `gps_uart_on` command.
 
 If you want to disable automatic startup of the GPS daemon, run `gps_off`.
 
