@@ -99,7 +99,7 @@ ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/n
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
-ln -s /home/astronaut/.astroarch/systemd/run-astroarch-onboarding.service /etc/systemd/system/run-astroarch-onboarding.service
+ln -s /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/astroarch-onboarding.service
 
 # Copy xorg config
 cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
