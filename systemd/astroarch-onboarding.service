@@ -1,8 +1,5 @@
 [Unit]
 Description=AstroArch onboarding configurator
-Requires=display-manager.service
-After=network-online.target
-After=plasma-workspace.target
 
 [Service]
 User=root
