@@ -44,7 +44,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm flatpak --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm flatpak ckbcomp astroarch-onboarding --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -99,6 +99,7 @@ ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/n
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
+ln -s /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/astroarch-onboarding.service
 
 # Copy xorg config
 cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
@@ -153,17 +154,17 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/ast
 timedatectl set-timezone Europe/London
 
 # If we are on a raspberry let's adjust /boot/config.txt
+sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
+sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-kms-v3d,cma-512/g' /boot/config.txt
 echo dtparam=i2c_arm=on >> /boot/config.txt
 echo dtparam=audio=on >> /boot/config.txt
 echo disable_overscan=1 >> /boot/config.txt
 echo gpu_mem=256 >> /boot/config.txt
-echo disable_splash=1 >> /boot/config.txt
 echo 3dtparam=krnbt=on >> /boot/config.txt
-echo hdmi_drive=2 >> /boot/config.txt
 echo dtoverlay=i2c-rtc >> /boot/config.txt
+echo kernel=kernel8.img >> /boot/config.txt
+echo hdmi_enable_4kp60=1 >> /boot/config.tx
 echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
-sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g' /boot/config.txt
-sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
 
 # Pi5 only settings should go here
 echo [pi5] >> /boot/config.txt

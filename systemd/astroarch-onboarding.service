@@ -1,0 +1,12 @@
+[Unit]
+Description=AstroArch onboarding configurator
+
+[Service]
+User=root
+Group=root
+ExecStart=/bin/bash /usr/share/calamares/.astroarch/configs/calamares_astroarch/run-astroarch-onboarding.sh
+ExecStop=/bin/systemctl disable astroarch-onboarding.service
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
