@@ -89,6 +89,9 @@ function update-astroarch()
 	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
     fi;
 
+    # Temporary fix for kde-portal duplicated conf
+    sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
+
     # Update the repo content
     yes | LC_ALL=en_US.UTF-8 sudo pacman -Sy
 
