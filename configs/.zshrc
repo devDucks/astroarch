@@ -90,7 +90,9 @@ function update-astroarch()
     fi;
 
     # Temporary fix for kde-portal duplicated conf
-    sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
+    if [ -f /usr/share/xdg-desktop-portal/kde-portal.conf ]; then
+        sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
+    fi;
 
     # Update the repo content
     yes | LC_ALL=en_US.UTF-8 sudo pacman -Sy
