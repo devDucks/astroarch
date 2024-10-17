@@ -26,10 +26,10 @@ done;
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
-INDI_ROLLBACK_VERSION=2.0.7-1
-INDI_LIBS_ROLLBACK_VERSION=2.0.7-1
-INDI_DRIVERS_ROLLBACK_VERSION=2.0.7-1
-KSTARS_ROLLBACK_VERSION=3.7.0-1
+INDI_ROLLBACK_VERSION=2.0.9-1
+INDI_LIBS_ROLLBACK_VERSION=2.0.9-1
+INDI_DRIVERS_ROLLBACK_VERSION=2.0.9-1
+KSTARS_ROLLBACK_VERSION=3.7.2-1
 
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
@@ -40,17 +40,20 @@ bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
 function use-astro-bleeding-edge()
 {
+    echo 'astro' | sudo -S echo ''
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
 }
 
 function use-astro-stable()
 {
+    echo 'astro' | sudo -S echo ''
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
 }
 
 
 function astro-rollback-indi()
 {
+    echo 'astro' | sudo -S echo ''
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
@@ -64,6 +67,7 @@ function astro-rollback-indi()
 
 function astro-rollback-kstars()
 {
+    echo 'astro' | sudo -S echo ''
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
@@ -75,6 +79,7 @@ function astro-rollback-kstars()
 
 function update-astroarch()
 {
+    echo 'astro' | sudo -S echo ''
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
@@ -87,6 +92,11 @@ function update-astroarch()
 
     if [ $OLD_VER != $NEW_VER ]; then
 	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
+    fi;
+
+    # Temporary fix for kde-portal duplicated conf
+    if [ -f /usr/share/xdg-desktop-portal/kde-portal.conf ]; then
+        sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
     fi;
 
     # Update the repo content
