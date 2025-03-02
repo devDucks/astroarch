@@ -80,19 +80,43 @@ function astro-rollback-kstars()
 function update-astroarch()
 {
     echo 'astro' | sudo -S echo ''
-    # Store actual version
-    OLD_VER=$(cat /home/$USER/.astroarch.version)
+
+    # Setting the update history file
+    UPDATE_HISTORY="/home/astronaut/.astroarch/.update_history"
+    if [ ! -f "$UPDATE_HISTORY" ]; then
+        touch "$UPDATE_HISTORY"
+    fi
+
+    # Backup the current version BEFORE updating the repository
+    if [ -f "/home/astronaut/.astroarch/configs/.astroarch.version" ]; then
+        OLD_VER=$(cat /home/astronaut/.astroarch/configs/.astroarch.version)
+    else
+        OLD_VER="1.9.0"  # Valeur par défaut si le fichier est manquant
+    fi
 
     # Checkout latest changes from git
     cd /home/$USER/.astroarch
     git pull origin main
     cd - > /dev/null 2>&1
 
-    NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
+    # Reading the new version after updating
+    if [ -f "/home/astronaut/.astroarch/configs/.astroarch.version" ]; then
+        NEW_VER=$(cat /home/astronaut/.astroarch/configs/.astroarch.version)
+    else
+        echo "Error: Unable to read updated version of AstroArch"
+        exit 1
+    fi
 
-    if [ $OLD_VER != $NEW_VER ]; then
-	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
-    fi;
+    # Check and run update scripts only if they are not saved
+    for ver in $(seq $(echo $OLD_VER | tr -d .) $(echo $NEW_VER | tr -d .)); do
+        SCRIPT_PATH="/home/astronaut/.astroarch/scripts/1.${ver}.sh"
+
+        if [ -f "$SCRIPT_PATH" ] && ! grep -q "1.${ver}.sh" "$UPDATE_HISTORY"; then
+            echo "=== Application de la mise à jour 1.${ver}... ==="
+            zsh "$SCRIPT_PATH"
+            echo "1.${ver}.sh" >> "$UPDATE_HISTORY"
+        fi
+    done
 
     # Temporary fix for kde-portal duplicated conf
     if [ -f /usr/share/xdg-desktop-portal/kde-portal.conf ]; then
