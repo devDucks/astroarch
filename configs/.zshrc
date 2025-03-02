@@ -107,14 +107,21 @@ function update-astroarch()
         exit 1
     fi
 
-    # Check and run update scripts only if they are not saved
-    for ver in $(seq $(echo $OLD_VER | tr -d .) $(echo $NEW_VER | tr -d .)); do
-        SCRIPT_PATH="/home/astronaut/.astroarch/scripts/1.${ver}.sh"
+    # Convert versions to correct numeric format (ex: 1.9.2 → 10902)
+    OLD_NUM=$(echo "$OLD_VER" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+    NEW_NUM=$(echo "$NEW_VER" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
 
-        if [ -f "$SCRIPT_PATH" ] && ! grep -q "1.${ver}.sh" "$UPDATE_HISTORY"; then
-            echo "=== Application de la mise à jour 1.${ver}... ==="
-            zsh "$SCRIPT_PATH"
-            echo "1.${ver}.sh" >> "$UPDATE_HISTORY"
+    # Check and run update scripts only if they are not saved
+    for script in $(ls /home/astronaut/.astroarch/scripts/1.*.sh | sort -V); do
+        SCRIPT_VER=$(basename "$script" | sed 's/1.\([0-9]*\).sh/\1/')  # Extrait la version X.Y.Z
+        SCRIPT_NUM=$(echo "$SCRIPT_VER" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+
+        if [[ $SCRIPT_NUM -gt $OLD_NUM && $SCRIPT_NUM -le $NEW_NUM ]]; then
+            if ! grep -q "$(basename "$script")" "$UPDATE_HISTORY"; then
+                echo "=== Application de la mise à jour $(basename "$script")... ==="
+                zsh "$script"
+                echo "$(basename "$script")" >> "$UPDATE_HISTORY"
+            fi
         fi
     done
 
