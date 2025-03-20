@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=/home/astronaut/.astroarch/scripts/update-astroarch.sh
+Icon=application-x-shellscript
+Name=update-astroarch.sh
+Type=Application
+X-KDE-AutostartScript=true

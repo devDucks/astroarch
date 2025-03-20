@@ -1,0 +1,114 @@
+#!/bin/bash
+# Exit on the first error, if any
+
+set -e
+
+# Grab the OS architecture for further forked logic
+ARCH=$(uname -m)
+
+#paru -S pishrink-git
+
+# Choose disk to write and prepare
+count=0
+IFS=$'\n'
+for device_info in `lsblk -d -n -o NAME,TYPE,SIZE`; do
+count=$((count+1))
+device_name=$(echo $device_info | cut -d" " -f1)
+dev[$count]=$device_name
+printf '%s: %s\n' "$count" "$device_info"
+done
+
+read -rp "Select disk (numbers 1-$count): " selection
+
+DISK="/dev/${dev[$selection]}"
+PART1="$DISK"1""
+PART2="$DISK"2""
+
+echo "Installing on $DISK"
+echo "Are you sure ?"
+read -p "Press enter to continue"
+echo
+echo "Erase disk $DISK"
+read -p "Press enter to continue"
+sudo -S dd if=/dev/zero of=$DISK bs=440 count=1 status=progress
+echo
+echo "Make partitions on $DISK"
+#read -p "Press enter to continue"
+(
+  echo p;
+  echo o;
+  echo n;
+  echo ;
+  echo ;
+  echo ;
+  echo +537M;
+  echo t;
+  echo 0c;
+  echo a;
+  echo n;
+  echo ;
+  echo ;
+  echo ;
+  echo ;
+  echo w;
+) | sudo fdisk $DISK
+echo
+echo "Format partitions on $DISK"
+#read -p "Press enter to continue"
+sudo mkfs.vfat -n 'BOOT' $PART1
+echo y | sudo mkfs.ext4 $PART2
+echo "done"
+
+
+# Create folder and mount
+echo "Create folder root"
+if [ ! -d ~/root ]; then
+  mkdir ~/root
+fi
+echo "Mount partitions in folder"
+#read -p "Press enter to continue"
+sudo mount $PART2 ~/root
+if [ ! -d ~/root/boot ]; then
+  sudo mkdir ~/root/boot
+fi
+sudo mount $PART1 ~/root/boot
+
+# Install base
+echo "Install ArchLinux base"
+#read -p "Press enter to continue"
+sudo pacstrap -K ~/root base base-devel linux-rpi linux-rpi-headers linux-firmware-whence linux-firmware linux-api-headers archlinuxarm-keyring
+
+# Copy some files in chroot
+echo $DISK > diskchroot
+sudo cp ~/diskchroot ~/root
+sudo cp ~/astroarch_build_chroot.sh ~/root
+sudo mkdir -p ~/root/kstars/astronomy/
+sudo cp ~/.local/share/kstars/astrometry/* ~/root/kstars/astronomy/
+sudo cp /home/astronaut/.astroarch/scripts/update-astroarch.sh ~/root
+
+# a supprimer si git a jour
+sudo cp /home/astronaut/.astroarch/desktop/plasmasystemsettings.sh.desktop  ~/root/
+sudo cp /home/astronaut/.astroarch/scripts/plasmasystemsettings.sh ~/root/
+sudo cp /home/astronaut/.astroarch/desktop/update-astroarch.sh.desktop  ~/root/
+sudo cp /home/astronaut/.astroarch/scripts/update-astroarch.sh ~/root/
+sudo cp /home/astronaut/.astroarch/scripts/clear-install-astroarch.sh ~/root/
+sudo cp /home/astronaut/.astroarch/systemd/clear-install-astroarch.service ~/root/
+sudo cp /home/astronaut/.astroarch/systemd/clear-install-astroarch.timer ~/root/
+sudo cp ~/.zshrc2 ~/root/
+
+
+# Enter chroot and install AstroArch
+echo "arch-chroot : install AstroArch"
+#read -p "Press enter to continue"
+sudo -S arch-chroot ~/root /astroarch_build_chroot.sh
+
+# Umount disk and delete folder
+echo "umount" $DISK
+sudo umount -l $PART1
+sudo umount -l $PART2
+echo "delete folder root"
+sudo rm -R ~/root
+
+echo "create image astroarch"
+#sudo dd if=$DISK of=astroarch.img bs=8M status=progress
+#sudo pishrink.sh -za astroarch.img astroarch-X.X.X.img.gz

@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer clear install astroarch
+
+[Timer]
+OnBootSec=2min
+Unit=clear-install-astroarch.service
+
+[Install]
+WantedBy=timers.target

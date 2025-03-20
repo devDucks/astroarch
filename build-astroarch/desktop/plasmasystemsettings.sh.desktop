@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=/home/astronaut/.astroarch/scripts/plasmasystemsettings.sh
+Icon=application-x-shellscript
+Name=plasmasystemsettings.sh
+Type=Application
+X-KDE-AutostartScript=true
