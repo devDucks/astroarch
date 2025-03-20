@@ -83,6 +83,7 @@ echo $DISK > diskchroot
 sudo cp ~/diskchroot ~/root
 sudo mkdir -p ~/root/kstars/astronomy/
 sudo cp ~/.local/share/kstars/astrometry/* ~/root/kstars/astronomy/
+sudo cp astroarch_build_chroot.sh /home/astronaut/root
 
 # Enter chroot and install AstroArch
 echo "arch-chroot : install AstroArch"

@@ -192,8 +192,8 @@ mkdir -p /home/astronaut/.local/share/kstars/astrometry/
 cp /kstars/astronomy/* /home/astronaut/.local/share/kstars/astrometry/
 
 # Clear script in autostart
-cp /home/astronaut/.astroarch/build-astroarch/scripts/clear-install-astroarch.service /etc/systemd/system/
-cp /home/astronaut/.astroarch/build-astroarch/scripts/clear-install-astroarch.timer /etc/systemd/system/
+cp /home/astronaut/.astroarch/build-astroarch/systemd/clear-install-astroarch.service /etc/systemd/system/
+cp /home/astronaut/.astroarch/build-astroarch/systemd/clear-install-astroarch.timer /etc/systemd/system/
 systemctl enable clear-install-astroarch.timer
 
 # Copy wallpapers
