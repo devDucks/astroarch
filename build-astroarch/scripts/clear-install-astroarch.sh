@@ -10,3 +10,5 @@ rm /clear-install-astroarch.service
 rm /clear-install-astroarch.timer
 rm /clear-install-astroarch.sh
 
+rm /home/astronaut/.zshrc
+ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc

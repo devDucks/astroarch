@@ -139,7 +139,7 @@ systemctl start smb
 systemctl stop smb
 
 # Link a zsh config for astronaut
-su astronaut -c "ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc"
+su astronaut -c "ln -s /home/astronaut/.astroarch/build-astroarch/configs/.zshrc /home/astronaut/.zshrc"
 
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
@@ -182,21 +182,18 @@ systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.servic
 
 # Script for autostart settings plasma
 mkdir -p /home/astronaut/.config/autostart/
-cp /plasmasystemsettings.sh.desktop /home/astronaut/.config/autostart/
-cp /plasmasystemsettings.sh /home/astronaut/.astroarch/scripts/
+cp /home/astronaut/.astroarch/build-astroarch/desktop/plasmasystemsettings.sh.desktop /home/astronaut/.config/autostart/
 
 # Script autostart update-astroarch
-cp /update-astroarch.sh.desktop /home/astronaut/.config/autostart/
-cp /update-astroarch.sh /home/astronaut/.astroarch/scripts/
+cp /home/astronaut/.astroarch/build-astroarch/desktop/update-astroarch.sh.desktop /home/astronaut/.config/autostart/
 
 # Install astrometry files
 mkdir -p /home/astronaut/.local/share/kstars/astrometry/
 cp /kstars/astronomy/* /home/astronaut/.local/share/kstars/astrometry/
 
 # Clear script in autostart
-cp /clear-install-astroarch.service /etc/systemd/system/
-cp /clear-install-astroarch.timer /etc/systemd/system/
-cp /clear-install-astroarch.sh /home/astronaut/.astroarch/scripts/
+cp /home/astronaut/.astroarch/build-astroarch/scripts/clear-install-astroarch.service /etc/systemd/system/
+cp /home/astronaut/.astroarch/build-astroarch/scripts/clear-install-astroarch.timer /etc/systemd/system/
 systemctl enable clear-install-astroarch.timer
 
 # Copy wallpapers
@@ -223,9 +220,6 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/ast
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
-
-# a supprimer
-cp /.zshrc2  /home/astronaut/.astroarch/configs/.zshrc
 
 # Assigns files to user astronaut
 chown -R astronaut:astronaut /home/astronaut

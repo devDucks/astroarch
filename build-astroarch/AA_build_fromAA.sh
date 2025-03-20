@@ -81,21 +81,8 @@ sudo pacstrap -K ~/root base base-devel linux-rpi linux-rpi-headers linux-firmwa
 # Copy some files in chroot
 echo $DISK > diskchroot
 sudo cp ~/diskchroot ~/root
-sudo cp ~/astroarch_build_chroot.sh ~/root
 sudo mkdir -p ~/root/kstars/astronomy/
 sudo cp ~/.local/share/kstars/astrometry/* ~/root/kstars/astronomy/
-sudo cp /home/astronaut/.astroarch/scripts/update-astroarch.sh ~/root
-
-# a supprimer si git a jour
-sudo cp /home/astronaut/.astroarch/desktop/plasmasystemsettings.sh.desktop  ~/root/
-sudo cp /home/astronaut/.astroarch/scripts/plasmasystemsettings.sh ~/root/
-sudo cp /home/astronaut/.astroarch/desktop/update-astroarch.sh.desktop  ~/root/
-sudo cp /home/astronaut/.astroarch/scripts/update-astroarch.sh ~/root/
-sudo cp /home/astronaut/.astroarch/scripts/clear-install-astroarch.sh ~/root/
-sudo cp /home/astronaut/.astroarch/systemd/clear-install-astroarch.service ~/root/
-sudo cp /home/astronaut/.astroarch/systemd/clear-install-astroarch.timer ~/root/
-sudo cp ~/.zshrc2 ~/root/
-
 
 # Enter chroot and install AstroArch
 echo "arch-chroot : install AstroArch"

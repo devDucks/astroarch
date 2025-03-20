@@ -40,20 +40,17 @@ bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
 function use-astro-bleeding-edge()
 {
-    echo 'astro' | sudo -S echo ''
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
 }
 
 function use-astro-stable()
 {
-    echo 'astro' | sudo -S echo ''
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
 }
 
 
 function astro-rollback-indi()
 {
-    echo 'astro' | sudo -S echo ''
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
@@ -67,7 +64,6 @@ function astro-rollback-indi()
 
 function astro-rollback-kstars()
 {
-    echo 'astro' | sudo -S echo ''
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
@@ -79,27 +75,36 @@ function astro-rollback-kstars()
 
 function update-astroarch()
 {
-    echo 'astro' | sudo -S echo ''
 
-    # Setting the update history file
+    # Fonction pour convertir une version (ex: 1.9 ou 1.9.1) en nombre (ex: 10900 ou 10901)
+    version_to_num() {
+        local version=$1
+        local major minor patch
+        IFS='.' read -r major minor patch <<< "$version"
+        minor=${minor:-0}
+        patch=${patch:-0}
+        printf "%d%02d%02d" "$major" "$minor" "$patch"
+    }
+
+    # Définition des fichiers et variables
     UPDATE_HISTORY="/home/astronaut/.astroarch/.update_history"
     if [ ! -f "$UPDATE_HISTORY" ]; then
         touch "$UPDATE_HISTORY"
     fi
 
-    # Backup the current version BEFORE updating the repository
+    # Récupération de l'ancienne version (bien qu'elle ne sera plus utilisée pour le test)
     if [ -f "/home/astronaut/.astroarch/configs/.astroarch.version" ]; then
         OLD_VER=$(cat /home/astronaut/.astroarch/configs/.astroarch.version)
     else
-        OLD_VER="1.9.0"  # Valeur par défaut si le fichier est manquant
+        OLD_VER="1.9.0"  # Valeur par défaut si le fichier est absent
     fi
 
-    # Checkout latest changes from git
+    # Mise à jour depuis le dépôt Git
     cd /home/$USER/.astroarch
     git pull origin main
     cd - > /dev/null 2>&1
 
-    # Reading the new version after updating
+    # Lecture de la nouvelle version après mise à jour
     if [ -f "/home/astronaut/.astroarch/configs/.astroarch.version" ]; then
         NEW_VER=$(cat /home/astronaut/.astroarch/configs/.astroarch.version)
     else
@@ -107,21 +112,38 @@ function update-astroarch()
         exit 1
     fi
 
-    # Convert versions to correct numeric format (ex: 1.9.2 → 10902)
-    OLD_NUM=$(echo "$OLD_VER" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
-    NEW_NUM=$(echo "$NEW_VER" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+    # Conversion des versions en format numérique
+    OLD_NUM=$(version_to_num "$OLD_VER")
+    NEW_NUM=$(version_to_num "$NEW_VER")
+    MIN_VERSION="1.9.0"
+    MIN_NUM=$(version_to_num "$MIN_VERSION")
 
-    # Check and run update scripts only if they are not saved
-    for script in $(ls /home/astronaut/.astroarch/scripts/1.*.sh | sort -V); do
-        SCRIPT_VER=$(basename "$script" | sed 's/1.\([0-9]*\).sh/\1/')  # Extrait la version X.Y.Z
-        SCRIPT_NUM=$(echo "$SCRIPT_VER" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+    echo "Ancienne version : $OLD_VER ($OLD_NUM)"
+    echo "Nouvelle version : $NEW_VER ($NEW_NUM)"
+    echo "Version minimale requise : $MIN_VERSION ($MIN_NUM)"
 
-        if [[ $SCRIPT_NUM -gt $OLD_NUM && $SCRIPT_NUM -le $NEW_NUM ]]; then
-            if ! grep -q "$(basename "$script")" "$UPDATE_HISTORY"; then
-                echo "=== Application de la mise à jour $(basename "$script")... ==="
-                zsh "$script"
-                echo "$(basename "$script")" >> "$UPDATE_HISTORY"
+    # Parcours des scripts de mise à jour
+    for script in /home/astronaut/.astroarch/scripts/1.*.sh; do
+        SCRIPT_BASENAME=$(basename "$script")
+        # Récupération de la version en retirant uniquement l'extension .sh
+        SCRIPT_VER=$(basename "$script" .sh)
+        SCRIPT_NUM=$(version_to_num "$SCRIPT_VER")
+
+        echo "Vérification du script : $SCRIPT_BASENAME (version $SCRIPT_VER, $SCRIPT_NUM, $MIN_NUM, $NEW_NUM)"
+
+        # On applique le script uniquement si :
+        # - La version du script est strictement supérieure à la version minimale (1.9.0)
+        # - Inférieure ou égale à la nouvelle version
+        if [[ $SCRIPT_NUM -gt $MIN_NUM && $SCRIPT_NUM -le $NEW_NUM ]]; then
+            if ! grep -Fq "$SCRIPT_BASENAME" "$UPDATE_HISTORY"; then
+                echo "=== Application de la mise à jour $SCRIPT_BASENAME... ==="
+                    zsh "$script"
+                echo "$SCRIPT_BASENAME" >> "$UPDATE_HISTORY"
+            else
+                echo "Déjà appliqué : $SCRIPT_BASENAME"
             fi
+        else
+            echo "Ignoré : $SCRIPT_BASENAME"
         fi
     done
 
