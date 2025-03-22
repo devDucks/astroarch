@@ -164,7 +164,7 @@ systemctl enable x0vncserver
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service resize_once.service sshd.service systemd-networkd.service systemd-resolved.service
+systemctl enable sshd.service systemd-networkd.service systemd-resolved.service sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service resize_once.service
 
 # Script for autostart settings plasma
 mkdir -p /home/astronaut/.config/autostart/
