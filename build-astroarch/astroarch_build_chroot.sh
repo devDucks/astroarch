@@ -29,6 +29,7 @@ UUID=$UUID_part2  /       ext4    rw,relatime                           0       
 EOF
 
 # Parallelize pacman download to 5 and use pacman as progress bar
+sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
 sed -i 's|ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
 sed -i '/ParallelDownloads=5/aILoveCandy' /etc/pacman.conf
 sed -i '/ParallelDownloads=5/aDisableDownloadTimeout' /etc/pacman.conf
@@ -219,6 +220,8 @@ pacman -Syu --noconfirm
 # Onboarding
 pacman -S astroarch-onboarding
 systemctl enable astroarch-onboarding.timer
+
+sed -i 's|#DownloadUser = alpm|DownloadUser = alpm|g' /etc/pacman.conf
 
 echo "exit arch-chroot"
 exit
