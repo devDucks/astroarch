@@ -47,11 +47,8 @@ pacman-key --init && pacman-key --populate archlinuxarm
 # Update all packages now
 pacman -Syu --noconfirm
 
-# Install just 2 packages for the next actions
-#pacman -S wget git --noconfirm
-
 # install packages
-pacman -Syu wget git pipewire-jack gnu-free-fonts wireplumber \
+pacman -S wget git pipewire-jack gnu-free-fonts wireplumber \
         zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt chromium xorg konsole \
 	gpsd breeze-icons hicolor-icon-theme knewstuff5 tigervnc \
@@ -213,6 +210,15 @@ chown -R astronaut:astronaut /home/astronaut
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+
+# repository sc74.github.io
+su astronaut -c "git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io"
+sed -i 's|\[core\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[core\]|' /etc/pacman.conf
+pacman -Syu --noconfirm
+
+# Onboarding
+pacman -S astroarch-onboarding
+systemctl enable astroarch-onboarding.timer
 
 echo "exit arch-chroot"
 exit
