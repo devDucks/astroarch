@@ -29,7 +29,6 @@ UUID=$UUID_part2  /       ext4    rw,relatime                           0       
 EOF
 
 # Parallelize pacman download to 5 and use pacman as progress bar
-sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
 sed -i 's|ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
 sed -i '/ParallelDownloads=5/aILoveCandy' /etc/pacman.conf
 sed -i '/ParallelDownloads=5/aDisableDownloadTimeout' /etc/pacman.conf
@@ -68,7 +67,7 @@ pacman -S wget git pipewire-jack gnu-free-fonts wireplumber \
     ecryptfs-utils geoclue glibmm gparted gtkmm3 imath iw kdenetwork-filesharing lbzip2 ldns libcamera libcamera-ipa \
     libdeflate libomxil-bellagio libsigc++ libsoup lrzip lzop nano net-tools netctl networkmanager-qt5 nilfs-utils \
     openexr openresolv pangomm partimage pbzip2 pigz pixz qt5-serialport \
-    qt5ct raspberrypi-utils rpi5-eeprom screen sshfs vi wireless-regdb wireless_tools drbl dtc --noconfirm --ask 4
+    qt5ct raspberrypi-utils rpi5-eeprom screen sshfs vi wireless-regdb wireless_tools drbl dtc
 
 # Uncomment en_US UTF8 and generate locale files
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
@@ -162,7 +161,7 @@ systemctl enable x0vncserver
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sshd.service systemd-networkd.service systemd-resolved.service sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service resize_once.service
+systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service resize_once.service
 
 # Script for autostart settings plasma
 mkdir -p /home/astronaut/.config/autostart/
@@ -208,20 +207,31 @@ su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwall
 # Assigns files to user astronaut
 chown -R astronaut:astronaut /home/astronaut
 
-# Take sudoers to the original state
-sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
-sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
-
+# Onboarding
 # repository sc74.github.io
 su astronaut -c "git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io"
 sed -i 's|\[core\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[core\]|' /etc/pacman.conf
 pacman -Syu --noconfirm
-
-# Onboarding
-pacman -S astroarch-onboarding
+# Disable alpm for repo in disk
+sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
+# Install package astroarch-onboarding
+pacman -S astroarch-onboarding --noconfirm --ask 4
+cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/
+cp /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/
+# Enable service astroarch-onboarding
 systemctl enable astroarch-onboarding.timer
-
+# Script autostart astroarch_onboarding
+cp /home/astronaut/.astroarch/config/calamares_astroarch/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/
+# delete repo sc74
+sed -i 's|[sc74]||g' /etc/pacman.conf
+sed -i 's|SigLevel = Optional TrustAll||g' /etc/pacman.conf
+sed -i 's|Server = file:///home/astronaut/.astroarch/sc74.github.io/aarch64||g' /etc/pacman.conf
+# Enable alpm
 sed -i 's|#DownloadUser = alpm|DownloadUser = alpm|g' /etc/pacman.conf
+
+# Take sudoers to the original state
+sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 echo "exit arch-chroot"
 exit
