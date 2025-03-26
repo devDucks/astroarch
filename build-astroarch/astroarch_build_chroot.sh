@@ -50,24 +50,24 @@ pacman -Syu --noconfirm
 # install packages
 pacman -S wget git pipewire-jack gnu-free-fonts wireplumber \
         zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-	network-manager-applet networkmanager-qt chromium xorg konsole \
-	gpsd breeze-icons hicolor-icon-theme knewstuff5 tigervnc \
-	knotifyconfig5 kplotting5 qt6-datavis3d qt5-quickcontrols \
-	qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
-	xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
-	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
-	websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
-	indi-3rdparty-libs indi-3rdparty-drivers \
-	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
-	ksystemlog discover kwalletmanager kgpg dhcpcd \
-	qt6-serialport qt6ct udisks2-qt5 xorg-fonts-misc fuse2 \
-	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm flatpak \
-	arch-install-scripts argon2 astroarch-status-notifications atkmm bc cairomm dialog dnssec-anchors dosfstools \
-    ecryptfs-utils geoclue glibmm gparted gtkmm3 imath iw kdenetwork-filesharing lbzip2 ldns libcamera libcamera-ipa \
-    libdeflate libomxil-bellagio libsigc++ libsoup lrzip lzop nano net-tools netctl networkmanager-qt5 nilfs-utils \
-    openexr openresolv pangomm partimage pbzip2 pigz pixz qt5-serialport \
-    qt5ct raspberrypi-utils rpi5-eeprom screen sshfs vi wireless-regdb wireless_tools drbl dtc
+		network-manager-applet networkmanager-qt chromium xorg konsole \
+		gpsd breeze-icons hicolor-icon-theme knewstuff5 tigervnc \
+		knotifyconfig5 kplotting5 qt6-datavis3d qt5-quickcontrols \
+		qt5-websockets qtkeychain stellarsolver xf86-video-fbdev \
+		xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
+		dolphin uboot-tools usbutils cloud-guest-utils samba paru \
+		websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
+		indi-3rdparty-libs indi-3rdparty-drivers \
+		i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
+		ksystemlog discover kwalletmanager kgpg dhcpcd \
+		qt6-serialport qt6ct udisks2-qt5 xorg-fonts-misc fuse2 \
+		fortune-mod cowsay pacman-contrib arandr neofetch \
+		astromonitor kscreen sddm-kcm flatpak ark \
+		arch-install-scripts argon2 astroarch-status-notifications atkmm bc cairomm dialog dnssec-anchors dosfstools \
+		ecryptfs-utils geoclue glibmm gparted gtkmm3 imath iw kdenetwork-filesharing lbzip2 ldns libcamera libcamera-ipa \
+		libdeflate libomxil-bellagio libsigc++ libsoup lrzip lzop nano net-tools netctl networkmanager-qt5 nilfs-utils \
+		openexr openresolv pangomm partimage pbzip2 pigz pixz qt5-serialport \
+		qt5ct raspberrypi-utils rpi5-eeprom screen sshfs vi wireless-regdb wireless_tools drbl dtc --noconfirm --ask 4
 
 # Uncomment en_US UTF8 and generate locale files
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
@@ -208,12 +208,12 @@ su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwall
 chown -R astronaut:astronaut /home/astronaut
 
 # Onboarding
+# Disable alpm for repo in disk
+sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
 # repository sc74.github.io
 su astronaut -c "git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io"
 sed -i 's|\[core\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[core\]|' /etc/pacman.conf
 pacman -Syu --noconfirm
-# Disable alpm for repo in disk
-sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
 # Install package astroarch-onboarding
 pacman -S astroarch-onboarding --noconfirm --ask 4
 cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/
@@ -221,11 +221,9 @@ cp /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/
 # Enable service astroarch-onboarding
 systemctl enable astroarch-onboarding.timer
 # Script autostart astroarch_onboarding
-cp /home/astronaut/.astroarch/config/calamares_astroarch/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/
+cp /home/astronaut/.astroarch/configs/calamares_astroarch/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/
 # delete repo sc74
-sed -i 's|[sc74]||g' /etc/pacman.conf
-sed -i 's|SigLevel = Optional TrustAll||g' /etc/pacman.conf
-sed -i 's|Server = file:///home/astronaut/.astroarch/sc74.github.io/aarch64||g' /etc/pacman.conf
+sed -i -e '/\[sc74\]/,+2d' /etc/pacman.conf
 # Enable alpm
 sed -i 's|#DownloadUser = alpm|DownloadUser = alpm|g' /etc/pacman.conf
 
