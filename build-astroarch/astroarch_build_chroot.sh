@@ -217,7 +217,7 @@ pacman -Syu --noconfirm
 # Install package astroarch-onboarding
 pacman -S astroarch-onboarding --noconfirm --ask 4
 #cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/
-cp /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/
+cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/
 # Enable service astroarch-onboarding
 #systemctl enable astroarch-onboarding.timer
 systemctl enable astroarch-onboarding.service
