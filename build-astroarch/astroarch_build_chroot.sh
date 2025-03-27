@@ -216,12 +216,13 @@ sed -i 's|\[core\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home
 pacman -Syu --noconfirm
 # Install package astroarch-onboarding
 pacman -S astroarch-onboarding --noconfirm --ask 4
-cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/
+#cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/
 cp /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/
 # Enable service astroarch-onboarding
-systemctl enable astroarch-onboarding.timer
+#systemctl enable astroarch-onboarding.timer
+systemctl enable astroarch-onboarding.service
 # Script autostart astroarch_onboarding
-cp /home/astronaut/.astroarch/configs/calamares_astroarch/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/
+#cp /home/astronaut/.astroarch/configs/calamares_astroarch/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/
 # delete repo sc74
 sed -i -e '/\[sc74\]/,+2d' /etc/pacman.conf
 # Enable alpm

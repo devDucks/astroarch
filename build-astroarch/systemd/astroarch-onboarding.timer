@@ -1,9 +1,0 @@
-[Unit]
-Description=Timer astroarch-onboarding
-
-[Timer]
-OnBootSec=1min
-Unit=astroarch-onboarding.service
-
-[Install]
-WantedBy=timers.target
