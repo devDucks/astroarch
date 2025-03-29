@@ -207,28 +207,28 @@ su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwall
 # Assigns files to user astronaut
 chown -R astronaut:astronaut /home/astronaut
 
+########################################################################################
+# This section allows you to install some packages from a GitHub repo. If the packages are on your site with a repo, install the packages in the packages section. Then copy the services to /etc/systemd/system and enable them
 # Onboarding
 # Disable alpm for repo in disk
 sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
-# repository sc74.github.io
+# Repository sc74.github.io
 su astronaut -c "git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io"
 sed -i 's|\[core\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[core\]|' /etc/pacman.conf
 pacman -Syu --noconfirm
 # Install package astroarch-onboarding
-yes | LC_ALL=en_US.UTF-8 pacman -R libcamera libcamera-ipa
-yes | LC_ALL=en_US.UTF-8 pacman -S astroarch-onboarding rustdesk-bin indi-pylibcamera libcamera-rpi libcamera-ipa-rpi libcamera-docs-rpi libcamera-tools-rpi libpisp  \
-		gst-plugin-libcamera-rpi python-pycamera2 rpicam-apps --noconfirm --ask 4
-#cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/
+yes | LC_ALL=en_US.UTF-8 pacman -S astroarch-onboarding --noconfirm --ask 4
 cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/
-# Enable service astroarch-onboarding
-#systemctl enable astroarch-onboarding.timer
 systemctl enable astroarch-onboarding.service
-# Script autostart astroarch_onboarding
-#cp /home/astronaut/.astroarch/configs/calamares_astroarch/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/
-# delete repo sc74
+
+# Install some packages
+pacman -S rustdesk-bin indi-pylibcamera libcamera-rpi python-libcamera-rpi libcamera-ipa-rpi libcamera-docs-rpi libcamera-tools-rpi  \
+		gst-plugin-libcamera-rpi python-pycamera2 rpicam-apps rustdesk-bin --noconfirm --ask 4
+# Delete repo sc74
 sed -i -e '/\[sc74\]/,+2d' /etc/pacman.conf
 # Enable alpm
 sed -i 's|#DownloadUser = alpm|DownloadUser = alpm|g' /etc/pacman.conf
+########################################################################################
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
