@@ -214,7 +214,7 @@ chown -R astronaut:astronaut /home/astronaut
 sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
 # Repository sc74.github.io
 su astronaut -c "git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io"
-sed -i 's|\[core\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[core\]|' /etc/pacman.conf
+sed -i 's|\[astromatto\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[astromatto\]|' /etc/pacman.conf
 pacman -Syu --noconfirm
 # Install package astroarch-onboarding
 yes | LC_ALL=en_US.UTF-8 pacman -S astroarch-onboarding --noconfirm --ask 4
@@ -223,7 +223,7 @@ systemctl enable astroarch-onboarding.service
 
 # Install some packages
 pacman -S rustdesk-bin indi-pylibcamera libcamera-rpi python-libcamera-rpi libcamera-ipa-rpi libcamera-docs-rpi libcamera-tools-rpi  \
-		gst-plugin-libcamera-rpi python-pycamera2 rpicam-apps rustdesk-bin --noconfirm --ask 4
+		gst-plugin-libcamera-rpi python-pycamera2 rpicam-apps --noconfirm --ask 4
 # Delete repo sc74
 sed -i -e '/\[sc74\]/,+2d' /etc/pacman.conf
 # Enable alpm
