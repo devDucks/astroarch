@@ -102,4 +102,5 @@ sudo rm -R ~/root
 echo 'astro' | sudo -S echo ''
 echo "create image astroarch"
 sudo dd if=$DISK of=astroarch.img bs=8M status=progress
+echo 'astro' | sudo -S echo ''
 sudo pishrink.sh -za astroarch.img astroarch-X.X.X.img.gz
