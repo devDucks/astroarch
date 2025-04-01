@@ -81,7 +81,7 @@ function update-astroarch()
 {
     echo 'astro' | sudo -S echo ''
 
-    # Fonction pour convertir une version (ex: 1.9 ou 1.9.1) en nombre (ex: 10900 ou 10901)
+    # Function to convert a version (eg: 1.9 or 1.9.1) to a number (eg: 10900 or 10901)
     version_to_num() {
         local version=$1
         local major minor patch
@@ -91,25 +91,25 @@ function update-astroarch()
         printf "%d%02d%02d" "$major" "$minor" "$patch"
     }
 
-    # Définition des fichiers et variables
+    # Defining files and variables
     UPDATE_HISTORY="/home/astronaut/.astroarch/.update_history"
     if [ ! -f "$UPDATE_HISTORY" ]; then
         touch "$UPDATE_HISTORY"
     fi
 
-    # Récupération de l'ancienne version (bien qu'elle ne sera plus utilisée pour le test)
+    # Recovering the old version (although it will no longer be used for testing)
     if [ -f "/home/astronaut/.astroarch/configs/.astroarch.version" ]; then
         OLD_VER=$(cat /home/astronaut/.astroarch/configs/.astroarch.version)
     else
-        OLD_VER="1.9.0"  # Valeur par défaut si le fichier est absent
+        OLD_VER="1.9.0"  # Default value if the file is missing
     fi
 
-    # Mise à jour depuis le dépôt Git
+    # Update from Git repository
     cd /home/$USER/.astroarch
     git pull origin main
     cd - > /dev/null 2>&1
 
-    # Lecture de la nouvelle version après mise à jour
+    # Reading the new version after updating
     if [ -f "/home/astronaut/.astroarch/configs/.astroarch.version" ]; then
         NEW_VER=$(cat /home/astronaut/.astroarch/configs/.astroarch.version)
     else
@@ -117,38 +117,42 @@ function update-astroarch()
         exit 1
     fi
 
-    # Conversion des versions en format numérique
+    # Converting versions into digital format
     OLD_NUM=$(version_to_num "$OLD_VER")
     NEW_NUM=$(version_to_num "$NEW_VER")
     MIN_VERSION="1.9.0"
     MIN_NUM=$(version_to_num "$MIN_VERSION")
 
-    echo "Ancienne version : $OLD_VER ($OLD_NUM)"
-    echo "Nouvelle version : $NEW_VER ($NEW_NUM)"
-    echo "Version minimale requise : $MIN_VERSION ($MIN_NUM)"
+    echo "Old version : $OLD_VER ($OLD_NUM)"
+    echo "New version : $NEW_VER ($NEW_NUM)"
+    echo "Minimum version required : $MIN_VERSION ($MIN_NUM)"
 
-    # Parcours des scripts de mise à jour
+    # Update Scripts Walkthrough
     for script in /home/astronaut/.astroarch/scripts/1.*.sh; do
         SCRIPT_BASENAME=$(basename "$script")
-        # Récupération de la version en retirant uniquement l'extension .sh
+        # Recovering the version by removing only the .sh extension
         SCRIPT_VER=$(basename "$script" .sh)
         SCRIPT_NUM=$(version_to_num "$SCRIPT_VER")
 
-        echo "Vérification du script : $SCRIPT_BASENAME (version $SCRIPT_VER, $SCRIPT_NUM, $MIN_NUM, $NEW_NUM)"
+        echo "Script Check : $SCRIPT_BASENAME (version $SCRIPT_VER, $SCRIPT_NUM, $MIN_NUM, $NEW_NUM)"
 
-        # On applique le script uniquement si :
-        # - La version du script est strictement supérieure à la version minimale (1.9.0)
-        # - Inférieure ou égale à la nouvelle version
-        if [[ $SCRIPT_NUM -gt $MIN_NUM && $SCRIPT_NUM -le $NEW_NUM ]]; then
-            if ! grep -Fq "$SCRIPT_BASENAME" "$UPDATE_HISTORY"; then
-                echo "=== Application de la mise à jour $SCRIPT_BASENAME... ==="
+        # The script is only applied if:
+        # - if the script is not in history
+        # - The script version is strictly higher than the minimum version (1.9.0)
+        if ! grep -Fq "$SCRIPT_BASENAME" "$UPDATE_HISTORY"; then
+            if [[ $SCRIPT_NUM -gt $MIN_NUM ]]; then
+                echo "=== Applying the update $SCRIPT_BASENAME... ==="
                     zsh "$script"
                 echo "$SCRIPT_BASENAME" >> "$UPDATE_HISTORY"
+                if [[ $SCRIPT_NUM -gt $NEW_NUM ]]; then
+                    echo $SCRIPT_VER > /home/astronaut/.astroarch/configs/.astroarch.version
+                    echo "update version"
+                fi
             else
-                echo "Déjà appliqué : $SCRIPT_BASENAME"
+               echo "Already applied : $SCRIPT_BASENAME"
             fi
         else
-            echo "Ignoré : $SCRIPT_BASENAME"
+            echo "Ignored : $SCRIPT_BASENAME"
         fi
     done
 
