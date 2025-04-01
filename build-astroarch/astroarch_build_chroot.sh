@@ -14,6 +14,7 @@ UUID_part2=$(blkid -o value -s UUID "$DISK"2"")
 echo $DISK
 
 sed -i 's/root=\/dev\/mmcblk0p2/root=UUID='$UUID_part2'/' /boot/cmdline.txt
+sed -i '/root/ s/$/ video=HDMI-A-1:1920x1080M@60D/' /boot/cmdline.txt
 
 # ROOT PASSWD
 echo "root passwd"
@@ -41,8 +42,13 @@ echo "astroarch" > /etc/hostname
 echo "127.0.0.1          localhost" >> /etc/hosts
 echo "127.0.1.1          astroarch" >> /etc/hosts
 
+
 # Bootstrap pacman-key
 pacman-key --init && pacman-key --populate archlinuxarm
+
+# Allows installation without asking for the root password after waiting
+#sed -i 's|# unlock_time = 600|unlock_time = 0|g'  /etc/security/faillock.conf
+#sed -i 's|# root_unlock_time = 900|root_unlock_time = 0|g'  /etc/security/faillock.conf
 
 # Update all packages now
 pacman -Syu --noconfirm
@@ -172,7 +178,7 @@ cp /home/astronaut/.astroarch/build-astroarch/desktop/update-astroarch.sh.deskto
 
 # Install astrometry files
 mkdir -p /home/astronaut/.local/share/kstars/astrometry/
-cp /kstars/astronomy/* /home/astronaut/.local/share/kstars/astrometry/
+mv /kstars/astronomy/* /home/astronaut/.local/share/kstars/astrometry/
 
 # Clear script in autostart
 cp /home/astronaut/.astroarch/build-astroarch/systemd/clear-install-astroarch.service /etc/systemd/system/
@@ -229,6 +235,9 @@ sed -i -e '/\[sc74\]/,+2d' /etc/pacman.conf
 # Enable alpm
 sed -i 's|#DownloadUser = alpm|DownloadUser = alpm|g' /etc/pacman.conf
 ########################################################################################
+
+# Restores faillock
+sed -i 's|unlock_time = 0|# unlock_time = 600|g'  /etc/security/faillock.conf
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

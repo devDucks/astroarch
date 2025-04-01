@@ -72,31 +72,34 @@ if [ ! -d ~/root/boot ]; then
   sudo mkdir ~/root/boot
 fi
 sudo mount $PART1 ~/root/boot
-
-# Install base
-echo "Install ArchLinux base"
-#read -p "Press enter to continue"
-sudo pacstrap -K ~/root base base-devel linux-rpi linux-rpi-headers linux-firmware-whence linux-firmware linux-api-headers archlinuxarm-keyring
-
+echo 'astro' | sudo -S echo ''
 # Copy some files in chroot
 echo $DISK > diskchroot
 sudo cp ~/diskchroot ~/root
+echo 'astro' | sudo -S echo ''
 sudo mkdir -p ~/root/kstars/astronomy/
 sudo cp ~/.local/share/kstars/astrometry/* ~/root/kstars/astronomy/
+echo 'astro' | sudo -S echo ''
 sudo cp astroarch_build_chroot.sh /home/astronaut/root
-
+echo 'astro' | sudo -S echo ''
+# Install base
+echo "Install ArchLinux base"
+#read -p "Press enter to continue"
+# sudo pacstrap -K ~/root base base-devel linux-rpi linux-rpi-headers linux-firmware-whence linux-firmware linux-api-headers archlinuxarm-keyring
+sudo pacstrap -K ~/root base linux-rpi linux-firmware base-devel linux-api-headers archlinuxarm-keyring
+echo 'astro' | sudo -S echo ''
 # Enter chroot and install AstroArch
 echo "arch-chroot : install AstroArch"
 #read -p "Press enter to continue"
 sudo -S arch-chroot ~/root /astroarch_build_chroot.sh
-
+echo 'astro' | sudo -S echo ''
 # Umount disk and delete folder
 echo "umount" $DISK
 sudo umount -l $PART1
 sudo umount -l $PART2
 echo "delete folder root"
 sudo rm -R ~/root
-
+echo 'astro' | sudo -S echo ''
 echo "create image astroarch"
-#sudo dd if=$DISK of=astroarch.img bs=8M status=progress
-#sudo pishrink.sh -za astroarch.img astroarch-X.X.X.img.gz
+sudo dd if=$DISK of=astroarch.img bs=8M status=progress
+sudo pishrink.sh -za astroarch.img astroarch-X.X.X.img.gz
