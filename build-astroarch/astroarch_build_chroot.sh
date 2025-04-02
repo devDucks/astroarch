@@ -63,12 +63,12 @@ pacman -S wget git pipewire-jack gnu-free-fonts wireplumber \
 		xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
 		dolphin uboot-tools usbutils cloud-guest-utils samba paru \
 		websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
-		indi-3rdparty-libs indi-3rdparty-drivers \
+		indi-3rdparty-libs indi-3rdparty-drivers rpi-imager \
 		i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
-		ksystemlog discover kwalletmanager kgpg dhcpcd \
+		ksystemlog discover kwalletmanager kgpg dhcpcd spectacle \
 		qt6-serialport qt6ct udisks2-qt5 xorg-fonts-misc fuse2 \
-		fortune-mod cowsay pacman-contrib arandr neofetch \
-		astromonitor kscreen sddm-kcm flatpak ark \
+		fortune-mod cowsay pacman-contrib arandr neofetch nss-mdns \
+		astromonitor kscreen sddm-kcm flatpak ark cups cups-pdf\
 		arch-install-scripts argon2 astroarch-status-notifications atkmm bc cairomm dialog dnssec-anchors dosfstools \
 		ecryptfs-utils geoclue glibmm gparted gtkmm3 imath iw kdenetwork-filesharing lbzip2 ldns libcamera libcamera-ipa \
 		libdeflate libomxil-bellagio libsigc++ libsoup lrzip lzop nano net-tools netctl networkmanager-qt5 nilfs-utils \
@@ -117,6 +117,9 @@ rm /home/astronaut/.bash*
 cd /home/astronaut
 ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 chown astronaut:astronaut .oh-my-zsh/
+
+# Set local Hostname resolution
+sed -i 's|hosts: mymachines |&mdns_minimal [NOTFOUND=return] |g' /etc/nsswitch.conf
 
 # Set the samba pass
 ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
@@ -167,7 +170,7 @@ systemctl enable x0vncserver
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service resize_once.service
+systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service resize_once.service cups.service
 
 # Script for autostart settings plasma
 mkdir -p /home/astronaut/.config/autostart/
@@ -221,7 +224,7 @@ sed -i 's|DownloadUser = alpm|#DownloadUser = alpm|g' /etc/pacman.conf
 # Repository sc74.github.io
 su astronaut -c "git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io"
 sed -i 's|\[astromatto\]|\[sc74\]\nSigLevel = Optional TrustAll\nServer = file:///home/astronaut/.astroarch/sc74.github.io/aarch64\n\n\[astromatto\]|' /etc/pacman.conf
-pacman -Syu --noconfirm
+yes | LC_ALL=en_US.UTF-8 pacman -Syu --noconfirm
 # Install package astroarch-onboarding
 yes | LC_ALL=en_US.UTF-8 pacman -S astroarch-onboarding --noconfirm --ask 4
 cp /home/astronaut/.astroarch/build-astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/
