@@ -12,6 +12,9 @@ sudo cp /home/astronaut/.astroarch/sc74/configs/xorg.conf /etc/X11/
 sudo cp /home/astronaut/.astroarch/sc74/configs/99-v3d.conf /etc/X11/xorg.conf.d
 sudo cp /home/astronaut/.astroarch/sc74/configs/kwinrc /home/astronaut/.config
 
+# Update .zshrc
+cp -rf /home/astronaut/.astroarch/sc74/configs/.zshrc /home/astronaut/.astroarch/configs
+
 # Delete repo sc74
 sudo rm -Rf /home/astronaut/.astroarch/sc74
 
@@ -33,8 +36,6 @@ sudo sed -i 's|hosts: mymachines |&mdns_minimal [NOTFOUND=return] |g' /etc/nsswi
 
 ########################################################################################
 # This section allows you to install some packages from a GitHub repo. If the packages are on your site with a repo, install the packages in the packages section. Then copy the services to /etc/systemd/system and enable them
-
-# Onboarding
 
 # Repository sc74.github.io
 git clone https://github.com/sc74/sc74.github.io.git /home/astronaut/.astroarch/sc74.github.io
