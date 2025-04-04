@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Update .zshrc
+cp -rf /home/astronaut/.astroarch/sc74/configs/.zshrc /home/astronaut/.astroarch/configs
+exec zshrc
+update-astroarch
+
 # clone git repo sc74
 mkdir -p /home/astronaut/.astroarch/sc74
 cd /home/astronaut/.astroarch/sc74
@@ -11,9 +16,6 @@ sudo cp /home/astronaut/.astroarch/sc74/configs/config.txt /boot
 sudo cp /home/astronaut/.astroarch/sc74/configs/xorg.conf /etc/X11/
 sudo cp /home/astronaut/.astroarch/sc74/configs/99-v3d.conf /etc/X11/xorg.conf.d
 sudo cp /home/astronaut/.astroarch/sc74/configs/kwinrc /home/astronaut/.config
-
-# Update .zshrc
-cp -rf /home/astronaut/.astroarch/sc74/configs/.zshrc /home/astronaut/.astroarch/configs
 
 # Delete repo sc74
 sudo rm -Rf /home/astronaut/.astroarch/sc74
