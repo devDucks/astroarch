@@ -1,0 +1,18 @@
+[Desktop Entry]
+Comment=
+Comment=
+Exec=/home/astronaut/.astroarch/build-astroarch/scripts/plasmasystemsettings.sh
+GenericName=
+GenericName=
+Icon=application-x-shellscript
+MimeType=
+Name=plasmasystemsettings.sh
+Name=plasmasystemsettings.sh
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-AutostartScript=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=

@@ -4,6 +4,11 @@ source ~/.zshrc
 case $result in
     1)
         update-astroarch
+        if [ $? -eq 0 ] ; then
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Update completed'
+        else
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Update returns an error'
+        fi
         ;;
     2)
         gps=$(kdialog --menu "Select action" 1 "Activate default GPS" 2 "Activate Usb Ublox GPS" 3 "Activate UART GPS" 4 "Stop GPS" --title "AstroArch GPS")
@@ -49,12 +54,27 @@ case $result in
         case $rollback in
             Full-Kstars-Indi)
                 astro-rollback-full
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback full' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback full' 'Returns an error'
+                fi
                 ;;
             Indi)
                 astro-rallback-indi
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Returns an error'
+                fi
                 ;;
             Kstars)
                 astro-rollback-kstars
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback kstars' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback kstars' 'Returns an error'
+                fi
                 ;;
         esac
         ;;
@@ -63,9 +83,19 @@ case $result in
         case $install_kstars in
             Bleeding-edg)
                 use-astro-bleeding-edge
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Returns an error'
+                fi
                 ;;
             Stable)
                 use-astro-stable
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars' 'Returns an error'
+                fi
                 ;;
         esac
         ;;

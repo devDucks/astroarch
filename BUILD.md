@@ -104,3 +104,20 @@ Using `pishrink` follow these steps:
 - `sudo ./pishrink.sh -za astroarch.img astroarch-X.X.X.img.gz`
 
 the gzipped image is ready to be distributed and can be flashed on other media
+
+## Building with an AstroArch script from an existing AstroArch version 
+## (according to this description https://wiki.archlinux.org/title/Install_Arch_Linux_from_existing_Linux)
+
+Copy the AA_build_fromAA.sh and astroarch_build_chroot.sh files from the GitHub site https://github.com/sc74/astroarch/tree/1.10/build-astroarch to your Home directory
+
+Make them executable with the command chown +x followed by the file name. Mount a drive or disk and simply run the command AA_build_fromAA.sh
+
+The script will simply ask you which device you want to install on and the password for astronaut
+
+At the end of the process, you will have a working installation on your device and an image to install on another device
+
+The scripts are easily modifiable to create your own AstroArch. The first script allows you to pass the files needed for the build
+
+The second builds the OS. You can add packages, services, and any other files to customize your setup
+
+

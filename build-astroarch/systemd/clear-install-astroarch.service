@@ -1,0 +1,10 @@
+[Unit]
+Description=Clear install astroarch
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/astronaut/.astroarch/build-astroarch/scripts/clear-install-astroarch.sh
+ExecStop=/bin/systemctl disable clear-install-astroarch.service
+
+[Install]
+WantedBy=multi-user.target
