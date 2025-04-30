@@ -41,20 +41,17 @@ bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
 function use-astro-bleeding-edge()
 {
-    echo 'astro' | sudo -S echo ''
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
 }
 
 function use-astro-stable()
 {
-    echo 'astro' | sudo -S echo ''
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
 }
 
 
 function astro-rollback-indi()
 {
-    echo 'astro' | sudo -S echo ''
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
@@ -68,7 +65,6 @@ function astro-rollback-indi()
 
 function astro-rollback-kstars()
 {
-    echo 'astro' | sudo -S echo ''
     setopt localoptions rmstarsilent
     mkdir -p ~/.rollback
     cd ~/.rollback
@@ -80,8 +76,6 @@ function astro-rollback-kstars()
 
 function update-astroarch()
 {
-    echo 'astro' | sudo -S echo ''
-
     # Function to convert a version (eg: 1.9 or 1.9.1) to a number (eg: 10900 or 10901)
     version_to_num() {
         local version=$1
