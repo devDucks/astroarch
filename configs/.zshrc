@@ -26,10 +26,11 @@ done;
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
-INDI_ROLLBACK_VERSION=2.0.9-1
-INDI_LIBS_ROLLBACK_VERSION=2.0.9-1
-INDI_DRIVERS_ROLLBACK_VERSION=2.0.9-1
-KSTARS_ROLLBACK_VERSION=3.7.2-1
+
+INDI_ROLLBACK_VERSION=2.1.2-1
+INDI_LIBS_ROLLBACK_VERSION=2.1.2-1
+INDI_DRIVERS_ROLLBACK_VERSION=2.1.2-1
+KSTARS_ROLLBACK_VERSION=3.7.5-1
 
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
@@ -155,6 +156,11 @@ function update-astroarch()
             echo "Ignored : $SCRIPT_BASENAME"
         fi
     done
+
+    # Temporary fix for kde-portal duplicated conf
+    if [ -f /usr/share/xdg-desktop-portal/kde-portal.conf ]; then
+        sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
+    fi;
 
     # Temporary fix for kde-portal duplicated conf
     if [ -f /usr/share/xdg-desktop-portal/kde-portal.conf ]; then
