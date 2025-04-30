@@ -4,6 +4,7 @@ function _check_vsftpd_installed()
     echo "FTP is already installed"
     else
 	echo "FTP packages not installed, installing them now..."
+	echo 'astro' | sudo -S echo ''
 	yes | LC_ALL=en_US.UTF-8 sudo pacman -S vsftpd
 	sudo sed -i 's/#write_enable=YES/write_enable=YES/g' /etc/vsftpd.conf
     sudo sed -i 's/#local_enable=YES/local_enable=YES/g' /etc/vsftpd.conf
@@ -28,20 +29,23 @@ function _check_vsftpd_installed()
 function ftp_on()
 {
     _check_vsftpd_installed
+    echo 'astro' | sudo -S echo ''
     sudo systemctl enable vsftpd.service --now
-    echo "FTP server turned ON and enabled to autostart at every boot"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP ON' 'FTP server turned ON and enabled to autostart at every boot'
 }
 
 function ftp_off()
 {
+    echo 'astro' | sudo -S echo ''
     sudo systemctl disable vsftpd.service --now
-    echo "FTP server disabled, remember to re-enable it if you want it to start automatically at boot"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP OFF' 'FTP server disabled, remember to re-enable it if you want it to start automatically at boot'
 }
 
 function ftp_remove()
 {
+    echo 'astro' | sudo -S echo ''
     sudo systemctl disable vsftpd.service --now
     yes | LC_ALL=en_US.UTF-8 sudo pacman -Rcs vsftpd
     sudo rm /etc/vsftpd.chroot_list
-    echo "FTP server remove"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "FTP server remove"
 }

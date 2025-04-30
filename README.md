@@ -49,7 +49,13 @@ this likely means that unfortunately your raspberry pi rev cannot boot the image
 Once you are logged in the first thing you should do is update the system, open the terminal and type `update-astroarch` command
 
 # Set timezone
-Do not forget to set the right timezone! to do so run `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
+Here a small video that will show you how to set the timezone without the terminal
+
+https://github.com/devDucks/astroarch/assets/4163222/a935b491-5b7a-444d-9f89-a01a279063de
+
+If you want to use the terminal list first the available timezone with `timedatecl list-timezones` and then set the right one with `tsudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
+
+Do not forget to set the right timezone! 
 
 # Passwords
 To save you some time, here the default password you will need for AstroArch:
@@ -96,6 +102,8 @@ The followings are some useful commands that you can run from the terminal so yo
  - `astro-rollback-full` => rollback automatically indi and kstars to the previous version
  - `use-astro-bleeding-edge` => install bleeding edge packages for Kstars and INDI
  - `use-astro-stable` => install stable  packages for Kstars and INDI
+
+The AstroArch Tweak Tool utility allows you to easily run all these commands
 
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
@@ -233,9 +241,11 @@ ADDITIONAL CONSIDERATIONS (use these as guidelines):
 If you are having trouble getting the signal, you may need to protect your USB3 cables (they interfere with the GPS signal)
 if the device is not recognized (which is very unlikely on ArchLinux), we do not recommend using ttyXXX as it may point to other serial devices after a reboot
 
+These commands are in the AstroArch Tweak Tool utility
+
 # How to enable bluetooth
 By default there are no packages to enabling bluetooth, to install them and enabling bluetooth functionalities run the following command `bluetooth_on`, this command will install the BT packages and enable the bluetooth daemon to run automatically at boot.
-If you want to disable bluetooth daemon autostart just run `bluetooth_off` and if you want to remove it run `bluetooth_remove`
+If you want to disable bluetooth daemon autostart just run `bluetooth_off` and if you want to remove it run `bluetooth_remove`. These commands are in the AstroArch Tweak Tool utility
 
 # How to enable FTP
 Identical to Bluetooth, there is no default package to activate an FTP server.
@@ -244,7 +254,9 @@ To install and activate it, run the following command `ftp_on`. This command wil
 
 To connect from a remote station, use an FTP client such as FileZilla or other. All you need to do is identify yourself with the astronaut user, his password and the IP address where the server is located. You will easily find the IP address of your LAN or WLAN with the ifconfig command in a console. Once connected, you can very quickly transfer your files in both directions.
 
-If you want to disable the automatic start of the FTP server, simply run `ftp_off` and if you want to remove it, run `ftp_remove`.
+If you want to disable the automatic start of the FTP server, simply run `ftp_off` and if you want to remove it, run `ftp_remove`. 
+
+These commands are in the AstroArch Tweak Tool utility
 
 # Where to find more packages?
 If you want to install more packages you should look what is available here https://archlinuxarm.org/packages - if you find the package there you can easily install it running `sudo pacman -S PACKAGE_NAME`,
