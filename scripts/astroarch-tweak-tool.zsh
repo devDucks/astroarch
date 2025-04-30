@@ -61,7 +61,7 @@ case $result in
                 fi
                 ;;
             Indi)
-                astro-rallback-indi
+                astro-rollback-indi
                 if [ $? -eq 0 ] ; then
                 notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Completed'
                 else
