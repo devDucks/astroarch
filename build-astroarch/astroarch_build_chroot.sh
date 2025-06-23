@@ -200,6 +200,7 @@ su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/as
 su astronaut -c "ln -s /usr/share/applications/phd2.desktop /home/astronaut/Desktop/phd2.desktop"
 su astronaut -c "ln -s /usr/share/applications/xgps.desktop /home/astronaut/Desktop/xgps.desktop"
 su astronaut -c "ln -s /usr/share/applications/indiserver-ui.desktop /home/astronaut/Desktop/indiserver-ui.desktop"
+su astronaut -c "ln -s /home/astronaut/.astroarch/Desktop/AstroArch-Tweak-Tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool.desktop"
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*

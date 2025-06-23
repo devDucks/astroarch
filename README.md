@@ -46,7 +46,8 @@ there is nothing I shall explain to you :)
 # First boot
 After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
 this likely means that unfortunately your raspberry pi rev cannot boot the image. In this case please plug a monitor and report here the output!
-Once you are logged in the first thing you should do is update the system, open the terminal and type `update-astroarch` command
+
+Once logged in, the first thing to do is to update the system and the Raspberry Pi firmware image, open the terminal and type the command "update-astroarch". Then install the version of the package corresponding to your pi by typing "paru -S rpi4-eeprom" or "paru -S rpi5-eeprom". Then install the latest firmware, in the terminal, type "sudo rpi-eeprom-update" to see your firmware version followed by "sudo rpi-eeprom-update -a" to install the latest version. Finally reboot your rpi
 
 # Set timezone
 Here a small video that will show you how to set the timezone without the terminal
