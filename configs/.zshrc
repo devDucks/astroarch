@@ -26,10 +26,10 @@ done;
 source $ZSH/oh-my-zsh.sh
 
 EDITOR=nano
-INDI_ROLLBACK_VERSION=2.1.2-1
-INDI_LIBS_ROLLBACK_VERSION=2.1.2-1
-INDI_DRIVERS_ROLLBACK_VERSION=2.1.2-1
-KSTARS_ROLLBACK_VERSION=3.7.5-1
+INDI_ROLLBACK_VERSION=2.1.3-1
+INDI_LIBS_ROLLBACK_VERSION=2.1.3-1
+INDI_DRIVERS_ROLLBACK_VERSION=2.1.3-1
+KSTARS_ROLLBACK_VERSION=3.7.6-2
 
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
