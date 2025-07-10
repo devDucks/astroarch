@@ -5,7 +5,7 @@ set -e
 ARCH=$(uname -m)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
-sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\n|g' /etc/pacman.conf
+sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\nDisableDownloadTimeout\n|g' /etc/pacman.conf
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
 sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
