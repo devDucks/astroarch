@@ -14,6 +14,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [On first boot - things to know](#first-boot)
+ - [Performance and compositor](#performance-and-compositor)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
  - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
  - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
@@ -55,6 +56,11 @@ Do not forget to set the right timezone! to do so run `sudo timedatectl set-time
 To save you some time, here the default password you will need for AstroArch:
  - the user password for `astronaut` (which is the user used to login or for ssh) is `astro`
  - the password for the `AstroArch-XXXXXXX` WiFi hotspot is `astronomy`
+
+# Performance and compositor
+IMPORTANT!
+Be aware that from version 2.0 the compositor is enabled by default, while this will enhance by a lot graphics (making everything smoother) it will probably increase
+system resource utilisation. If you want to disable it, just add the following line `Enabled=false` in the file `/home/astronaut/.config/kwinrc`
 
 # How to protect VNC with password
 If you want to add more security to your installation (or maybe you are at a starparty with more users running AstroArch), you may want to add a password to VNC (by default there is no password).
