@@ -35,3 +35,5 @@ if [ ! -f /home/astronaut/Desktop/AstroArch-Tweak-Tool ]; then
     echo "AstroArch Tweak Tool installed"
     echo "===================="
 fi
+
+sudo sed -i 's|ILoveCandy|ILoveCandy\nDisableDownloadTimeout\n|g' /etc/pacman.conf
