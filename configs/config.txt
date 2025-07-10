@@ -1,4 +1,79 @@
+# For more options and information see:
+# http://rptl.io/configtxt
+
+initramfs initramfs-linux.img followkernel
+
+# Uncomment some or all of these to enable the optional hardware interfaces
+#dtparam=i2c_arm=on
+#dtparam=i2s=on
+#dtparam=spi=on
+
+# Additional overlays and parameters are documented
+# /boot/firmware/overlays/README
+
+# Automatically load overlays for detected cameras
+camera_auto_detect=1
+
+# Automatically load overlays for detected DSI displays
+display_auto_detect=1
+
+# Enable DRM VC4 V3D driver
+dtoverlay=vc4-kms-v3d,cma-512
+max_framebuffers=2
+framebuffer_depth=24
+
+# Uncomment if hdmi display is not detected and composite is being output
+#hdmi_force_hotplug=1
+
+# Uncomment if you want to disable wifi or bluetooth respectively
+#dtoverlay=disable-wifi
+#dtoverlay=disable-bt
+
+# Uncomment this to enable infrared communication.
+#dtoverlay=gpio-ir,gpio_pin=17
+#dtoverlay=gpio-ir-tx,gpio_pin=18
+
+# Run as fast as firmware / board allows
+arm_boost=1
+
+[cm4]
+# Enable host mode on the 2711 built-in XHCI USB controller.
+# This line should be removed if the legacy DWC2 controller is required
+# (e.g. for USB device mode) or if USB support is not required.
+otg_mode=1
+
+[all]
+dtparam=i2c_arm=on
+dtparam=audio=on
+disable_overscan=1
+gpu_mem=256
+#disable_splash=1
+3dtparam=krnbt=on
+#hdmi_drive=2
+dtoverlay=i2c-rtc
+kernel=kernel8.img
+hdmi_enable_4kp60=1
+
+[pi5]
+dtparam=rtc_bbat_vchg=3000000
+
+
+
+
+
+
+
+
+
+
+
+
 # uncomment if you get no picture on HDMI for a default "safe" mode
+
+
+
+
+
 #hdmi_safe=1
 
 # uncomment this if your display has a black border of unused pixels visible
