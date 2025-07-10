@@ -11,3 +11,13 @@ if [ ! -f /home/astronaut/Desktop/update-astroarch ]; then
     echo "Update AstroArch script installed"
     echo "===================="
 fi
+
+check_plasmasess=$(pacman -Q | grep -c plasma-x11-session)
+
+if [ $check_plasmasess -eq 0 ]; then
+    echo "===================="
+    echo "Plasma x11 session not found... Installing"
+    sudo pacman -Sy plasma-x11-session --noconfirm
+    echo "Plasma x11 session  installed"
+    echo "===================="
+fi
