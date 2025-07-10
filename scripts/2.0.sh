@@ -22,5 +22,6 @@ if [ $check_plasmasess -eq 0 ]; then
     echo "===================="
 fi
 
-# Copy the new version of 99-v3d now
-cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
+# Copy the new version of 99-v3d new config files
+sudo cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
+sudo cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
