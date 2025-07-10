@@ -25,3 +25,12 @@ fi
 # Copy the new version of 99-v3d new config files
 sudo cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 sudo cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
+
+if [ ! -f /home/astronaut/Desktop/AstroArch-Tweak-Tool ]; then
+    echo "===================="
+    echo "AstroArch Tweak Tool script not found... Installing"
+    su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
+    sudo chmod +x /home/astronaut/Desktop/AstroArch-Tweak-Tool
+    echo "AstroArch Tweak Tool installed"
+    echo "===================="
+fi
