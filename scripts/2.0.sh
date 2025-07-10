@@ -21,3 +21,6 @@ if [ $check_plasmasess -eq 0 ]; then
     echo "Plasma x11 session  installed"
     echo "===================="
 fi
+
+# Copy the new version of 99-v3d now
+cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
