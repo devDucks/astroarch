@@ -25,6 +25,7 @@ fi
 # Copy the new version of 99-v3d new config files
 sudo cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 sudo cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
+sudo cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 
 if [ ! -f /home/astronaut/Desktop/AstroArch-Tweak-Tool ]; then
     echo "===================="
