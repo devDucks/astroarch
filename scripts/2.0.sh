@@ -26,6 +26,8 @@ fi
 sudo cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 sudo cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
 sudo cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
+# The following is a one time thing! By defaukt it will be put in the base image at build time
+sudo cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
 
 if [ ! -f /home/astronaut/Desktop/AstroArch-Tweak-Tool ]; then
     echo "===================="
