@@ -1,0 +1,20 @@
+[Desktop Entry]
+Categories=System
+Comment[fr_CH]=Tools for AstroArch
+Comment=Tools for AstroArch
+Encoding=UTF-8
+Exec=/home/astronaut/.astroarch/scripts/astroarch-tweak-tool.zsh
+GenericName[fr_CH]=AstroArch Tweak Tool
+GenericName=AstroArch Tweak Tool
+Icon=/home/astronaut/.astroarch/assets/icons/novnc-192x192.png
+MimeType=
+Name[fr_CH]=AstroArch Tweak Tool
+Name=AstroArch Tweak Tool
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+Version=1.0
+X-KDE-SubstituteUID=false
+X-KDE-Username=

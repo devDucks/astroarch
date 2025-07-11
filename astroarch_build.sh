@@ -5,7 +5,7 @@ set -e
 ARCH=$(uname -m)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
-sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\n|g' /etc/pacman.conf
+sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\nDisableDownloadTimeout\n|g' /etc/pacman.conf
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
 sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
@@ -44,7 +44,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
 	ksystemlog discover kwalletmanager kgpg qt5-serialbus \
 	qt5-serialport qt5ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm flatpak --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm flatpak plasma-x11-session --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -134,6 +134,11 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astro
 su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
 su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
 su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
+
+# Make the icons executable so there will be no ! on the first boot
+chmod +x /home/astronaut/Desktop/update-astroarch
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
@@ -153,21 +158,7 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/ast
 timedatectl set-timezone Europe/London
 
 # If we are on a raspberry let's adjust /boot/config.txt
-echo dtparam=i2c_arm=on >> /boot/config.txt
-echo dtparam=audio=on >> /boot/config.txt
-echo disable_overscan=1 >> /boot/config.txt
-echo gpu_mem=256 >> /boot/config.txt
-echo disable_splash=1 >> /boot/config.txt
-echo 3dtparam=krnbt=on >> /boot/config.txt
-echo hdmi_drive=2 >> /boot/config.txt
-echo dtoverlay=i2c-rtc >> /boot/config.txt
-echo i2c-dev > /etc/modules-load.d/raspberrypi.conf
-sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g' /boot/config.txt
-sed -i 's/max_framebuffers=2/max_framebuffers=2\nframebuffer_depth=24/g' /boot/config.txt
-
-# Pi5 only settings should go here
-echo [pi5] >> /boot/config.txt
-echo dtparam=rtc_bbat_vchg=3000000 >> /boot/config.txt
+cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"

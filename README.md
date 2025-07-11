@@ -14,6 +14,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [On first boot - things to know](#first-boot)
+ - [Performance and compositor](#performance-and-compositor)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
  - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
  - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
@@ -49,12 +50,23 @@ this likely means that unfortunately your raspberry pi rev cannot boot the image
 Once you are logged in the first thing you should do is update the system, open the terminal and type `update-astroarch` command
 
 # Set timezone
-Do not forget to set the right timezone! to do so run `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
+Here a small video that will show you how to set the timezone without the terminal
+
+https://github.com/devDucks/astroarch/assets/4163222/a935b491-5b7a-444d-9f89-a01a279063de
+
+If you want to use the terminal list first the available timezone with `timedatecl list-timezones` and then set the right one with `tsudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
+
+Do not forget to set the right timezone!
 
 # Passwords
 To save you some time, here the default password you will need for AstroArch:
  - the user password for `astronaut` (which is the user used to login or for ssh) is `astro`
  - the password for the `AstroArch-XXXXXXX` WiFi hotspot is `astronomy`
+
+# Performance and compositor
+IMPORTANT!
+Be aware that from version 2.0 the compositor is enabled by default, while this will enhance by a lot graphics (making everything smoother) it will probably increase
+system resource utilisation. If you want to disable it, just add the following line `Enabled=false` in the file `/home/astronaut/.config/kwinrc`
 
 # How to protect VNC with password
 If you want to add more security to your installation (or maybe you are at a starparty with more users running AstroArch), you may want to add a password to VNC (by default there is no password).
@@ -179,10 +191,10 @@ EOF
 the following software will be available, by category
 
 ### Astronomical
-- Kstars 3.7.2
-- phd2 2.6.13dev1
-- indi libs 2.0.9 **(all of them)**
-- indi drivers 2.0.9 **(all of them)**
+- Kstars 3.7.7
+- phd2 2.6.13dev2
+- indi libs 2.1.4 **(all of them)**
+- indi drivers 2.1.4 **(all of them)**
 - most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor)
 - AstroDMx (a capture software like FireCapture)
