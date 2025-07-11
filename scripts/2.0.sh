@@ -37,7 +37,7 @@ if [ ! -f /home/astronaut/Desktop/astroarch-tweak-tool.deskop ]; then
     echo "AstroArch Tweak Tool script not found... Installing"
     cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/
     sudo chmod +x /home/astronaut/Desktop/astroarch-tweak-tool.desktop
-    sudo pacman -Sy kdialog
+    sudo pacman -Sy kdialog --noconfirm
     echo "AstroArch Tweak Tool installed"
     echo "===================="
 fi
