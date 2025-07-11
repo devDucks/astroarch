@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment=
 Comment=
-Exec=/home/astronaut/.astroarch/build-astroarch/scripts/update-astroarch.sh
+Exec=/home/astronaut/.astroarch/scripts/update-astroarch.sh
 GenericName=
 GenericName=
 Icon=application-x-shellscript
