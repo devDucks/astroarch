@@ -3,11 +3,11 @@
 # First run 1.9.3.sh to be sure that old changes will be applied
 bash /home/astronaut/.astroarch/scripts/1.9.3.sh
 
-if [ ! -f /home/astronaut/Desktop/update-astroarch ]; then
+if [ ! -f /home/astronaut/Desktop/update-astroarch.desktop ]; then
     echo "===================="
     echo "Update astroarch script not found... Installing"
-    su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
-    sudo chmod +x /home/astronaut/Desktop/update-astroarch
+    su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/"
+    sudo chmod +x /home/astronaut/Desktop/update-astroarch.desktop
     echo "Update AstroArch script installed"
     echo "===================="
 fi
@@ -29,11 +29,12 @@ sudo cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 # The following is a one time thing! By defaukt it will be put in the base image at build time
 sudo cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
 
-if [ ! -f /home/astronaut/Desktop/AstroArch-Tweak-Tool ]; then
+if [ ! -f /home/astronaut/Desktop/astroarch-tweak-tool.deskop ]; then
     echo "===================="
     echo "AstroArch Tweak Tool script not found... Installing"
-    su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
-    sudo chmod +x /home/astronaut/Desktop/AstroArch-Tweak-Tool
+    su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/"
+    sudo chmod +x /home/astronaut/Desktop/astroarch-tweak-tool.desktop
+    sudo pacman -Sy kdialog
     echo "AstroArch Tweak Tool installed"
     echo "===================="
 fi
