@@ -9,7 +9,7 @@ sudo pacman -Rdd linux-firmware --noconfirm && sudo pacman -Sy linux-firmware --
 if [ ! -f /home/astronaut/Desktop/update-astroarch.desktop ]; then
     echo "===================="
     echo "Update astroarch script not found... Installing"
-    su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/"
+    cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/
     sudo chmod +x /home/astronaut/Desktop/update-astroarch.desktop
     echo "Update AstroArch script installed"
     echo "===================="
@@ -35,7 +35,7 @@ sudo cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
 if [ ! -f /home/astronaut/Desktop/astroarch-tweak-tool.deskop ]; then
     echo "===================="
     echo "AstroArch Tweak Tool script not found... Installing"
-    su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/"
+    cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/
     sudo chmod +x /home/astronaut/Desktop/astroarch-tweak-tool.desktop
     sudo pacman -Sy kdialog
     echo "AstroArch Tweak Tool installed"
