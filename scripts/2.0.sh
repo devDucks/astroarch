@@ -3,6 +3,9 @@
 # First run 1.9.3.sh to be sure that old changes will be applied
 bash /home/astronaut/.astroarch/scripts/1.9.3.sh
 
+# Fix the pesky problem with linux-firmware
+sudo pacman -Rdd linux-firmware --noconfirm && sudo pacman -Sy linux-firmware --noconfirm
+
 if [ ! -f /home/astronaut/Desktop/update-astroarch.desktop ]; then
     echo "===================="
     echo "Update astroarch script not found... Installing"
