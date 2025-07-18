@@ -95,13 +95,16 @@ function update-astroarch()
     fi;
 
     # Update the repo content
-    yes | LC_ALL=en_US.UTF-8 sudo pacman -Sy
+    sudo pacman -Sy --noconfirm
 
     # Update always keyring first, than all of the other packages
-    yes | LC_ALL=en_US.UTF-8 sudo pacman -S archlinux-keyring --noconfirm
+    sudo pacman -S archlinux-keyring --noconfirm
 
     # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
-    yes | LC_ALL=en_US.UTF-8 sudo pacman -Syu
+    sudo pacman -Syu --noconfirm
+
+    # Reinstall plasma-x11-session, cannot work on 1.9.0 cause of old kwin
+    sudo pacman -Sy plasma-x11-session --noconfirm
 }
 
 if [ -f $EXTRA_ZSH ]; then
