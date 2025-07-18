@@ -38,7 +38,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
 
 # Download
-Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1S4lGyRT1soCdO8QAUk5gmDEXj6T2_b2g/view
+Please use this link to download the latest astroarch gzipped img file => UNAVAILABLE AT THE MOMENT - WE ARE BUILDING THE 2.0 IMAGE
 
 # Flash the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
