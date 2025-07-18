@@ -34,6 +34,8 @@ KSTARS_ROLLBACK_VERSION=3.7.6-2
 # Alias section
 alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
 alias astro-rollback-full='astro-rollback-indi && astro-rollback-kstars'
+alias apt=xyz
+alias apt-get=xyz
 
 # Run aa_motd.sh
 bash /home/astronaut/.astroarch/scripts/aa_motd.sh
@@ -105,6 +107,28 @@ function update-astroarch()
 
     # Reinstall plasma-x11-session, cannot work on 1.9.0 cause of old kwin
     sudo pacman -Sy plasma-x11-session --noconfirm
+}
+
+function xyz () {
+    echo "ATTENTION! The system is going to be infected with a virus now!"
+    sleep 1
+    echo "This virus is called ArchLinux"
+    sleep 0.5
+    echo -n "Transfering virus."
+    sleep 0.5
+    echo -n "."
+    sleep 0.5
+    echo -n "."
+    sleep 0.5
+    echo -n "."
+    sleep 0.5
+    echo -n "."
+    echo ""
+    sleep 1
+    echo "Virus transfered successfully"
+    echo "ENJOY YOUR ARCHLINUX SYSTEM AND EMBRACE THE DARK SIDE"
+    sleep 1
+    echo "That was a joke of course, there is no apt nor apt-get on arch, just pacman!"
 }
 
 if [ -f $EXTRA_ZSH ]; then
