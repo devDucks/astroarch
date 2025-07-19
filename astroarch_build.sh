@@ -44,7 +44,8 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
 	ksystemlog discover kwalletmanager kgpg qt6-serialbus \
 	qt6-serialport qt6ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm flatpak plasma-x11-session --noconfirm --ask 4
+	astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
+	kdialog --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
