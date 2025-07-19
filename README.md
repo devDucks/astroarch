@@ -11,6 +11,7 @@
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
  - [Quick video intro](#quick-video-intro-to-astroarch)
  - [What Raspberry is supported?](#what-raspberry-version-is-supported)
+ - [Why ArchLinux?](#why-archlinux)
  - [Download](#download)
  - [Flash the image to SD](#flash-the-img-to-an-sd)
  - [On first boot - things to know](#first-boot)
@@ -39,6 +40,36 @@ AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry
 
 # Download
 Please use this link to download the latest astroarch gzipped img file => UNAVAILABLE AT THE MOMENT - WE ARE BUILDING THE 2.0 IMAGE
+
+# Why ArchLinux?
+Why ArchLinux?
+
+Because control matters.
+Because when you're under the stars, 200 km from the nearest Wi‑Fi, you don't want to wrestle with package managers or beg an outdated distro for a newer kernel.
+
+ArchLinux gives us clarity.
+No cruft. No bloated defaults. No assumptions.
+Just a fast, minimal, bleeding-edge base that stays out of your way and respects your intent.
+Exactly what an astrophotography system should do.
+
+Some ask, why not Raspbian?
+Because I’ve used it. Because I’ve waited weeks for upstream fixes to trickle through layers of bureaucracy. Because when something breaks in the field at 2 AM, I’d rather pacman -Sy than dig through obsolete forum posts.
+Because I’ve seen what happens when distros try to protect you by locking the door and hiding the keys.
+
+This isn’t about gatekeeping.
+This is about choosing the right tool for the job—even if it demands more from the user.
+If you're the kind of person who compiles INDI from source just to try a bleeding-edge driver,
+then you already get it.
+Arch isn't a barrier. It's a launchpad.
+
+AstroArch was built for those who tinker. For those who read logs instead of rebooting. For those who know that freedom and responsibility walk hand in hand.
+
+You don't have to like Arch.
+But I do. And that’s why we're here.
+
+    AstroArch was built for curiosity, not consensus.
+    Even if I’m the only one who finds joy in it—tuning drivers, reshaping workflows, and bending the system to my will—that’s enough.
+    But if that sounds like your kind of fun, welcome aboard.
 
 # Flash the img to an SD
 If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
