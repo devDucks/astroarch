@@ -14,7 +14,7 @@ if [ ! -f /home/astronaut/Desktop/update-astroarch.desktop ]; then
     echo "Update AstroArch script installed"
     echo "===================="
 fi
-
+sudo pacman -Syu --noconfirm
 check_plasmasess=$(pacman -Q | grep -c plasma-x11-session)
 
 if [ $check_plasmasess -eq 0 ]; then
