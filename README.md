@@ -152,7 +152,7 @@ otherwise, if you want to connect to its hotspot, find the WiFi network `AstroAr
 Welcome to astro arch!
 
 # Connecting via VNC client
-If you trust me, this should be always the preferred way to connect usig VNC. noVNC goes through the browser and is less fluid and performant than a real VNC client.
+If you trust me, this should be always the preferred way to connect using VNC. noVNC goes through the browser and is less fluid and performant than a real VNC client.
 You can use whatever VNC client you prefer, there should be no issue.
 
 The address is `astroarch.local` (or the IP if you prefer) and the port is 5900
