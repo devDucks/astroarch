@@ -143,7 +143,7 @@ The following are some useful commands that you can run from the terminal so you
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
-noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the follwing methods:
+noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the following methods:
 - **http://astroarch.local:8080/vnc.html**
 - if the previous method doesn't work, find your raspberry pi IP, connect to it through your browser typing `http://RASPBERRY_IP:8080/vnc.html`
 
