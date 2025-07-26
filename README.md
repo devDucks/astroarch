@@ -132,7 +132,7 @@ Server = http://astroarch.astromatto.com:9000/$arch
 after that run `sudo pacman -Sy && sudo pacman -S kstars phd2 indi-3rdparty-drivers stellarsolver`
 
 # Useful commands
-The followings are some useful commands that you can run from the terminal so you don't have to deal with complicated stuff by yourself if you don't want to:
+The following are some useful commands that you can run from the terminal so you don't have to deal with complicated stuff by yourself if you don't want to:
  - `update-astroarch` => this command will update system packages (including kstars, indi, etc. if there are new versions) and will pull any fix for astroarch itself, additionally will update the astroarch configuration that may bring in more commands etc.
  - `astro-rollback-indi` => rollback automatically indi to the previous version
  - `astro-rollback-kstars` => rollback automatically indi to the previous version
