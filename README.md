@@ -122,7 +122,7 @@ Reboot and now you should be prompted to input a password when connecting via VN
 AstroArch finally supports raspberry cameras via indi pylibcamera, to install it and having fun with it just run `sudo pacman -S indi-pylibcamera`
 
 # Use only the astro packages maintained for AstroArch on PC and mini PC
-If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
+If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I maintain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
 ```
 [astromatto]
 SigLevel = Optional TrustAll
