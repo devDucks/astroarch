@@ -293,7 +293,7 @@ If you want to disable the automatic start of the FTP server, simply run `ftp_of
 If you want to install more packages you should look what is available here https://archlinuxarm.org/packages - if you find the package there you can easily install it running `sudo pacman -S PACKAGE_NAME`,
 if you want to install packages using a GUI instead, open discovery (the blue bag icon on the tray) and follow the instructions.
 
-If the package you are looking for is not there you may additionally have a look at the AUR https://aur.archlinux.org/ - AUR is a list of packages mantained by the community,
+If the package you are looking for is not there you may additionally have a look at the AUR https://aur.archlinux.org/ - AUR is a list of packages maintained by the community,
 they are not ready to be installed so they can't be installed with pacman but instead you need `paru` (already installed on AstroArch), if you find your package on the AUR run `paru -S PACKAGE_NAME`
 it will ask you for a review (confirm it) and then it will compile the package for you and install it. Please be patient, some packages are just huges and it may take some time to compile on lower hardware like the raspberry.
 Even for AUR there is a graphical installer (although I never used it and I cannot guarantee if it works well or not), run `sudo pacman -S pamac-full` and you can run `pamac` to install graphically packages from the AUR.
