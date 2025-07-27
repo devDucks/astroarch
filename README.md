@@ -121,8 +121,8 @@ Reboot and now you should be prompted to input a password when connecting via VN
 # How can I use a raspberry camera
 AstroArch finally supports raspberry cameras via indi pylibcamera, to install it and having fun with it just run `sudo pacman -S indi-pylibcamera`
 
-# Use only the astro packages mantained for AstroArch on PC and mini PC
-If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I mantain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
+# Use only the astro packages maintained for AstroArch on PC and mini PC
+If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I maintain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
 ```
 [astromatto]
 SigLevel = Optional TrustAll
@@ -132,7 +132,7 @@ Server = http://astroarch.astromatto.com:9000/$arch
 after that run `sudo pacman -Sy && sudo pacman -S kstars phd2 indi-3rdparty-drivers stellarsolver`
 
 # Useful commands
-The followings are some useful commands that you can run from the terminal so you don't have to deal with complicated stuff by yourself if you don't want to:
+The following are some useful commands that you can run from the terminal so you don't have to deal with complicated stuff by yourself if you don't want to:
  - `update-astroarch` => this command will update system packages (including kstars, indi, etc. if there are new versions) and will pull any fix for astroarch itself, additionally will update the astroarch configuration that may bring in more commands etc.
  - `astro-rollback-indi` => rollback automatically indi to the previous version
  - `astro-rollback-kstars` => rollback automatically indi to the previous version
@@ -143,7 +143,7 @@ The followings are some useful commands that you can run from the terminal so yo
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
-noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the follwing methods:
+noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the following methods:
 - **http://astroarch.local:8080/vnc.html**
 - if the previous method doesn't work, find your raspberry pi IP, connect to it through your browser typing `http://RASPBERRY_IP:8080/vnc.html`
 
@@ -152,7 +152,7 @@ otherwise, if you want to connect to its hotspot, find the WiFi network `AstroAr
 Welcome to astro arch!
 
 # Connecting via VNC client
-If you trust me, this should be always the preferred way to connect usig VNC. noVNC goes through the browser and is less fluid and performant than a real VNC client.
+If you trust me, this should be always the preferred way to connect using VNC. noVNC goes through the browser and is less fluid and performant than a real VNC client.
 You can use whatever VNC client you prefer, there should be no issue.
 
 The address is `astroarch.local` (or the IP if you prefer) and the port is 5900
@@ -293,12 +293,12 @@ If you want to disable the automatic start of the FTP server, simply run `ftp_of
 If you want to install more packages you should look what is available here https://archlinuxarm.org/packages - if you find the package there you can easily install it running `sudo pacman -S PACKAGE_NAME`,
 if you want to install packages using a GUI instead, open discovery (the blue bag icon on the tray) and follow the instructions.
 
-If the package you are looking for is not there you may additionally have a look at the AUR https://aur.archlinux.org/ - AUR is a list of packages mantained by the community,
+If the package you are looking for is not there you may additionally have a look at the AUR https://aur.archlinux.org/ - AUR is a list of packages maintained by the community,
 they are not ready to be installed so they can't be installed with pacman but instead you need `paru` (already installed on AstroArch), if you find your package on the AUR run `paru -S PACKAGE_NAME`
 it will ask you for a review (confirm it) and then it will compile the package for you and install it. Please be patient, some packages are just huges and it may take some time to compile on lower hardware like the raspberry.
 Even for AUR there is a graphical installer (although I never used it and I cannot guarantee if it works well or not), run `sudo pacman -S pamac-full` and you can run `pamac` to install graphically packages from the AUR.
 
-What if your package is not in the AUR or the offcial ArchLinux repository? Please let me know, it is not hard to package stuff for ArchLinux and in fact I already do it for few things, I can take a look at the source and if possible I will try to package
+What if your package is not in the AUR or the official ArchLinux repository? Please let me know, it is not hard to package stuff for ArchLinux and in fact I already do it for few things, I can take a look at the source and if possible I will try to package
 it for Arch so that you may be able to install it using pacman.
 
 # How to install Python packages?
