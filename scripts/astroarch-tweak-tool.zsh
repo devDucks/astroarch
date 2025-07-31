@@ -11,18 +11,12 @@ case $result in
         fi
         ;;
     2)
-        gps=$(kdialog --menu "Select action" 1 "Activate default GPS" 2 "Activate Usb Ublox GPS" 3 "Activate UART GPS" 4 "Stop GPS" --title "AstroArch GPS")
+        gps=$(kdialog --menu "Select action" 1 "Activate GPS" 2 "Stop GPS" --title "AstroArch GPS")
         case $gps in
             1)
                 gps_on
                 ;;
             2)
-                gps_ublox_on
-                ;;
-            3)
-                gps_uart_on
-                ;;
-            4)
                 gps_off
                 ;;
         esac
