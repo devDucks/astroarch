@@ -265,10 +265,6 @@ To use a GPS dongle, simply plug in your device and activate the GPSD service wh
 
 Otherwise, simply use the following command `gps_on` to perform these two operations.
 
-For users of a GPS USB dongle models u-blox 7 or VK-162 with a mount using the eqmod module, use the `gps_ublox_on` command. This helps avoid a conflict between the GPS and the mount.
-
-For GPS UART users, use the `gps_uart_on` command.
-
 If you want to disable automatic startup of the GPS daemon, run `gps_off`.
 
 ADDITIONAL CONSIDERATIONS (use these as guidelines):

@@ -53,6 +53,7 @@ gpu_mem=256
 dtoverlay=i2c-rtc
 kernel=kernel8.img
 hdmi_enable_4kp60=1
+enable_uart=1
 
 [pi5]
 dtparam=rtc_bbat_vchg=3000000
