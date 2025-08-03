@@ -9,6 +9,9 @@ if [ $check_cmdline -eq 1 ]; then
     echo "===================="
     echo "Fixing serial device mounting"
     sudo cp ~/.astroarch/configs/cmdline.txt /boot/cmdline.txt
+    sudo cp ~/.astroarch/configs/config.txt /boot/config.txt
     echo "Fixed"
     echo "===================="
 fi
+
+sudo pacman -Sy jq --noconfirm

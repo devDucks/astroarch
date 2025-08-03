@@ -4,9 +4,9 @@
 initramfs initramfs-linux.img followkernel
 
 # Uncomment some or all of these to enable the optional hardware interfaces
-#dtparam=i2c_arm=on
+dtparam=i2c_arm=on
 #dtparam=i2s=on
-#dtparam=spi=on
+dtparam=spi=on
 
 # Additional overlays and parameters are documented
 # /boot/firmware/overlays/README
@@ -17,10 +17,20 @@ camera_auto_detect=1
 # Automatically load overlays for detected DSI displays
 display_auto_detect=1
 
+# Automatically load initramfs files, if found
+auto_initramfs=1
+
 # Enable DRM VC4 V3D driver
-dtoverlay=vc4-kms-v3d,cma-512
+dtoverlay=vc4-kms-v3d
 max_framebuffers=2
-framebuffer_depth=24
+#framebuffer_depth=24
+
+# Don't have the firmware create an initial video= setting in cmdline.txt.
+# Use the kernel's default instead.
+disable_fw_kms_setup=1
+
+# Disable compensation for displays with overscan
+disable_overscan=1
 
 # Uncomment if hdmi display is not detected and composite is being output
 #hdmi_force_hotplug=1
@@ -32,6 +42,9 @@ framebuffer_depth=24
 # Uncomment this to enable infrared communication.
 #dtoverlay=gpio-ir,gpio_pin=17
 #dtoverlay=gpio-ir-tx,gpio_pin=18
+
+# Run in 64-bit mode
+arm_64bit=1
 
 # Run as fast as firmware / board allows
 arm_boost=1
