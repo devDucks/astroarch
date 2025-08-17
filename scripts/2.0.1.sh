@@ -15,3 +15,6 @@ if [ $check_cmdline -eq 1 ]; then
 fi
 
 sudo pacman -Sy jq --noconfirm
+
+# Update xorg.conf following updates (vnc)
+sudo cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
