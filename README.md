@@ -40,6 +40,8 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
 
+Note on the possible back-powering of the raspberry by a mount, camera, powered USB hub or other devices having its own power source and connected to the raspberry by USB. Plug in your raspberry then connect each device so as not to have issues for your AstroArch.
+
 # Download
 Please use this link to download the latest astroarch gzipped img file => UNAVAILABLE AT THE MOMENT - WE ARE BUILDING THE 2.0 IMAGE
 
