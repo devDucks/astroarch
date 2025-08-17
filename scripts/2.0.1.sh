@@ -14,7 +14,14 @@ if [ $check_cmdline -eq 1 ]; then
     echo "===================="
 fi
 
+# Package jq for new gps.plugin.zsh
 sudo pacman -Sy jq --noconfirm
+
+# Package xrdp
+sudo pacman -Sy xrdp
+sudo systemctl enable xrdp
 
 # Update xorg.conf following updates (vnc)
 sudo cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
+
+

@@ -45,7 +45,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
 	qt6-serialport qt6ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
 	astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-	kdialog jq --noconfirm --ask 4
+	kdialog jq xrdp --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -120,7 +120,7 @@ systemctl enable x0vncserver
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service xrdp.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
