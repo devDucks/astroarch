@@ -18,6 +18,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Performance and compositor](#performance-and-compositor)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
  - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
+ - [Connecting via XRDP client](#connecting-via-xrdp-client)
  - [Issues with VNC](#issues-with-vnc)
  - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
  - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
@@ -161,6 +162,10 @@ The address is `astroarch.local` (or the IP if you prefer) and the port is 5900
 Few VNC client suggestions (work an all platforms):
 - TigerVNC (https://tigervnc.org/)
 - RealVNC (https://www.realvnc.com/en/)
+
+# Connecting via XRDP client
+Another option to control your Raspberry Pi remotely is to use an XRDP client. For this you can use the "remote desktop connection" tool if you are on Windows or on Linux or a software like FreeRDP.
+You can also use the command line xfreerdp /u:astronaut /w:1920 /h:1080 /v:10.42.0.1 after installing the xfreerdp package corresponding to your distribution
 
 # Issues with VNC
 
