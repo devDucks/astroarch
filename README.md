@@ -18,6 +18,8 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [Performance and compositor](#performance-and-compositor)
  - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
  - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
+ - [Connecting via XRDP client](#connecting-via-xrdp-client)
+ - [Issues with VNC](#issues-with-vnc)
  - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
  - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
  - [Kstars hours is not correct, how can I fix it?](#set-timezone)
@@ -28,7 +30,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
  - [How to enable bluetooth?](#how-to-enable-bluetooth)
- - [How to enable an FTP server?](#how-to-enable-FTP)
+ - [How to enable an FTP server?](#how-to-enable-ftp)
  - [Where can I find more packages?](#where-to-find-more-pacakges)
  - [How can I install Python packages?](#how-to-install-python-packages)
  - [reporting problems](#reporting-issues)
@@ -37,6 +39,8 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
+
+Note on the possible back-powering of the raspberry by a mount, camera, powered USB hub or other devices having its own power source and connected to the raspberry by USB. Plug in your raspberry then connect each device so as not to have issues for your AstroArch.
 
 # Download
 Please use this link to download the latest astroarch gzipped img file => UNAVAILABLE AT THE MOMENT - WE ARE BUILDING THE 2.0 IMAGE
@@ -161,6 +165,68 @@ Few VNC client suggestions (work an all platforms):
 - TigerVNC (https://tigervnc.org/)
 - RealVNC (https://www.realvnc.com/en/)
 
+# Connecting via XRDP client
+Another option to control your Raspberry Pi remotely is to use an XRDP client. For this you can use the "remote desktop connection" tool if you are on Windows or on Linux or a software like FreeRDP.
+You can also use the command line xfreerdp /u:astronaut /w:1920 /h:1080 /v:10.42.0.1 after installing the xfreerdp package corresponding to your distribution
+
+# Issues with VNC
+
+Beware of metal cases and USB3 hubs, which can interfere with the RPI's Wi-Fi driver. Try connecting an external Wi-Fi antenna to your Raspberry.
+
+Before continuing, check the status of your brcmfmac driver. Use the command journalctl -b --since today | grep brcmfmac or dmesg | grep brcmfmac.
+If you get a brcmfmac error: brcmf_set_channel: set chanspec 0x100c fail, reason -52, you must run these commands:
+
+```
+sudo systemctl stop wpa_supplicant
+sudo systemctl stop NetworkManager
+sudo systemctl stop x0vncserver
+sudo killall wpa_supplicant
+sudo rfkill unblock all
+sudo modprobe -r brcmfmac_wcc
+sudo modprobe -r brcmfmac
+sudo modprobe brcmfmac
+sudo systemctl start wpa_supplicant
+sudo systemctl start NetworkManager
+sudo systemctl start x0vncserver
+sudo /home/astronaut/.astroarch/scripts/create_ap.sh
+reboot
+```
+
+After restarting, check that you no longer have any errors with the brcmfmac driver.
+
+Other controls:
+
+- Check that the RPI and your PC/tablet are using WPA2.
+  
+- Check your PC's Wi-Fi settings to ensure that IPV6 is not enabled. Normally, IPV6 is disabled for the access point on AstroArch.
+  
+
+Check that Wi-Fi power management is disabled on the client PC you are connecting to the Raspberry Pi using the iwconfig command. If it is not disabled, you must disable it permanently.
+
+**Linux Mint / Ubuntu / Debian**
+
+sudo nano /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+
+```
+[connection]
+wifi.powersave = 2
+```
+
+**ArchLinux**
+
+/etc/udev/rules.d/81-wifi-powersave.rules
+
+```
+ACTION==“add”, SUBSYSTEM==‘net’, KERNEL==“wl*”, RUN+=“/usr/bin/iw dev wlan0 set power_save off”
+```
+Change wlan0 to the name of your wifi that you will find with the ifconfig command.
+
+Other considerations:
+
+- Try changing the Wi-Fi frequency of your RPI and your PC from “automatic” to “2.4 GHz.” Change the channel if necessary.
+  
+- Try changing your regdomain. To configure the regdomain, install wireless-regdb and reboot, then edit the /etc/conf.d/wireless-regdom file and uncomment the appropriate domain by removing the # sign in front of your country code (e.g., US), or add cfg80211.ieee80211_regdom=" your country code" to cmdline.txt.
+
 # Adding swap
 By default astroarch don't have swap, for prevent issues about memory space you can add a swap file and enable it, we will set swappiness to 10 don't use swap file if RAM space is ok.
 In this example we make a 2GB swapfile 
@@ -264,10 +330,6 @@ If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at 
 To use a GPS dongle, simply plug in your device and activate the GPSD service which is disabled by default. So the only command required is sudo systemctl enable gpsd --now and the service will start automatically after each boot. You can also manually edit /etc/gpsd and hardcode the device path on the DEVICES="" line with DEVICES="/dev/gps0"
 
 Otherwise, simply use the following command `gps_on` to perform these two operations.
-
-For users of a GPS USB dongle models u-blox 7 or VK-162 with a mount using the eqmod module, use the `gps_ublox_on` command. This helps avoid a conflict between the GPS and the mount.
-
-For GPS UART users, use the `gps_uart_on` command.
 
 If you want to disable automatic startup of the GPS daemon, run `gps_off`.
 
