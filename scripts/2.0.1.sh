@@ -17,8 +17,8 @@ fi
 # Package jq for new gps.plugin.zsh
 sudo pacman -Sy jq --noconfirm
 
-# Package xrdp
-sudo pacman -Sy xrdp
+# Package AUR xrdp
+paru -Sy xrdp --noconfirm
 sudo systemctl enable xrdp
 
 # Update xorg.conf following updates (vnc)

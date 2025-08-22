@@ -107,6 +107,9 @@ cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
 # Copy v3d X config
 cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 
+# Copy udev rule to disable wifi power saving
+cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
+
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 

@@ -226,6 +226,8 @@ Other considerations:
 - Try changing the Wi-Fi frequency of your RPI and your PC from “automatic” to “2.4 GHz.” Change the channel if necessary.
   
 - Try changing your regdomain. To configure the regdomain, install wireless-regdb and reboot, then edit the /etc/conf.d/wireless-regdom file and uncomment the appropriate domain by removing the # sign in front of your country code (e.g., US), or add cfg80211.ieee80211_regdom=" your country code" to cmdline.txt.
+  
+- If you are using RealVNC Viewer, set the image quality to high in the options. Other values ​​cause CPU issues.
 
 # Adding swap
 By default astroarch don't have swap, for prevent issues about memory space you can add a swap file and enable it, we will set swappiness to 10 don't use swap file if RAM space is ok.
