@@ -16,4 +16,16 @@ sudo systemctl enable xrdp-sesman
 sudo systemctl start xrdp
 sudo systemctl start xrdp-sesman
 
+# Disable do not disturb mode
+if [ ! -f /home/astronaut/.config/plasmanotifyrc ]; then
+cat <<EOF >/home/astronaut/.config/plasmanotifyrc
+[DoNotDisturb]
+WhenFullscreen=false
+WhenScreensMirrored=false
+EOF
+else
+sed -i '$a\\[DoNotDisturb]\nWhenFullscreen=false\nWhenScreensMirrored=false' /home/astronaut/.config/plasmanotifyrc
+fi
+
+
 
