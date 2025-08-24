@@ -89,6 +89,11 @@ function update-astroarch()
 
     if [ $OLD_VER != $NEW_VER ]; then
 	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
+        if [[ $? -eq 1 ]]; then
+        git reset --hard HEAD-1
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Sript '$NEW_VER' failed'
+        fi;
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Sript '$NEW_VER' succeded'
     fi;
 
     # Temporary fix for kde-portal duplicated conf
