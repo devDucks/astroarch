@@ -45,7 +45,7 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
 	qt6-serialport qt6ct udisks2-qt5 xorg-fonts-misc fuse2 \
 	fortune-mod cowsay pacman-contrib arandr neofetch \
 	astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-	kdialog jq xrdp --noconfirm --ask 4
+	kdialog jq --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -60,6 +60,9 @@ usermod -aG video sddm
 sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
+
+# Install AUR packages
+su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
 
 # Make all necessary folders
 mkdir /etc/sddm.conf.d
@@ -119,11 +122,18 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 # Enable vncserver
 systemctl enable x0vncserver
 
+# Enable xrdp
+chmod +x /home/astronaut/.astroarch/configs/startwm.sh
+sudo mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
+ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
+systemctl enable xrdp.service
+systemctl enable xrdp-sesman.service
+
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service xrdp.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
