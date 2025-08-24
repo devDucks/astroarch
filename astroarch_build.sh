@@ -126,6 +126,7 @@ systemctl enable x0vncserver
 chmod +x /home/astronaut/.astroarch/configs/startwm.sh
 sudo mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
+ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
 systemctl enable xrdp.service
 systemctl enable xrdp-sesman.service
 
