@@ -9,6 +9,8 @@ chmod +x /home/astronaut/.astroarch/configs/startwm.sh
 sudo mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 sudo ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 sudo ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
+sudo ln -s /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
+sudo ln -s /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
 sudo systemctl enable xrdp
 sudo systemctl enable xrdp-sesman
 sudo systemctl start xrdp
