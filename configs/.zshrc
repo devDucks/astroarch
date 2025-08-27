@@ -80,6 +80,10 @@ function update-astroarch()
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
+    # Store the current commit hash before the pull
+    cd /home/$USER/.astroarch
+    CURRENT_COMMIT=$(git rev-parse HEAD)
+
     # Checkout latest changes from git
     cd /home/$USER/.astroarch
     git pull origin main
@@ -87,13 +91,23 @@ function update-astroarch()
 
     NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
 
-    if [ $OLD_VER != $NEW_VER ]; then
-	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
-        if [[ $? -eq 1 ]]; then
-        git reset --hard HEAD-1
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Sript '$NEW_VER' failed'
-        fi;
-    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Sript '$NEW_VER' succeded'
+    if [[ "$OLD_VER" != "$NEW_VER" ]]; then
+        # Find all patch scripts, sort them by version, and filter out older versions
+        find /home/$USER/.astroarch/scripts/ -type f -regex '.*/[0-9.]+\.sh' | sort -V | awk -v ver="$OLD_VER" '$0 ~ ver {p=1; next} p' | while read -r SCRIPT; do
+            SCRIPT_VER=$(basename "$SCRIPT" .sh)
+
+            zsh "$SCRIPT"
+            if [[ $? -ne 0 ]]; then
+                # Revert to the commit stored before the pull
+                cd /home/$USER/.astroarch
+                git reset --hard "$CURRENT_COMMIT"
+                cd - > /dev/null 2>&1
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
+                return 1 # Stop the function in case of error
+            fi
+        done
+
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
     fi;
 
     # Temporary fix for kde-portal duplicated conf
