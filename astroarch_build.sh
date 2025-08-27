@@ -123,20 +123,17 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 systemctl enable x0vncserver
 
 # Enable xrdp
-chmod +x /home/astronaut/.astroarch/configs/startwm.sh
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
 ln -s /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
 ln -s /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
-systemctl enable xrdp.service
-systemctl enable xrdp-sesman.service
 
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service xrdp.service xrdp-sesman.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

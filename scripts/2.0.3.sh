@@ -11,10 +11,7 @@ sudo ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 sudo ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
 sudo ln -s /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
 sudo ln -s /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
-sudo systemctl enable xrdp
-sudo systemctl enable xrdp-sesman
-sudo systemctl start xrdp
-sudo systemctl start xrdp-sesman
+sudo systemctl enable --now xrdp xrdp-sesman
 
 # Disable do not disturb mode
 if [ ! -f /home/astronaut/.config/plasmanotifyrc ]; then
