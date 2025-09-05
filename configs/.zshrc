@@ -92,17 +92,14 @@ function update-astroarch()
     NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
 
     if [[ "$OLD_VER" != "$NEW_VER" ]]; then
-            zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
-            if [[ $? -ne 0 ]]; then
-                # Revert to the commit stored before the pull
-                cd /home/$USER/.astroarch
-                git reset --hard "$CURRENT_COMMIT"
-                cd - > /dev/null 2>&1
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
-                return 1 # Stop the function in case of error
-            fi
-        done
-
+        zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
+        if [[ $? -ne 0 ]]; then
+            # Revert to the commit stored before the pull
+            cd /home/$USER/.astroarch
+            git reset --hard "$CURRENT_COMMIT"
+            cd - > /dev/null 2>&1
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
+        fi
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
     fi;
 
