@@ -167,7 +167,9 @@ Few VNC client suggestions (work an all platforms):
 
 # Connecting via XRDP client
 Another option to control your Raspberry Pi remotely is to use an XRDP client. For this you can use the "remote desktop connection" tool if you are on Windows or on Linux or a software like FreeRDP.
-You can also use the command line xfreerdp /u:astronaut /w:1920 /h:1080 /v:10.42.0.1 after installing the xfreerdp package corresponding to your distribution
+You can also, after installing the xfreerdp package corresponding to your distribution, use the command line: xfreerdp /dynamic-resolution /u:astronaut /w:1920 /h:1080 /v:X.X.X.X (Where X.X.X.X is the IP address of the pi)
+
+Xrdp is smoother and faster than vnc but be aware that it also consumes at least 500M of memory. This can be limiting for use on a Raspberry with only 4G
 
 # Issues with VNC
 

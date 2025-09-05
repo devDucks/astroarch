@@ -80,6 +80,10 @@ function update-astroarch()
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
+    # Store the current commit hash before the pull
+    cd /home/$USER/.astroarch
+    CURRENT_COMMIT=$(git rev-parse HEAD)
+
     # Checkout latest changes from git
     cd /home/$USER/.astroarch
     git pull origin main
@@ -87,8 +91,16 @@ function update-astroarch()
 
     NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
 
-    if [ $OLD_VER != $NEW_VER ]; then
-	zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
+    if [[ "$OLD_VER" != "$NEW_VER" ]]; then
+        zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
+        if [[ $? -ne 0 ]]; then
+            # Revert to the commit stored before the pull
+            cd /home/$USER/.astroarch
+            git reset --hard "$CURRENT_COMMIT"
+            cd - > /dev/null 2>&1
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
+        fi
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
     fi;
 
     # Temporary fix for kde-portal duplicated conf
