@@ -92,11 +92,7 @@ function update-astroarch()
     NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
 
     if [[ "$OLD_VER" != "$NEW_VER" ]]; then
-        # Find all patch scripts, sort them by version, and filter out older versions
-        find /home/$USER/.astroarch/scripts/ -type f -regex '.*/[0-9.]+\.sh' | sort -V | awk -v ver="$OLD_VER" '$0 ~ ver {p=1; next} p' | while read -r SCRIPT; do
-            SCRIPT_VER=$(basename "$SCRIPT" .sh)
-
-            zsh "$SCRIPT"
+            zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
             if [[ $? -ne 0 ]]; then
                 # Revert to the commit stored before the pull
                 cd /home/$USER/.astroarch
