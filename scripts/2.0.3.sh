@@ -11,8 +11,8 @@ chmod +x /home/astronaut/.astroarch/configs/startwm.sh
 sudo mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 sudo ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 sudo ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-sudo ln -sfn /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
-sudo ln -sfn /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
+sudo cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
+sudo cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
 sudo systemctl enable --now xrdp xrdp-sesman
 
 # Disable do not disturb mode
