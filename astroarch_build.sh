@@ -154,6 +154,10 @@ su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop 
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
+# Autostart AstroArch-onboarding
+su astronaut -c "mkdir /home/astronaut/.config/autostart"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
+
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
 
