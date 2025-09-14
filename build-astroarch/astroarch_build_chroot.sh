@@ -61,7 +61,7 @@ pacman -S wget git zsh vi dhcp dnsmasq paru usbutils uboot-tools cloud-guest-uti
 		plasma-systemmonitor dolphin kate konsole ksystemlog discover kwalletmanager \
 		kgpg spectacle kscreen dialog kdenetwork-filesharing screen kdialog \
 		gpsd chrony tigervnc novnc samba pipewire-jack wireplumber \
-		chromium firefox astroarch-status-notifications astromonitor astroarch-onboarding \
+		chromium firefox astroarch-status-notifications astromonitor \
 		xplanet astrometry.net gsc kstars phd2 stellarsolver astro_dmx \
 		indi-3rdparty-libs indi-3rdparty-drivers indiserver-ui libcamera-ipa --noconfirm --ask 4
 
@@ -127,6 +127,9 @@ systemctl stop smb
 # Link a zsh config for astronaut
 su astronaut -c "ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc"
 
+# Install onboarding
+pacman -S astroarch-onboarding --noconfirm
+
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
 sleep 5
@@ -144,8 +147,6 @@ ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/n
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
-ln -s /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/astroarch-onboarding.service
-ln -s /home/astronaut/.astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/astroarch-onboarding.timer
 
 # Copy xorg config
 cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
@@ -197,7 +198,8 @@ su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desk
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
@@ -226,8 +228,9 @@ cp /plasmasystemsettings.sh /home/astronaut/.cache/plasmasystemsettings.sh
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
+sed -i '/root/ s/$/ usb-storage.quirks=152d:1576:u/' /boot/cmdline.txt
 
-# Clear script in autostart
+# Script in timer
 cp /clear-install-astroarch.service /etc/systemd/system/
 cp /clear-install-astroarch.timer /etc/systemd/system/
 systemctl enable clear-install-astroarch.timer

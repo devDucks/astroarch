@@ -2,7 +2,7 @@
 Description=Timer clear install astroarch
 
 [Timer]
-OnBootSec=10min
+OnBootSec=5min
 Unit=clear-install-astroarch.service
 
 [Install]
