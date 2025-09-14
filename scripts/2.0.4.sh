@@ -4,7 +4,7 @@ bash /home/astronaut/.astroarch/scripts/2.0.3.sh
 
 # Install Astroarch-onboarding
 
-sudo pacman -S astroarch-onboarding
+sudo pacman -S astroarch-onboarding --noconfirm
 cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding
 
 
