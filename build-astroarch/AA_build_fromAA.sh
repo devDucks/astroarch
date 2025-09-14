@@ -54,35 +54,18 @@ echo "Erase disk $DISK"
 read -p "Press enter to continue"
 
 # Erase
-sudo -S dd if=/dev/zero of=$DISK bs=440 count=1 status=progress
+sudo sfdisk --wipe always --delete $DISK
 echo
 
-# Fdisk
-echo "Make partitions on $DISK"
-(
-  echo p;
-  echo o;
-  echo n;
-  echo ;
-  echo ;
-  echo ;
-  echo +537M;
-  echo t;
-  echo 0c;
-  echo a;
-  echo n;
-  echo ;
-  echo ;
-  echo ;
-  echo ;
-  echo w;
-) | sudo fdisk $DISK
-echo
+sudo sfdisk --quiet --wipe always $DISK << EOF
+,+512M,0c,
+,,,
+EOF
 
 # Format
 echo "Format partitions on $DISK"
 #read -p "Press enter to continue"
-sudo mkfs.vfat -n 'BOOT' $PART1
+sudo mkfs.vfat $PART1
 echo y | sudo mkfs.ext4 $PART2
 echo "done"
 

@@ -11,8 +11,8 @@ rm /update-astroarch.sh.desktop
 rm /home/astronaut/.cache/update-astroarch.sh
 rm /home/astronaut/.cache/plasmasystemsettings.sh
 rm /home/astronaut/.config/autostart/plasmasystemsettings.sh.desktop
-rm /home/astronaut/.config/autostart/update-astroarch.sh.desktop
+rm /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop
+rm /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop
 
 systemctl disable clear-install-astroarch.timer
-systemctl disable astroarch-onboarding.timer
 
