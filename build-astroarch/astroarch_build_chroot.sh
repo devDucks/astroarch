@@ -228,7 +228,6 @@ cp /plasmasystemsettings.sh /home/astronaut/.cache/plasmasystemsettings.sh
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
-sed -i '/root/ s/$/ usb-storage.quirks=152d:1576:u/' /boot/cmdline.txt
 
 # Script in timer
 cp /clear-install-astroarch.service /etc/systemd/system/
