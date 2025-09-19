@@ -89,7 +89,6 @@ echo $DISK > diskchroot
 sudo cp diskchroot ~/root
 sudo cp plasmasystemsettings.sh.desktop ~/root
 sudo cp clear-install-astroarch.service ~/root
-sudo cp clear-install-astroarch.timer ~/root
 sudo cp clear-install-astroarch.sh ~/root
 sudo cp plasmasystemsettings.sh ~/root
 

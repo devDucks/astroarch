@@ -52,7 +52,7 @@ pacman -S wget git zsh vi dhcp dnsmasq paru usbutils uboot-tools cloud-guest-uti
 		libdeflate libomxil-bellagio libsigc++ libsoup lrzip lzop nano net-tools netctl nilfs-utils \
 		raspberrypi-utils rpi5-eeprom sshfs wireless-regdb wireless_tools drbl dtc \
 		fortune-mod cowsay neofetch flatpak ark cups cups-pdf rpi-imager \
-		openexr openresolv pangomm partimage pbzip2 pigz pixz jq \
+		openexr openresolv pangomm partimage pbzip2 pigz pixz \
 		plasma-desktop plasma-nm plasma-x11-session sddm sddm-kcm xf86-video-dummy xf86-video-fbdev xorg xorg-fonts-misc \
 		gnu-free-fonts breeze-icons hicolor-icon-theme \
 		networkmanager network-manager-applet networkmanager-qt \
@@ -70,6 +70,24 @@ echo "astroarch" > /etc/hostname
 echo "127.0.0.1          localhost" >> /etc/hosts
 echo "127.0.1.1          astroarch" >> /etc/hosts
 
+# Config network for systemd-networkd-wait-online.service
+cat <<EOF > /etc/systemd/network/en.network
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
+DNSSEC=no
+EOF
+cat <<EOF > /etc/systemd/network/eth.network
+[Match]
+Name=eth*
+
+[Network]
+DHCP=yes
+DNSSEC=no
+EOF
+
 # Uncomment en_US UTF8 and generate locale files
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
@@ -79,6 +97,13 @@ timedatectl set-timezone Europe/London
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+
+# Added alarm user mandatory for proper configuration of Arm Arch packages
+useradd -mG wheel -m alarm
+echo "alarm:alarm" | chpasswd
+
+# Add alarm group
+usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users alarm
 
 # create user astro with home, add it to wheel
 useradd -mG wheel -m astronaut
@@ -100,9 +125,6 @@ su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astro
 sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
-
-# Install AUR packages
-su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
 
 # Make all necessary folders
 mkdir /etc/sddm.conf.d
@@ -127,9 +149,6 @@ systemctl stop smb
 # Link a zsh config for astronaut
 su astronaut -c "ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc"
 
-# Install onboarding
-pacman -S astroarch-onboarding --noconfirm
-
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
 sleep 5
@@ -148,15 +167,6 @@ ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
 
-# Copy xorg config
-cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
-
-# Copy v3d X config
-cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
-
-# Copy udev rule to disable wifi power saving
-cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
-
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 
@@ -166,15 +176,8 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
-# Enable xrdp
-mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
-ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
-ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
-cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
-
 # Enable now all services
-systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service x0vncserver.service cups.service xrdp.service xrdp-sesman.service resize_once.service
+systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service x0vncserver.service cups.service resize_once.service
 
 # Install astrometry files
 #mkdir -p /home/astronaut/.local/share/kstars/astrometry/
@@ -189,20 +192,14 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astro
 su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
 su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
 su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -s /usr/share/applications/phd2.desktop /home/astronaut/Desktop/phd2.desktop"
 su astronaut -c "ln -s /usr/share/applications/xgps.desktop /home/astronaut/Desktop/xgps.desktop"
 su astronaut -c "ln -s /usr/share/applications/indiserver-ui.desktop /home/astronaut/Desktop/indiserver-ui.desktop"
-su astronaut -c "ln -s /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool.desktop"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
-
-# Make the icons executable so there will be no ! on the first boot
-chmod +x /home/astronaut/Desktop/update-astroarch
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
@@ -225,17 +222,17 @@ su astronaut -c "mkdir -p /home/astronaut/.cache"
 cp /clear-install-astroarch.sh /home/astronaut/.cache/clear-install-astroarch.sh
 cp /plasmasystemsettings.sh /home/astronaut/.cache/plasmasystemsettings.sh
 
-# If we are on a raspberry let's adjust /boot/config.txt
-cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
-cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
-
-# Script in timer
+# Script to clean
 cp /clear-install-astroarch.service /etc/systemd/system/
-cp /clear-install-astroarch.timer /etc/systemd/system/
-systemctl enable clear-install-astroarch.timer
+systemctl enable clear-install-astroarch.service
 
 # Assigns files to user astronaut
 chown -R astronaut:astronaut /home/astronaut
+
+# Apply recursives scripts for patch AstroArch
+su astronaut -c "zsh /home/astronaut/.astroarch/scripts/2.0.5.sh"
+
+sed -i '/root/ s/$/ usb-storage.quirks=152d:1576:u/' /boot/cmdline.txt
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

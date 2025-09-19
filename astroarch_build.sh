@@ -61,9 +61,6 @@ sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
 
-# Install AUR packages
-su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
-
 # Make all necessary folders
 mkdir /etc/sddm.conf.d
 su astronaut -c "mkdir -p /home/astronaut/.config"
@@ -104,15 +101,6 @@ ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
 
-# Copy xorg config
-cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
-
-# Copy v3d X config
-cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
-
-# Copy udev rule to disable wifi power saving
-cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
-
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 
@@ -122,18 +110,11 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 # Enable vncserver
 systemctl enable x0vncserver
 
-# Enable xrdp
-mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
-ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
-ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-ln -s /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
-ln -s /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
-
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service xrdp.service xrdp-sesman.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -152,9 +133,6 @@ su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop 
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
-# Make the icons executable so there will be no ! on the first boot
-chmod +x /home/astronaut/Desktop/update-astroarch
-
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
 
@@ -172,8 +150,8 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/ast
 # Set a standard TZ to avoid breaking plasma clock widget
 timedatectl set-timezone Europe/London
 
-# If we are on a raspberry let's adjust /boot/config.txt
-cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
+# Apply recursives scripts for patch AstroArch
+su astronaut -c "zsh /home/astronaut/.astroarch/scripts/2.0.5.sh"
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
