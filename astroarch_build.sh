@@ -33,8 +33,8 @@ locale-gen
 pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
         zsh plasma-desktop sddm networkmanager xf86-video-dummy \
 	network-manager-applet networkmanager-qt chromium xorg konsole \
-	gpsd breeze-icons hicolor-icon-theme knewstuff5 tigervnc \
-	knotifyconfig5 kplotting5 qt6-datavis3d qt5-quickcontrols \
+	gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
+	knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
 	qt6-websockets qtkeychain stellarsolver xf86-video-fbdev \
 	xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
 	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
