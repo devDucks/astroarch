@@ -126,10 +126,17 @@ systemctl enable x0vncserver
 
 # Enable xrdp
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
-ln -s /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
-ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-ln -s /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
-ln -s /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
+ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
+ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
+ln -sfn /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
+ln -sfn /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
+
+#
+su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
+[DoNotDisturb]
+WhenFullscreen=false
+WhenScreensMirrored=false
+EOF"
 
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
