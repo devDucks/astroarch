@@ -190,9 +190,6 @@ cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
-# Enable dark breeze theme
-su astronaut -c "plasma-apply-desktoptheme breeze-dark"
-
 # Increases the xrdp buffer
 sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
