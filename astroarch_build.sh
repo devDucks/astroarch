@@ -184,5 +184,8 @@ cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
+# Enable dark breeze theme
+su astronaut -c "plasma-apply-desktoptheme breeze-dark"
+
 # Reboot and enjoy now
 reboot
