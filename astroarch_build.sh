@@ -60,6 +60,7 @@ usermod -aG video sddm
 sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
+sed -i -E 's/^[#]?X11Forwarding.*/X11Forwarding yes/' /etc/ssh/sshd_config
 
 # Install AUR packages
 su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
@@ -119,17 +120,15 @@ cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
-# Enable vncserver
-systemctl enable x0vncserver
-
 # Enable xrdp
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-ln -sfn /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
-ln -sfn /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
+# Not ln this files
+cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
+cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
 
-#
+# Reactivate notifications (disable by default in kde?)
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
 [DoNotDisturb]
 WhenFullscreen=false
@@ -140,7 +139,7 @@ EOF"
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service xrdp.service xrdp-sesman.service
+systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service x0vncserver.service xrdp.service xrdp-sesman.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -158,11 +157,13 @@ su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/
 su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
-su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
+su astronaut -c "ln -snf /home/astronaut/.config/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
+# WARGNING --> Uncomment these lines if you have to create a service that will delete them after the first system boot otherwise astroarch-onboarding will launch at each startup
+#su astronaut -c "cp /home/astronaut/.config/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
+#su astronaut -c "cp /home/astronaut/.config/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
@@ -188,6 +189,7 @@ timedatectl set-timezone Europe/London
 
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
+cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
