@@ -167,7 +167,7 @@ su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
 chmod +x /home/astronaut/Desktop/AstroArch-onboarding
-chmod +x /home/astronaut/Desktop/Arch-Tweak-Toolstroarch
+chmod +x /home/astronaut/Desktop/Arch-Tweak-Tool
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
