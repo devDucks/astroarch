@@ -198,5 +198,12 @@ sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /e
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x82000\" > /etc/modprobe.d/brcmfmac.conf"
 
+# Override cmdline.txt (Only on QEMU)
+if command -v systemd-detect-virt >/dev/null 2>&1; then
+    if [ "$(systemd-detect-virt)" = "qemu" ]; then
+        echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
+    fi
+fi
+
 # Reboot and enjoy now
 reboot
