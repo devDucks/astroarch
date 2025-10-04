@@ -31,9 +31,8 @@ UUID=$UUID_part2  /       ext4    rw,relatime                           0       
 EOF
 
 # Parallelize pacman download to 5 and use pacman as progress bar
-sed -i 's|ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
-sed -i '/ParallelDownloads=5/aILoveCandy' /etc/pacman.conf
-sed -i '/ParallelDownloads=5/aDisableDownloadTimeout' /etc/pacman.conf
+sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
+sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\nDisableDownloadTimeout\n|g' /etc/pacman.conf
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
 sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
@@ -63,7 +62,7 @@ pacman -S wget git zsh vi dhcp dnsmasq paru usbutils uboot-tools cloud-guest-uti
 		gpsd chrony tigervnc novnc samba pipewire-jack wireplumber \
 		chromium firefox astroarch-status-notifications astromonitor \
 		xplanet astrometry.net gsc kstars phd2 stellarsolver astro_dmx \
-		indi-3rdparty-libs indi-3rdparty-drivers indiserver-ui libcamera-ipa --noconfirm --ask 4
+		indi-3rdparty-libs indi-3rdparty-drivers indiserver-ui libcamera-ipa astroarch-onboarding --noconfirm --ask 4
 
 # config hostnames
 echo "astroarch" > /etc/hostname
@@ -132,8 +131,6 @@ sed -i -E 's/^[#]?X11Forwarding.*/X11Forwarding yes/' /etc/ssh/sshd_config
 
 # Install AUR packages
 su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
-
-pacman -Sy astroarch-onboarding --noconfirm
 
 # Make all necessary folders
 mkdir /etc/sddm.conf.d
@@ -228,20 +225,20 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
 # Copy desktop icons
-su astronaut -c "ln -snf /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
-su astronaut -c "ln -snf /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
-su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
-su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/phd2.desktop"
-su astronaut -c "ln -snf /usr/share/applications/xgps.desktop /home/astronaut/Desktop/xgps.desktop"
-su astronaut -c "ln -snf /usr/share/applications/indiserver-ui.desktop /home/astronaut/Desktop/indiserver-ui.desktop"
-su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
-su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
-su astronaut -c "ln -snf /home/astronaut/.config/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding.desktop"
+su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
+su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
+su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
+su astronaut -c "ln -s /usr/share/applications/phd2.desktop /home/astronaut/Desktop/phd2.desktop"
+su astronaut -c "ln -s /usr/share/applications/xgps.desktop /home/astronaut/Desktop/xgps.desktop"
+su astronaut -c "ln -s /usr/share/applications/indiserver-ui.desktop /home/astronaut/Desktop/indiserver-ui.desktop"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
+su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
+su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding.desktop"
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "cp /home/astronaut/.config/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
-su astronaut -c "cp /home/astronaut/.config/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
+su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
+su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
@@ -255,21 +252,15 @@ cp -r /home/astronaut/.astroarch/assets/icons/* /usr/share/webapps/novnc/app/ima
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
-# Install files in autostart folder
-su astronaut -c "mkdir -p /home/astronaut/.config/autostart/"
-cp /plasmasystemsettings.sh.desktop /home/astronaut/.config/autostart/plasmasystemsettings.sh.desktop
+# Config plasma theme AstroArch
+cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
+cp -r /home/astronaut/.astroarch/configs/layout-templates/astroarchPanel /usr/share/plasma/layout-templates/
+chown root:root /home/astronaut/.astroarch/configs/kdeglobals
+chmod 644 /home/astronaut/.astroarch/configs/kdeglobals
+cp /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
-
-# Install conf & clean files
-su astronaut -c "mkdir -p /home/astronaut/.cache"
-cp /clear-install-astroarch.sh /home/astronaut/.cache/clear-install-astroarch.sh
-cp /plasmasystemsettings.sh /home/astronaut/.cache/plasmasystemsettings.sh
-
-# Script to clean
-cp /clear-install-astroarch.service /etc/systemd/system/
-systemctl enable clear-install-astroarch.service
 
 # Assigns files to user astronaut
 chown -R astronaut:astronaut /home/astronaut

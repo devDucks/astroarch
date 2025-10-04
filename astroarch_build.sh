@@ -191,6 +191,13 @@ timedatectl set-timezone Europe/London
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
 
+# Config plasma theme AstroArch
+cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
+cp -r /home/astronaut/.astroarch/configs/layout-templates/astroarchPanel /usr/share/plasma/layout-templates/
+chown root:root /home/astronaut/.astroarch/configs/kdeglobals
+chmod 644 /home/astronaut/.astroarch/configs/kdeglobals
+cp /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
+
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 

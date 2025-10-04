@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "Plasma/LayoutTemplate",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "promat85@gmail.com",
+                "Name": "Mattia Procopio"
+            }
+        ],
+        "Category": "",
+        "Description": "AstroArch panel",
+        "EnabledByDefault": true,
+        "Id": "astroarchPanel",
+        "License": "LGPLv2+",
+        "Name": "AstroArch Panel",
+        "Website": "https://github.com/devDucks/astroarch"
+    },
+    "X-Plasma-ContainmentCategories": [
+        "panel"
+    ],
+    "X-Plasma-Shell": "plasmashell"
+}
