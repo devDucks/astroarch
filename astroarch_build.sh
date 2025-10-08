@@ -190,6 +190,8 @@ timedatectl set-timezone Europe/London
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
+uuid_root=$(findmnt / -o UUID -n)
+sudo sed -i 's/root=UUID=c2cea082-7f3e-43e2-b6a1-0c8540d350cc/root=UUID=\'$uuid_root'/g' /boot/cmdline.txt
 
 # Config plasma theme AstroArch
 cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
@@ -200,7 +202,6 @@ cp /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
-
 # Increases the xrdp buffer
 sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
