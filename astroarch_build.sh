@@ -196,9 +196,9 @@ sudo sed -i 's/root=UUID=c2cea082-7f3e-43e2-b6a1-0c8540d350cc/root=UUID=\'$uuid_
 # Config plasma theme AstroArch
 cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
 cp -r /home/astronaut/.astroarch/configs/layout-templates/astroarchPanel /usr/share/plasma/layout-templates/
-chown root:root /home/astronaut/.astroarch/configs/kdeglobals
-chmod 644 /home/astronaut/.astroarch/configs/kdeglobals
 cp /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
+chown root:root /etc/xdg/kdeglobals
+chmod 644 /etc/xdg/kdeglobals
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
