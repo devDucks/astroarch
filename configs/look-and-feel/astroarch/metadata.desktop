@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=AstroArch Dark
+Comment=AstroArch theme for kde plasma
+Encoding=UTF-8
+Keywords=Desktop;Workspace;Appearance;Look and Feel;Logout;Lock;Suspend;Shutdown;Hibernate;
+
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/LookAndFeel
+X-KDE-ParentApp=
+X-KDE-PluginInfo-Author=Mattia Procopio
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Email=promat85@gmail.com
+X-KDE-PluginInfo-License=GPL3.0
+X-KDE-PluginInfo-Name=astroarch
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=https://github.com/devDucks/astroarch
+X-KDE-fallbackPackage=org.kde.breeze.desktop
+X-Plasma-MainScript=defaults

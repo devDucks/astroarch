@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "promat85@gmail.com",
+                "Name": "Mattia Procopio"
+            }
+        ],
+        "Description": "Custom theme AstroArch",
+        "Id": "astroarch",
+        "License": "LGPL 2.1+",
+        "Name": "AstroArch",
+        "Website": "https://github.com/devDucks/astroarch"
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;",
+    "X-Plasma-APIVersion": "2",
+    "X-Plasma-MainScript": "default"
+}
