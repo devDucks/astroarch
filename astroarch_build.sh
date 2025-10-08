@@ -5,7 +5,17 @@ set -e
 ARCH=$(uname -m)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
-sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy\nDisableDownloadTimeout\n|g' /etc/pacman.conf
+sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
+
+# Let's go pacman (the real pacman)
+if ! grep -q '^[[:space:]]*ILoveCandy' /etc/pacman.conf; then
+    echo "ILoveCandy" | tee -a /etc/pacman.conf
+fi
+
+# Let's go pacman (the real pacman)
+if ! grep -q '^[[:space:]]*DisableDownloadTimeout' /etc/pacman.conf; then
+    echo "DisableDownloadTimeout" | tee -a /etc/pacman.conf
+fi
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
 sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
@@ -31,21 +41,21 @@ sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
-        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-	network-manager-applet networkmanager-qt chromium xorg konsole \
-	gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
-	knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
-	qt6-websockets qtkeychain stellarsolver xf86-video-fbdev \
-	xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
-	dolphin uboot-tools usbutils cloud-guest-utils samba paru \
-	websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
-	indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
-	i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
-	ksystemlog discover kwalletmanager kgpg qt6-serialbus \
-	qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
-	fortune-mod cowsay pacman-contrib arandr neofetch \
-	astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-	kdialog jq astroarch-onboarding dhcpcd --noconfirm --ask 4
+       zsh plasma-desktop sddm networkmanager xf86-video-dummy \
+       network-manager-applet networkmanager-qt chromium xorg konsole \
+       gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
+       knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
+       qt6-websockets qtkeychain stellarsolver xf86-video-fbdev \
+       xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
+       dolphin uboot-tools usbutils cloud-guest-utils samba paru \
+       websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
+       indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
+       i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
+       ksystemlog discover kwalletmanager kgpg qt6-serialbus \
+       qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
+       fortune-mod cowsay pacman-contrib arandr neofetch \
+       astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
+       kdialog jq astroarch-onboarding dhcpcd iw --noconfirm --ask 4
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -152,20 +162,22 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
 # Copy desktop icons
-su astronaut -c "ln -s /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
-su astronaut -c "ln -s /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
-su astronaut -c "ln -s /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
-su astronaut -c "ln -s /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
+su astronaut -c "ln -snf /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
+su astronaut -c "ln -snf /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
+su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
+su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "cp /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
+chmod +x /home/astronaut/Desktop/AstroArch-onboarding
+chmod +x /home/astronaut/Desktop/Arch-Tweak-Tool
 
 # Remove actual novnc icons
 rm -r /usr/share/webapps/novnc/app/images/icons/*
@@ -195,6 +207,13 @@ sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /e
 
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x82000\" > /etc/modprobe.d/brcmfmac.conf"
+
+# Override cmdline.txt (Only on QEMU)
+if command -v systemd-detect-virt >/dev/null 2>&1; then
+    if [ "$(systemd-detect-virt)" = "qemu" ]; then
+        echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
+    fi
+fi
 
 # Reboot and enjoy now
 reboot
