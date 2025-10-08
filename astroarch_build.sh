@@ -209,6 +209,8 @@ timedatectl set-timezone Europe/London
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
 
+install -o root -g root -m 644 /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
+
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 

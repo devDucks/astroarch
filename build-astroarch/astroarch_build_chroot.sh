@@ -211,9 +211,12 @@ cp -r /home/astronaut/.astroarch/assets/icons/* /usr/share/webapps/novnc/app/ima
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
-# Install files in autostart folder
-su astronaut -c "mkdir -p /home/astronaut/.config/autostart/"
-cp /plasmasystemsettings.sh.desktop /home/astronaut/.config/autostart/plasmasystemsettings.sh.desktop
+# Config plasma theme AstroArch
+cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
+cp -r /home/astronaut/.astroarch/configs/layout-templates/astroarchPanel /usr/share/plasma/layout-templates/
+cp /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
+chown root:root /etc/xdg/kdeglobals
+chmod 644 /etc/xdg/kdeglobals
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
