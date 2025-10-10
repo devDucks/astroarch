@@ -9,12 +9,11 @@ sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
 
 # Let's go pacman (the real pacman)
 if ! grep -q '^[[:space:]]*ILoveCandy' /etc/pacman.conf; then
-    echo "ILoveCandy" | tee -a /etc/pacman.conf
+    sed -i 's|ParallelDownloads = 5|ParallelDownloads=5\nILoveCandy|g' /etc/pacman.conf
 fi
 
-# Let's go pacman (the real pacman)
 if ! grep -q '^[[:space:]]*DisableDownloadTimeout' /etc/pacman.conf; then
-    echo "DisableDownloadTimeout" | tee -a /etc/pacman.conf
+    sed -i 's|ParallelDownloads = 5|ParallelDownloads=5\nDisableDownloadTimeout|g' /etc/pacman.conf
 fi
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
@@ -40,7 +39,11 @@ su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astro
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
-pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
+# If we are on QEMU, packages have already been pulled in the docker phase - install only the pi kernel
+if command -v systemd-detect-virt >/dev/null 2>&1; then
+    pacman -Syu linux-rpi linux-rpi-headers --noconfirm
+else
+    pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
        network-manager-applet networkmanager-qt chromium xorg konsole \
        gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
@@ -56,6 +59,8 @@ pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
        kdialog jq astroarch-onboarding dhcpcd iw --noconfirm --ask 4
+fi
+
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
