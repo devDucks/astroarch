@@ -3,9 +3,12 @@ set -e
 
 # Grab the OS architecture for further forked logic
 ARCH=$(uname -m)
+HAS_VIRT=$(command -v systemd-detect-virt >/dev/null 2>&1 && echo 1 || echo 0)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
-sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
+if [ "$HAS_VIRT" -eq 0 ]; then
+    sed -i 's|#ParallelDownloads = 5|ParallelDownloads=5|g' /etc/pacman.conf
+fi
 
 # Let's go pacman (the real pacman)
 if ! grep -q '^[[:space:]]*ILoveCandy' /etc/pacman.conf; then
@@ -17,7 +20,9 @@ if ! grep -q '^[[:space:]]*DisableDownloadTimeout' /etc/pacman.conf; then
 fi
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
-sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
+if [ "$HAS_VIRT" -eq 0 ]; then
+    sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
+fi
 
 # Bootstrap pacman-key
 pacman-key --init && pacman-key --populate archlinuxarm
@@ -40,8 +45,8 @@ sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 # If we are on QEMU, packages have already been pulled in the docker phase - install only the pi kernel
-if command -v systemd-detect-virt >/dev/null 2>&1; then
-    pacman -Syu linux-rpi linux-rpi-headers --noconfirm
+if [ "$HAS_VIRT" -eq 1 ]; then
+    pacman -Syu linux-rpi linux-rpi-headers --noconfirm --ask 4
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
@@ -211,20 +216,16 @@ su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwall
 sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
 # Modprobe brcmfmac
-bash -c "echo \"options brcmfmac feature_disable=0x82000\" > /etc/modprobe.d/brcmfmac.conf"
+bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
 
 # Override cmdline.txt (Only on QEMU)
-if command -v systemd-detect-virt >/dev/null 2>&1; then
-    if [ "$(systemd-detect-virt)" = "qemu" ]; then
-        echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
-    fi
+if [ "$HAS_VIRT" -eq 1 ]; then
+    echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 fi
 
 # Reboot and enjoy now
-if command -v systemd-detect-virt >/dev/null 2>&1; then
-    if [ "$(systemd-detect-virt)" = "qemu" ]; then
-        shutdown now
-    else
-	reboot
-    fi
+if [ "$HAS_VIRT" -eq 0 ]; then
+    reboot
+else
+    shutdown
 fi
