@@ -178,11 +178,11 @@ su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/
 su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
-su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
+su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
+su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
