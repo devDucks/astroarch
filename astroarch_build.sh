@@ -216,4 +216,10 @@ if command -v systemd-detect-virt >/dev/null 2>&1; then
 fi
 
 # Reboot and enjoy now
-reboot
+if command -v systemd-detect-virt >/dev/null 2>&1; then
+    if [ "$(systemd-detect-virt)" = "qemu" ]; then
+        shutdown now
+    else
+	reboot
+    fi
+fi
