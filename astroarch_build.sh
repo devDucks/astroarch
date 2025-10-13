@@ -95,7 +95,7 @@ chsh -s /usr/bin/zsh astronaut
 rm /home/astronaut/.bash*
 cd /home/astronaut
 ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-chown astronaut:astronaut .oh-my-zsh/
+chown -R astronaut:astronaut /home/astronaut/.oh-my-zsh/
 
 # Set the samba pass
 ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
