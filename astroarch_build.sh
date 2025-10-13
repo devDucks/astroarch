@@ -185,6 +185,10 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astro
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/astronaut/Pictures/wallpapers"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
+# Autostart AstroArch-onboarding
+su astronaut -c "mkdir /home/astronaut/.config/autostart"
+su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
+
 # Copy desktop icons
 su astronaut -c "ln -snf /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
 su astronaut -c "ln -snf /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
@@ -195,10 +199,6 @@ su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool
 su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
 su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
-
-# Autostart AstroArch-onboarding
-su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
