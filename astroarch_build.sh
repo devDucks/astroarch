@@ -173,7 +173,7 @@ systemctl enable sddm.service \
 
 # If we are on qemu, enable also the AP creation and resize scripts
 if [ "$HAS_VIRT" -eq 1 ]; then
-    systemctl enable ap_create.service resize_once.service
+    systemctl enable create_ap.service resize_once.service
 fi
 
 # Take sudoers to the original state
