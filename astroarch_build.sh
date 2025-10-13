@@ -133,8 +133,10 @@ cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 # Copy udev rule to disable wifi power saving
 cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
 
-# Copy the polkit script to allow rebooting, shutting down with no errors
+# Polkit rules go here
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/
 
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
@@ -146,8 +148,7 @@ systemctl enable x0vncserver
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-ln -sfn /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
-ln -sfn /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
+
 
 #
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
@@ -160,7 +161,20 @@ EOF"
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
 # Enable now all services
-systemctl enable sddm.service novnc.service dhcpcd.service NetworkManager.service avahi-daemon.service nmb.service smb.service xrdp.service xrdp-sesman.service
+systemctl enable sddm.service \
+	  novnc.service \
+	  dhcpcd.service \
+	  NetworkManager.service \
+	  avahi-daemon.service \
+	  nmb.service \
+	  smb.service \
+	  xrdp.service \
+	  xrdp-sesman.service
+
+# If we are on qemu, enable also the AP creation and resize scripts
+if [ "$HAS_VIRT" -eq 1 ]; then
+    systemctl enable ap_create.service resize_once.service
+fi
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -179,6 +193,8 @@ su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/De
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
+su astronaut -c "cp /usr/share/applications/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
+su astronaut -c "cp /usr/share/applications/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
@@ -233,5 +249,5 @@ fi
 if [ "$HAS_VIRT" -eq 0 ]; then
     reboot
 else
-    shutdown
+    shutdown now
 fi
