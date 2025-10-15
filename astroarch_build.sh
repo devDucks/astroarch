@@ -51,7 +51,7 @@ if [ "$HAS_VIRT" -eq 1 ]; then
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-       network-manager-applet networkmanager-qt chromium xorg konsole \
+       network-manager-applet networkmanager-qt xorg konsole \
        gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
        knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
        qt6-websockets qtkeychain stellarsolver xf86-video-fbdev \
