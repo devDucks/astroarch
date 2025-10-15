@@ -197,7 +197,6 @@ su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/
 su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
-su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
 su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
