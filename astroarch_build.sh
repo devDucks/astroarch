@@ -30,8 +30,9 @@ pacman-key --init && pacman-key --populate archlinuxarm
 # Update all packages now
 pacman -Syu --noconfirm
 
-# Install just 2 packages for the next actions
-pacman -S wget sudo git --noconfirm
+# Install just 2 packages for the next actions, additionally reinstall glibc, this should generate a full
+# list of commented locales
+pacman -S wget sudo git glibc --noconfirm
 
 # create user astro with home, add it to wheel
 useradd -G wheel -m astronaut
