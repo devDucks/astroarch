@@ -7,16 +7,9 @@ HAS_VIRT=$(command -v systemd-detect-virt >/dev/null 2>&1 && echo 1 || echo 0)
 
 # Parallelize pacman download to 5 and use pacman as progress bar
 if [ "$HAS_VIRT" -eq 0 ]; then
-    sed -i 's|#ParallelDownloads=5|ParallelDownloads=5|g' /etc/pacman.conf
-fi
-
-# Let's go pacman (the real pacman)
-if ! grep -q '^[[:space:]]*ILoveCandy' /etc/pacman.conf; then
-    sed -i 's|ParallelDownloads=5|ParallelDownloads=5\nILoveCandy|g' /etc/pacman.conf
-fi
-
-if ! grep -q '^[[:space:]]*DisableDownloadTimeout' /etc/pacman.conf; then
-    sed -i 's|ParallelDownloads=5|ParallelDownloads=5\nDisableDownloadTimeout|g' /etc/pacman.conf
+    sed -i 's|#ParallelDownloads = 5|ParallelDownloads = 5|g' /etc/pacman.conf
+    sed -i 's|ParallelDownloads = 5|ParallelDownloads = 5\nILoveCandy|g' /etc/pacman.conf
+    sed -i 's|ParallelDownloads = 5|ParallelDownloads = 5\nDisableDownloadTimeout|g' /etc/pacman.conf
 fi
 
 # Add astroarch pacman repo to pacman.conf (it must go first)
@@ -245,9 +238,9 @@ if [ "$HAS_VIRT" -eq 1 ]; then
     echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 fi
 
-# Reboot and enjoy now
+# Reboot and enjoy now, if QEMU stop and add indexes
 if [ "$HAS_VIRT" -eq 0 ]; then
     reboot
 else
-    shutdown now
+    echo "Astroarchization achieved, now it's your turn"
 fi
