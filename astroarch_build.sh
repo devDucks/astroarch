@@ -40,7 +40,7 @@ locale-gen
 
 # If we are on QEMU, packages have already been pulled in the docker phase - install only the pi kernel
 if [ "$HAS_VIRT" -eq 1 ]; then
-    pacman -Syu linux-rpi linux-rpi-headers --noconfirm --ask 4
+    pacman -Syu linux-rpi linux-rpi-headers linux-firmware --noconfirm --ask 4
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
