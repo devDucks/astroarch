@@ -181,7 +181,6 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astro
 
 # Autostart AstroArch-onboarding
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
-su astronaut -c "ln -snf /usr/share/applications/AstroArch-onboarding.desktop /home/astronaut/.config/autostart/AstroArch-onboarding.desktop"
 
 # Copy desktop icons
 su astronaut -c "ln -snf /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
