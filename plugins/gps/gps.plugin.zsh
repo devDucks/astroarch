@@ -1,75 +1,141 @@
-function gps_on()
+# Plugin Zsh: GPS Management for Archlinux ARM/Raspberry Pi
+
+# --- Configuration Variables ---
+_ZSH_GPS_GPSD_CONF="/etc/default/gpsd"
+_ZSH_GPS_BAUDS=(4800 9600 19200 38400 57600 115200)
+_ZSH_GPS_PORTS=("/dev/ttyS0" "/dev/ttyAMA0" "/dev/ttyACM0" "/dev/ttyUSB0")
+_ZSH_GPS_TIME_LIMIT=3
+_ZSH_GPS_MIN_BYTES=50
+
+
+# --- Helper Function: Check if a device is sending a GPS stream ---
+# Returns 0 (Success) if a stream is found, 1 otherwise.
+# Output to stdout: NONE. All status messages go to stderr (>2).
+function _zsh_gps_check_device_stream()
 {
-    if pacman -Qs 'gpsd' > /dev/null ; then
-    echo "GPS packages is already installed"
-    else
-	echo "GPS packages not installed, installing them now..."
-	yes | LC_ALL=en_US.UTF-8 sudo pacman -S gpsd
-    echo "GPS packages installed!"
-    fi
-    sudo systemctl enable gpsd.service --now
-    sudo sh -c "echo 'refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' >> /etc/chrony.conf"
-    sudo sh -c "echo 'driftfile /var/lib/chrony/drift' >> /etc/chrony.conf"
-    sudo rm /etc/default/gpsd
-    sudo touch /etc/default/gpsd
-    sudo sh -c 'echo "#Default settings for gpsd." >> /etc/default/gpsd'
+    local DEV="$1"
+    local COUNT=0
 
-    gps_info=$(gpspipe -w -n 10 2>/dev/null)
-    if [[ -n "$gps_info" ]]; then
-    device_path=$(echo "$gps_info" | jq -r 'select(.class=="DEVICES") | .devices[0].path' 2>/dev/null)
-        if [[ -n "$device_path" && "$device_path" != "null" ]]; then
-        echo "The GPS device is mounted on the path : $device_path"
-            if [ $device_path="/dev/ttyACM0" ]; then
-                sudo sh -c 'echo "START_DAEMON=\""false\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "GPSD_OPTIONS=\""-n\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "DEVICES=\""/dev/ttyACM0\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "USBAUTO=\""false\" >> /etc/default/gpsd'
-                sudo systemctl restart gpsd.service --now
-                echo "GPS server USB /dev/ttyACM0 turned ON and enabled to autostart at every boot"
-                return 1
-            elif [ $device_path="/dev/ttyAMA0" ]; then
-                sudo sh -c 'echo "START_DAEMON=\""false\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "GPSD_OPTIONS=\""-n\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "DEVICES=\""/dev/ttyAMA0\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "USBAUTO=\""false\" >> /etc/default/gpsd'
-                sudo systemctl restart gpsd.service --now
-                echo "GPS server USB /dev/ttyAMA0 turned ON and enabled to autostart at every boot"
-                return 1
-            elif [ $device_path="/dev/ttyS0" ]; then
-                sudo sh -c 'echo "START_DAEMON=\""false\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "GPSD_OPTIONS=\""-n\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "DEVICES=\""/dev/ttyS0\" >> /etc/default/gpsd'
-                sudo sh -c 'echo "USBAUTO=\""false\" >> /etc/default/gpsd'
-                sudo systemctl restart gpsd.service --now
-                echo "GPS server USB /dev/ttyS0 turned ON and enabled to autostart at every boot"
-                return 1
-            else
-                echo ""
-            fi
-        else
-        echo " gpsd does not appear to have any active devices"
+    for BAUD in "${_ZSH_GPS_BAUDS[@]}"; do
+
+        # 1. Configure the serial port for raw reading
+        sudo stty -F "$DEV" $BAUD cs8 -cstopb -parenb -ixon -ixoff -crtscts raw 2>/dev/null
+
+        # 2. Try to read data stream within TIME_LIMIT
+        COUNT=$(sudo timeout $_ZSH_GPS_TIME_LIMIT dd if="$DEV" bs=1 count=500 2>/dev/null | wc -c)
+
+        if [ "$COUNT" -ge "$_ZSH_GPS_MIN_BYTES" ]; then
+            echo "✅ Stream found on $DEV at $BAUD baud ($COUNT bytes read)." >&2 # Output to stderr
+            return 0 # Success
         fi
+    done
 
-        echo "Please enter your GPS point /dev (eg: /dev/ttyxx):"
-        read device
-
-        if [ -e "$device" ] && timeout 2s cat "$device" | head -n 1 > /dev/null; then
-        sudo sh -c 'echo "START_DAEMON=\""true\" >> /etc/default/gpsd'
-        sudo sh -c 'echo "GPSD_OPTIONS=\""\" >> /etc/default/gpsd'
-        sudo tee -a /etc/default/gpsd <<< 'DEVICES="'$device'"'
-        sudo sh -c 'echo "USBAUTO=\""true\" >> /etc/default/gpsd'
-        sudo systemctl enable gpsd.service --now
-        echo "GPS server $device turned ON and enabled to autostart at every boot"
-        else
-        echo "No GPS found"
-        fi
-    fi
+    return 1 # Failure
 }
 
 
+# --- Function for Automatic Detection ---
+# Output to stdout: The device path (e.g., /dev/ttyAMA0) or empty string.
+function _zsh_gps_find_device()
+{
+    local DEVICE=""
+
+    echo "🔍 Starting brute-force search for GPS stream on serial ports..." >&2 # Output to stderr
+
+    for DEV in "${_ZSH_GPS_PORTS[@]}"; do
+        [ -e "$DEV" ] || continue
+
+        if ! sudo fuser -s "$DEV"; then
+            # Note: check_device_stream sends its messages to stderr
+            if _zsh_gps_check_device_stream "$DEV"; then
+                echo "$DEV" # ONLY send the device path to stdout
+                return 0 # Success
+            fi
+        else
+            echo "⚠️ Port $DEV is busy (serial console or other service). Skipping." >&2 # Output to stderr
+        fi
+    done
+
+    echo "❌ No GPS stream detected on checked serial ports." >&2 # Output to stderr
+    return 1 # Failure
+}
+
+# Enable and configure GPS
+function gps_on()
+{
+    if pacman -Qs 'gpsd' &> /dev/null ; then
+        echo "✅ GPS packages are already installed."
+    else
+        echo "📦 GPS packages not installed, installing them now..."
+        sudo pacman -S --noconfirm gpsd jq
+        echo "✅ GPS packages and 'jq' installed!"
+    fi
+
+    # 2. Automatic Detection (stderr redirected to user, stdout captured by 'device')
+    local device
+    device=$(_zsh_gps_find_device)
+
+    if [ $? -eq 0 ] && [[ -n "$device" ]]; then
+        echo "✅ Automatic detection successful: $device"
+
+    else
+        echo "❌ Automated GPS detection failed."
+
+        # 3. Manual Fallback with Verification
+        echo "--------------------------------------------------------"
+        echo "Please enter your GPS port path (e.g., /dev/ttyAMA0):"
+        local manual_device
+        read manual_device
+
+        if [[ -n "$manual_device" ]]; then
+            if [ -e "$manual_device" ]; then
+                echo "🔍 Testing manual device: $manual_device..."
+
+                # check_device_stream sends its messages to stderr
+                if _zsh_gps_check_device_stream "$manual_device"; then
+                    device="$manual_device"
+                    echo "✅ Valid GPS stream confirmed."
+                else
+                    echo "❌ No valid GPS stream found on $manual_device at any common baud rate."
+                    device=""
+                fi
+            else
+                echo "❌ Device $manual_device does not exist."
+                device=""
+            fi
+        else
+            device=""
+        fi
+    fi
+
+    # 4. Final Configuration and Activation
+    if [[ -n "$device" ]]; then
+        echo "⚙️ Configuring GPSD to use device: $device"
+
+        # Clean and configure gpsd
+        sudo sh -c "> $_ZSH_GPS_GPSD_CONF"
+        echo "# Configuration file generated by script" | sudo tee -a "$_ZSH_GPS_GPSD_CONF" > /dev/null
+        echo "USBAUTO=\"false\"" | sudo tee -a "$_ZSH_GPS_GPSD_CONF" > /dev/null
+        echo "START_DAEMON=\"true\"" | sudo tee -a "$_ZSH_GPS_GPSD_CONF" > /dev/null
+        echo "GPSD_OPTIONS=\"-n\"" | sudo tee -a "$_ZSH_GPS_GPSD_CONF" > /dev/null
+        echo "DEVICES=\"$device\"" | sudo tee -a "$_ZSH_GPS_GPSD_CONF" > /dev/null
+
+        # Service Activation
+        sudo systemctl enable gpsd.service
+        sudo systemctl restart gpsd.service
+
+        echo "🎉 GPS server ($device) is ON and enabled to autostart at every boot."
+        return 0
+    else
+        echo "❌ GPS setup failed. GPSD service remains disabled."
+        sudo systemctl disable gpsd.service --now 2>/dev/null
+        return 1
+    fi
+}
+
+# Disable GPS service
 function gps_off()
 {
     sudo systemctl disable gpsd.service --now
-    echo "GPS server disabled, remember to re-enable it if you want it to start automatically at boot"
+    echo "🛑 GPS server disabled. Remember to re-enable it if you want it to start automatically at boot."
 }
-
