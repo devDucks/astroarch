@@ -1,9 +1,11 @@
 function _check_vsftpd_installed()
 {
     if pacman -Qs 'vsftpd' > /dev/null ; then
-    echo "FTP is already installed"
+    echo "✅ FTP packages are already installed"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "✅ FTP packages are already installed"
     else
-	echo "FTP packages not installed, installing them now..."
+	echo "📦 FTP packages not installed, installing them now..."
+	notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "📦 FTP packages not installed, installing them now..."
 	yes | LC_ALL=en_US.UTF-8 sudo pacman -S vsftpd
 	sudo sed -i 's/#write_enable=YES/write_enable=YES/g' /etc/vsftpd.conf
     sudo sed -i 's/#local_enable=YES/local_enable=YES/g' /etc/vsftpd.conf
@@ -21,7 +23,8 @@ function _check_vsftpd_installed()
     sudo touch /etc/hosts.allow
     sudo sh -c "echo 'vsftpd: ALL' >> /etc/hosts.allow"
     sudo sh -c "echo 'vsftpd: 10.0.0.0/255.255.255.0' >> /etc/hosts.allow"
-    echo "FTP packages installed!"
+    echo "✅ FTP packages installed!"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "✅ FTP packages installed!"
     fi
 }
 
@@ -29,13 +32,15 @@ function ftp_on()
 {
     _check_vsftpd_installed
     sudo systemctl enable vsftpd.service --now
-    echo "FTP server turned ON and enabled to autostart at every boot"
+    echo "🎉 FTP server is ON and enabled to autostart at every boot"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "🎉 FTP server is ON and enabled to autostart at every boot"
 }
 
 function ftp_off()
 {
     sudo systemctl disable vsftpd.service --now
-    echo "FTP server disabled, remember to re-enable it if you want it to start automatically at boot"
+    echo "🛑 FTP server disabled. Remember to re-enable it if you want it to start automatically at boot"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "🛑 FTP server disabled. Remember to re-enable it if you want it to start automatically at boot"
 }
 
 function ftp_remove()
@@ -43,5 +48,6 @@ function ftp_remove()
     sudo systemctl disable vsftpd.service --now
     yes | LC_ALL=en_US.UTF-8 sudo pacman -Rcs vsftpd
     sudo rm /etc/vsftpd.chroot_list
-    echo "FTP server remove"
+    echo "🗑️ FTP server remove"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "🗑️ FTP server remove"
 }

@@ -26,6 +26,7 @@ function _zsh_gps_check_device_stream()
 
         if [ "$COUNT" -ge "$_ZSH_GPS_MIN_BYTES" ]; then
             echo "✅ Stream found on $DEV at $BAUD baud ($COUNT bytes read)." >&2 # Output to stderr
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "✅ Stream found on $DEV at $BAUD baud ($COUNT bytes read)."
             return 0 # Success
         fi
     done
@@ -41,6 +42,7 @@ function _zsh_gps_find_device()
     local DEVICE=""
 
     echo "🔍 Starting brute-force search for GPS stream on serial ports..." >&2 # Output to stderr
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "🔍 Starting brute-force search for GPS stream on serial ports..."
 
     for DEV in "${_ZSH_GPS_PORTS[@]}"; do
         [ -e "$DEV" ] || continue
@@ -52,11 +54,13 @@ function _zsh_gps_find_device()
                 return 0 # Success
             fi
         else
-            echo "⚠️ Port $DEV is busy (serial console or other service). Skipping." >&2 # Output to stderr
+            echo "⚠️ Port $DEV is busy (serial console or other service). Skipping" >&2 # Output to stderr
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "⚠️ Port $DEV is busy (serial console or other service). Skipping"
         fi
     done
 
-    echo "❌ No GPS stream detected on checked serial ports." >&2 # Output to stderr
+    echo "❌ No GPS stream detected on checked serial ports" >&2 # Output to stderr
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "❌ No GPS stream detected on checked serial ports"
     return 1 # Failure
 }
 
@@ -64,11 +68,14 @@ function _zsh_gps_find_device()
 function gps_on()
 {
     if pacman -Qs 'gpsd' &> /dev/null ; then
-        echo "✅ GPS packages are already installed."
+        echo "✅ GPS packages are already installed"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "✅ GPS packages are already installed"
     else
         echo "📦 GPS packages not installed, installing them now..."
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "📦 GPS packages not installed, installing them now..."
         sudo pacman -S --noconfirm gpsd jq
         echo "✅ GPS packages and 'jq' installed!"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "✅ GPS packages and 'jq' installed!"
     fi
 
     # 2. Automatic Detection (stderr redirected to user, stdout captured by 'device')
@@ -77,9 +84,11 @@ function gps_on()
 
     if [ $? -eq 0 ] && [[ -n "$device" ]]; then
         echo "✅ Automatic detection successful: $device"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "✅ Automatic detection successful: $device"
 
     else
-        echo "❌ Automated GPS detection failed."
+        echo "❌ Automated GPS detection failed"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "❌ Automated GPS detection failed"
 
         # 3. Manual Fallback with Verification
         echo "--------------------------------------------------------"
@@ -90,17 +99,21 @@ function gps_on()
         if [[ -n "$manual_device" ]]; then
             if [ -e "$manual_device" ]; then
                 echo "🔍 Testing manual device: $manual_device..."
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "🔍 Testing manual device: $manual_device..."
 
                 # check_device_stream sends its messages to stderr
                 if _zsh_gps_check_device_stream "$manual_device"; then
                     device="$manual_device"
-                    echo "✅ Valid GPS stream confirmed."
+                    echo "✅ Valid GPS stream confirmed"
+                    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "✅ Valid GPS stream confirmed"
                 else
-                    echo "❌ No valid GPS stream found on $manual_device at any common baud rate."
+                    echo "❌ No valid GPS stream found on $manual_device at any common baud rate"
+                    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "❌ No valid GPS stream found on $manual_device at any common baud rate"
                     device=""
                 fi
             else
-                echo "❌ Device $manual_device does not exist."
+                echo "❌ Device $manual_device does not exist"
+                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "❌ Device $manual_device does not exist"
                 device=""
             fi
         else
@@ -111,6 +124,7 @@ function gps_on()
     # 4. Final Configuration and Activation
     if [[ -n "$device" ]]; then
         echo "⚙️ Configuring GPSD to use device: $device"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "⚙️ Configuring GPSD to use device: $device"
 
         # Clean and configure gpsd
         sudo sh -c "> $_ZSH_GPS_GPSD_CONF"
@@ -124,10 +138,12 @@ function gps_on()
         sudo systemctl enable gpsd.service
         sudo systemctl restart gpsd.service
 
-        echo "🎉 GPS server ($device) is ON and enabled to autostart at every boot."
+        echo "🎉 GPS server ($device) is ON and enabled to autostart at every boot"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "🎉 GPS server ($device) is ON and enabled to autostart at every boot"
         return 0
     else
-        echo "❌ GPS setup failed. GPSD service remains disabled."
+        echo "❌ GPS setup failed. GPSD service remains disabled"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "❌ GPS setup failed. GPSD service remains disabled"
         sudo systemctl disable gpsd.service --now 2>/dev/null
         return 1
     fi
@@ -137,5 +153,6 @@ function gps_on()
 function gps_off()
 {
     sudo systemctl disable gpsd.service --now
-    echo "🛑 GPS server disabled. Remember to re-enable it if you want it to start automatically at boot."
+    echo "🛑 GPS server disabled. Remember to re-enable it if you want it to start automatically at boot"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "🛑 GPS server disabled. Remember to re-enable it if you want it to start automatically at boot"
 }
