@@ -64,9 +64,45 @@ function _zsh_gps_find_device()
     return 1 # Failure
 }
 
+# --- Helper Function: Check if GPSD is running and configured ---
+# Returns 0 (Success) if a running GPSD instance is found, 1 otherwise.
+function _zsh_gps_is_running()
+{
+# 1. Check if the gpsd service is active
+    if ! systemctl is-active --quiet gpsd.service; then
+        return 1 # Service not active
+    fi
+
+    # 2. Check if the daemon is actually connected to a GPS device.
+    local current_device
+
+    # Query the daemon, wait a max of 2 seconds, and read the first 10 JSON objects.
+    # We use 'jq -r .device' to extract the device path from ALL 10 objects.
+    # 'head -1' will take the first non-null/non-empty device path found.
+    current_device=$(timeout 2 gpspipe -w -n 10 2>/dev/null | \
+                     jq -r '.device' 2>/dev/null | \
+                     grep -v '^null$' | \
+                     head -1)
+    echo $current_device
+    # Check if a non-empty device path was returned
+    if [[ -n "$current_device" ]]; then
+        return 0 # GPSD is running AND connected to a device
+    else
+        return 1 # Service is running but no active device is reported
+    fi
+}
+
 # Enable and configure GPS
 function gps_on()
 {
+    echo "🔍 Checking if GPSD is already running..."
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "🔍 Checking if GPSD is already running..."
+    if _zsh_gps_is_running; then
+        echo "🎉 GPSD is already installed and actively running with a device. No action is needed"
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "🎉 GPSD is already installed and actively running with a device. No action is needed"
+        return 0
+    fi
+
     if pacman -Qs 'gpsd' &> /dev/null ; then
         echo "✅ GPS packages are already installed"
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'GPS' "✅ GPS packages are already installed"
