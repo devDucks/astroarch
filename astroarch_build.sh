@@ -142,7 +142,19 @@ systemctl enable x0vncserver
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-
+# Add user xrdp
+sudo useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
+# Set user in xrdp.ini
+sudo sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sudo sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sudo sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
+# Set permissions
+sudo chown root:xrdp /etc/xrdp/rsakeys.ini
+sudo chmod u=rw,g=r /etc/xrdp/rsakeys.ini
+sudo chmod 755 /etc/xrdp/cert.pem
+sudo chmod 755 /etc/xrdp/key.pem
+# Allows adding devices from the xorg.conf.d section
+sudo sed -i '/Option "AutoAddDevices" "off"/s/^/#/' /etc/X11/xrdp/xorg.conf
 
 #
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
