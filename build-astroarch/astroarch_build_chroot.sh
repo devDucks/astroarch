@@ -175,7 +175,10 @@ sudo useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
 # Set user in xrdp.ini
 sudo sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
 sudo sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sudo sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
+# Set user in xrdp.sesman.ini
 sudo sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
+sudo sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
 # Set permissions
 sudo chown root:xrdp /etc/xrdp/rsakeys.ini
 sudo chmod u=rw,g=r /etc/xrdp/rsakeys.ini
