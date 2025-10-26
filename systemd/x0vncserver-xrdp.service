@@ -1,0 +1,13 @@
+[Unit]
+Description=Remote desktop service (VNC) for :0 display
+
+[Service]
+Type=simple
+Environment=XAUTHORITY=/home/astronaut/.Xauthority
+Environment=HOME=/home/astronaut
+ExecStart=x0vncserver --rfbport 5910 --display :10 --SecurityTypes None
+Restart=on-failure
+RestartSec=500ms
+
+[Install]
+WantedBy=multi-user.target

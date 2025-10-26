@@ -145,6 +145,7 @@ ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
 ln -s /home/astronaut/.astroarch/systemd/astroarch-onboarding.service /etc/systemd/system/astroarch-onboarding.service
 ln -s /home/astronaut/.astroarch/systemd/astroarch-onboarding.timer /etc/systemd/system/astroarch-onboarding.timer
+ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
 
 # Copy xorg config
 cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
@@ -189,6 +190,7 @@ sudo sed -i '/Option "AutoAddDevices" "off"/s/^/#/' /etc/X11/xrdp/xorg.conf
 
 # Enable now all services
 systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service x0vncserver.service cups.service xrdp.service xrdp-sesman.service resize_once.service
+su astronaut -c "systemctl --user enable x0vncserver-xrdp"
 
 # Install astrometry files
 #mkdir -p /home/astronaut/.local/share/kstars/astrometry/

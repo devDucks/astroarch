@@ -117,6 +117,7 @@ ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/n
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
+ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
 
 # Copy xorg config
 cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
@@ -137,6 +138,7 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
 # Enable vncserver
 systemctl enable x0vncserver
+su astronaut -c "systemctl --user enable x0vncserver-xrdp"
 
 # Enable xrdp
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
