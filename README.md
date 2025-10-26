@@ -173,6 +173,16 @@ Xrdp is smoother and faster than vnc but be aware that it also consumes at least
 
 XRDP and VNC have different purposes. VNC only allows you to replicate the user's existing session. XRDP can also do this by selecting the vnc-any session. However, the main use of XRDP is not to replicate but to open a new Xorg session for the user on the Display 10.0 environment variable.
 
+To connect with a new Xorg session (recommended):
+
+<img width="363" height="374" alt="image" src="https://github.com/user-attachments/assets/6b9390e0-9a6e-4454-a0db-c399abfb02ff" />
+
+To connect with a VNC session:
+
+<img width="363" height="374" alt="image" src="https://github.com/user-attachments/assets/b5f7f2a2-4cae-4c31-aa9f-29f87979a35d" />
+
+
+
 # Issues with VNC
 
 Beware of metal cases and USB3 hubs, which can interfere with the RPI's Wi-Fi driver. Try connecting an external Wi-Fi antenna to your Raspberry.
