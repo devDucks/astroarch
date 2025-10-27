@@ -117,6 +117,7 @@ ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/n
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
+ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
 
 # Copy xorg config
 cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
@@ -137,12 +138,28 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
 # Enable vncserver
 systemctl enable x0vncserver
+su astronaut -c "systemctl --user enable x0vncserver-xrdp"
 
 # Enable xrdp
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-
+# Add user xrdp
+sudo useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
+# Set user in xrdp.ini
+sudo sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sudo sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sudo sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
+# Set user in xrdp.sesman.ini
+sudo sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
+sudo sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
+# Set permissions
+sudo chown root:xrdp /etc/xrdp/rsakeys.ini
+sudo chmod u=rw,g=r /etc/xrdp/rsakeys.ini
+sudo chmod 755 /etc/xrdp/cert.pem
+sudo chmod 755 /etc/xrdp/key.pem
+# Allows adding devices from the xorg.conf.d section
+sudo sed -i '/Option "AutoAddDevices" "off"/s/^/#/' /etc/X11/xrdp/xorg.conf
 
 #
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
