@@ -159,7 +159,9 @@ Welcome to astro arch!
 If you trust me, this should be always the preferred way to connect using VNC. noVNC goes through the browser and is less fluid and performant than a real VNC client.
 You can use whatever VNC client you prefer, there should be no issue.
 
-The address is `astroarch.local` (or the IP if you prefer) and the port is 5900
+The address is `astroarch.local` (or the IP if you prefer) and the port is 5900.
+
+If you have started an Xorg session with Xrdp, you can connect with your VNC client on port 5910.
 
 Few VNC client suggestions (work an all platforms):
 - TigerVNC (https://tigervnc.org/)
@@ -181,6 +183,28 @@ To connect with a VNC session:
 
 <img width="363" height="374" alt="image" src="https://github.com/user-attachments/assets/b5f7f2a2-4cae-4c31-aa9f-29f87979a35d" />
 
+
+
+
+```mermaid
+flowchart TD
+    A@{ shape: curv-trap, label: "Xorg Display :0" }
+    B[XRDP Server]
+    C@{ shape: curv-trap, label: "Xorg Display :10" }
+    D[TigerVNC server port 5900]
+    E[TigerVNC server port 5910]
+    subgraph Display :0
+    A --> D
+    end
+    subgraph Display :10
+    B --> C
+    C --> E
+    end
+    D ---> F@{ shape: stadium, label: "VNC Client"}
+    D --> |any-vnc| G@{ shape: stadium, label: "Xrdp Client"}
+    C --> G
+    E --> F
+```
 
 
 # Issues with VNC
