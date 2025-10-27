@@ -89,7 +89,7 @@ Here a small video that will show you how to set the timezone without the termin
 
 https://github.com/devDucks/astroarch/assets/4163222/a935b491-5b7a-444d-9f89-a01a279063de
 
-If you want to use the terminal list first the available timezone with `timedatecl list-timezones` and then set the right one with `tsudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
+If you want to use the terminal list first the available timezone with `timedatecl list-timezones` and then set the right one with `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
 
 Do not forget to set the right timezone!
 
@@ -187,7 +187,7 @@ To connect with a VNC session:
 
 Beware of metal cases and USB3 hubs, which can interfere with the RPI's Wi-Fi driver. Try connecting an external Wi-Fi antenna to your Raspberry.
 
-Before continuing, check the status of your brcmfmac driver. Use the command journalctl -b --since today | grep brcmfmac or dmesg | grep brcmfmac.
+Before continuing, check the status of your brcmfmac driver. Use the command `journalctl -b --since today | grep brcmfmac or dmesg | grep brcmfmac`.
 If you get a brcmfmac error: brcmf_set_channel: set chanspec 0x100c fail, reason -52, you must run these commands:
 
 ```
@@ -219,7 +219,7 @@ Check that Wi-Fi power management is disabled on the client PC you are connectin
 
 **Linux Mint / Ubuntu / Debian**
 
-sudo nano /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+`sudo nano /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf`
 
 ```
 [connection]
@@ -343,7 +343,7 @@ Reboot your PI and you should have the time automatically synchronized when it s
 If you want to remove the RTC sync just drop `,xxxx` from `/boot/config.txt` at line `dtoverlay=i2c-rtc,xxxx`
 
 # Using a GPS dongle
-To use a GPS dongle, simply plug in your device and activate the GPSD service which is disabled by default. So the only command required is sudo systemctl enable gpsd --now and the service will start automatically after each boot. You can also manually edit /etc/gpsd and hardcode the device path on the DEVICES="" line with DEVICES="/dev/gps0"
+To use a GPS dongle, simply plug in your device and activate the GPSD service which is disabled by default. So the only command required is `sudo systemctl enable gpsd --now` and the service will start automatically after each boot. You can also manually edit `/etc/gpsd` and hardcode the device path on the `DEVICES=""` line with `DEVICES="/dev/gps0"`
 
 Otherwise, simply use the following command `gps_on` to perform these two operations.
 
@@ -383,7 +383,7 @@ it for Arch so that you may be able to install it using pacman.
 PLEASE READ THIS CAREFULLY
 
 Python packages via pip installing has changed over time and it now looks way more different than it was years ago, this may looks like a cultural shock if you are coming from more stable distros (Debian and similar) that still didn't catch up with this change but bear with us;
-installing packages via pip globally is not supported anymore by default (sudo pip install) cause it messes up distro packaging. If you try to do so you will see an error message suggesting to use a virtual environment (which, by the way, is a GREAT suggestion).
+installing packages via pip globally is not supported anymore by default (`sudo pip install`) cause it messes up distro packaging. If you try to do so you will see an error message suggesting to use a virtual environment (which, by the way, is a GREAT suggestion).
 Sometimes vietual envs are not simply possible, so there are 3 ways to achieve the wanted result:
 1) install the package via the package manager (pacman) - if the python package you want to install is a common one, there is a big chance it's been packaged for ArchLinux already and you can install it with pacman - BEST WAY
 2) open an issue here on github and let me know what python packages you would like to see available to be installed via `pacman`, it will take few days to few weeks depending on availability but it is doable - RECOMMENDED WAY if 1 is not possible
