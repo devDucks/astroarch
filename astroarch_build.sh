@@ -138,7 +138,7 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
 # Enable vncserver
 systemctl enable x0vncserver
-su astronaut -c "systemctl --user enable x0vncserver-xrdp"
+ln -snf /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /home/astronaut/.config/systemd/user/multi-user.target.wants/x0vncserver-xrdp.service
 
 # Enable xrdp
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
