@@ -1,5 +1,5 @@
 [Unit]
-Description=Remote desktop service (VNC) for :0 display
+Description=Remote desktop service (VNC) for :10 display
 After=xrdp.service
 
 [Service]
