@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-exec dbus-run-session -- startplasma-x11
+systemctl --user restart x0vncser-xrdp && exec dbus-run-session -- startplasma-x11
