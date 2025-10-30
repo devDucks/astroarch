@@ -172,25 +172,24 @@ ln -s /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.conf
 cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/50-udiskie.rules
 cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/50-networkmanager.rules
 # Add user xrdp
-sudo useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
+useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
 # Set user in xrdp.ini
-sudo sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
-sudo sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
-sudo sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
+sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
 # Set user in xrdp.sesman.ini
-sudo sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
-sudo sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
+sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
+sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
 # Set permissions
-sudo chown root:xrdp /etc/xrdp/rsakeys.ini
-sudo chmod u=rw,g=r /etc/xrdp/rsakeys.ini
-sudo chmod 755 /etc/xrdp/cert.pem
-sudo chmod 755 /etc/xrdp/key.pem
+chown root:xrdp /etc/xrdp/rsakeys.ini
+chmod u=rw,g=r /etc/xrdp/rsakeys.ini
+chmod 755 /etc/xrdp/cert.pem
+chmod 755 /etc/xrdp/key.pem
 # Allows adding devices from the xorg.conf.d section
-sudo sed -i '/Option "AutoAddDevices" "off"/s/^/#/' /etc/X11/xrdp/xorg.conf
+sed -i '/Option "AutoAddDevices" "off"/s/^/#/' /etc/X11/xrdp/xorg.conf
 
 # Enable now all services
 systemctl enable systemd-resolved.service dhcpcd.service sshd.service systemd-networkd.service sddm.service novnc.service NetworkManager.service avahi-daemon.service nmb.service smb.service create_ap.service x0vncserver.service cups.service xrdp.service xrdp-sesman.service resize_once.service
-su astronaut -c "systemctl --user enable x0vncserver-xrdp"
 
 # Install astrometry files
 #mkdir -p /home/astronaut/.local/share/kstars/astrometry/
