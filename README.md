@@ -334,10 +334,10 @@ EOF
 the following software will be available, by category
 
 ### Astronomical
-- Kstars 3.7.7
+- Kstars 3.7.9
 - phd2 2.6.13dev2
-- indi libs 2.1.4 **(all of them)**
-- indi drivers 2.1.4 **(all of them)**
+- indi libs 2.1.6 **(all of them)**
+- indi drivers 2.1.6 **(all of them)**
 - most of the widefield indexes for plate solving
 - astromonitor (you never heard of it? Check it here https://github.com/MattBlack85/astro_monitor)
 - AstroDMx (a capture software like FireCapture)
