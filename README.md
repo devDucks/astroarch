@@ -35,7 +35,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How can I install Python packages?](#how-to-install-python-packages)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
-
+ - [Tips](#tips)
 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
@@ -421,6 +421,13 @@ Sometimes vietual envs are not simply possible, so there are 3 ways to achieve t
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
+
+# Tips
+
+- If you restart AstroArch-onboarding, it will not retain your configuration except for the locale settings (language, location, and keyboard). You must  make your choices again, otherwise it will use the default configuration
+- If you are not comfortable with command lines for the “Useful commands” section, use <mark>AstroArch Tweak Tool</mark>
+- If you need help from someone else, simply install the <mark>RustDesk</mark> software. This will allow the other person who has the same software with the ID and one-time password you provide to connect to your Raspberry Pi (easy and secure)
+- The <mark>xgps</mark> software in the Applications panel under “Utilities” allows you to view information from your GPS device
 
 # Quick video intro to AstroArch
 
