@@ -324,6 +324,12 @@ EOF
 - remove the eeprom settings created in the previous steps `rm eeprom.conf`
 - the eeprom update requires a reboot, so be sure to reboot your pi
 
+>[!IMPORTANT]
+>For non-PD power supplies, or those not recognized as such, the Raspberry Pi considers them to provide 3 A. It then limits the current to 0.6 A and USB boot is disabled by default. See:
+>https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#differences-on-raspberry-pi-5
+>
+>You must add the parameter `usb_max_current_enable=1` to the config.txt file if you are not using the official power supply or a PD-certified power supply. During initial setup with AstroArch-onboarding, in the Power supplies panel, select <mark>Power supply without USBC-C PD</mark>
+
 # Software available
 the following software will be available, by category
 
