@@ -170,6 +170,9 @@ EOF"
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
+# Create the folder (owned by astronaut) to store index files that requires no root access
+su astronaut -c "mkdir -p /home/astronaut/.local/share/kstars/astrometry"
+
 # Enable now all services
 systemctl enable sddm.service \
 	  novnc.service \
