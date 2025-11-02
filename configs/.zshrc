@@ -40,6 +40,40 @@ alias apt-get=xyz
 # Run aa_motd.sh
 bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
+function check_and_update_eeprom()
+{
+    pi_model=$(cat /proc/device-tree/model 2>/dev/null | awk '{$1=$1};1')
+    eeprom_package=""
+
+    if [[ "$pi_model" == *"Raspberry Pi 5"* ]]; then
+        eeprom_package="rpi5-eeprom"
+        rpi="Pi 5"
+    elif [[ "$pi_model" == *"Raspberry Pi 4"* ]]; then
+        eeprom_package="rpi4-eeprom"
+        rpi="Pi 4"
+    else
+        return 0
+    fi
+
+    if ! pacman -Qs $eeprom_package > /dev/null; then
+        sudo pacman -S --noconfirm $eeprom_package
+    fi
+
+    eeprom_status=$(sudo rpi-eeprom-update 2>&1)
+
+    if [[ "$eeprom_status" == *"UPDATE AVAILABLE"* ]]; then
+        update_message="A new Raspberry Pi EEPROM firmware update is available. This update is being applied automatically and requires a reboot to take effect. Do not turn off your Raspberry Pi during installation"
+        title="EEPROM Update $rpi"
+        icon="/usr/share/icons/breeze/status/64/dialog-information.svg"
+        kdialog --title $title --icon=$icon --msgbox "$update_message" "$eeprom_status"
+        if sudo rpi-eeprom-update -a; then
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 15000 'EEPROM Update' '✅ EEPROM update staged. Please reboot to apply it!'
+        else
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 15000 'EEPROM Update' '❌ Failed to update EEPROM. Please check the logs.'
+        fi
+    fi
+}
+
 function use-astro-bleeding-edge()
 {
     sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
@@ -77,6 +111,9 @@ function astro-rollback-kstars()
 
 function update-astroarch()
 {
+
+    check_and_update_eeprom
+
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
@@ -98,9 +135,9 @@ function update-astroarch()
             cd /home/$USER/.astroarch
             git reset --hard "$CURRENT_COMMIT"
             cd - > /dev/null 2>&1
-            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Script '$SCRIPT_VER' failed. Reverted to previous state."
         fi
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' '✅ All scripts applied successfully'
     fi;
 
     # Temporary fix for kde-portal duplicated conf
@@ -118,9 +155,9 @@ function update-astroarch()
     sudo pacman -Syu --noconfirm
 
     if [ $? -eq 0 ]; then
-    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Successful update"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "✅ Successful update"
     else
-    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Update failed"
+    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Update failed"
     fi
 
     # Reinstall plasma-x11-session, cannot work on 1.9.0 cause of old kwin
