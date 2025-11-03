@@ -43,8 +43,8 @@ AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry
 Note on the possible back-powering of the raspberry by a mount, camera, powered USB hub or other devices having its own power source and connected to the raspberry by USB. Plug in your raspberry then connect each device so as not to have issues for your AstroArch.
 
 # Download
-Please use this link to download the latest astroarch gzipped img file => https://drive.google.com/file/d/1JfhbDGlgW9m4aI5Iow7QuoVrsQRsD79r/view
-
+Please use this link to download the latest astroarch gzipped img file => 
+https://drive.google.com/file/d/1CzN3f9_lNp2InT2PLvp_vflsW7gywFZB/view
 # Why ArchLinux?
 Why ArchLinux?
 
