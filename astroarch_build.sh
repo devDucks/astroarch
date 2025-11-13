@@ -107,6 +107,9 @@ sleep 5
 # Remove eventually existing systemd configs we are going to substitute
 rm -f /usr/lib/systemd/system/novnc.service
 
+# Synchronize the system time with the GPS if there is no Real Time Clock (RTC) or network connection to the Raspberry Pi
+sed -i '$a\refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' /etc/chrony.conf
+
 # Disable systemd-timesyncd and enable chronyd
 systemctl disable systemd-timesyncd
 systemctl enable chronyd
