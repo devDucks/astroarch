@@ -38,9 +38,9 @@ su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astro
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
-# If we are on QEMU, packages have already been pulled in the docker phase - install only the pi kernel
+# If we are on QEMU, packages have already been pulled in the docker phase - install the pi kernel and base-devel
 if [ "$HAS_VIRT" -eq 1 ]; then
-    pacman -Syu linux-rpi linux-rpi-headers linux-firmware --noconfirm --ask 4
+    pacman -Syu linux-rpi linux-rpi-headers linux-firmware base-devel --noconfirm --ask 4
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
@@ -57,7 +57,8 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw kde-gtk-config kdeplasma-addons \
+       libgpiod qt6-imageformats qt6-wayland --noconfirm --ask 4
 fi
 
 
