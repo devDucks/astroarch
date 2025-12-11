@@ -143,6 +143,7 @@ The following are some useful commands that you can run from the terminal so you
  - `astro-rollback-full` => rollback automatically indi and kstars to the previous version
  - `use-astro-bleeding-edge` => install bleeding edge packages for Kstars and INDI
  - `use-astro-stable` => install stable  packages for Kstars and INDI
+ - `kstars-watchdog` => starts Kstars and Ekos with the default profile. If the program is closed or crashes, il will restart automatically. If an ekos job file named default.esl is present in the home dir, it will automatically be started.
 
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
