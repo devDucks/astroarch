@@ -9,8 +9,8 @@
 # automatically.
 
 SCHEDFILE=/home/astronaut/default.esl	# Can be a link to a .esl file located elsewhere or a real file
-# LOGFILE=/dev/null
-LOGFILE=/home/astronaut/kstars.log
+LOGFILE=/dev/null
+# LOGFILE=/home/astronaut/kstars.log
 echo $'\n\n\n\n\n' >> $LOGFILE
 date >> $LOGFILE
 
