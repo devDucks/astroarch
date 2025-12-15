@@ -210,6 +210,7 @@ su astronaut -c "ln -snf /usr/share/applications/org.kde.kstars.desktop /home/as
 su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
 su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/kstars-watchdog.desktop /home/astronaut/Desktop/kstars-watchdog"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "ln -snf /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
@@ -217,6 +218,7 @@ su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
+chmod +x /home/astronaut/Desktop/kstars-watchdog
 chmod +x /home/astronaut/Desktop/AstroArch-onboarding
 chmod +x /home/astronaut/Desktop/AstroArch-Tweak-Tool
 
