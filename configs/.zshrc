@@ -42,12 +42,12 @@ bash /home/astronaut/.astroarch/scripts/aa_motd.sh
 
 function use-astro-bleeding-edge()
 {
-    sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git
+    sudo pacman -Sy --noconfirm && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars-git libindi-git indi-3rdparty-drivers-git indi-3rdparty-libs-git --noconfirm
 }
 
 function use-astro-stable()
 {
-    sudo pacman -Sy && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs
+    sudo pacman -Sy --noconfirm && yes | LC_ALL=en_US.UTF-8 sudo pacman -S kstars libindi indi-3rdparty-drivers indi-3rdparty-libs --noconfirm
 }
 
 
