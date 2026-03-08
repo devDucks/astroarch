@@ -100,6 +100,9 @@ systemctl stop smb
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
+# NetworkManager WiFi Power Saving
+ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
 sleep 5

@@ -13,3 +13,7 @@ sudo sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrd
 sudo sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
 # Improve xrdp & network
 sudo cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
+
+# NetworkManager WiFi Power Saving
+sudo ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+
