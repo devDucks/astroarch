@@ -100,6 +100,9 @@ systemctl stop smb
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
+# NetworkManager WiFi Power Saving
+ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
 sleep 5
@@ -272,7 +275,7 @@ su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
 cp /home/astronaut/.astroarch/configs/kiosk/astroarch-kiosk.png /home/astronaut-kiosk/Pictures/wallpapers/
 
 # Add menu
-sudo cp -r /home/astronaut/.astroarch/configs/kiosk/menus /home/astronaut-kiosk/.config/
+cp -r /home/astronaut/.astroarch/configs/kiosk/menus /home/astronaut-kiosk/.config/
 
 # Copy kstars folders
 cp -R /home/astronaut/.local/share/kstars /home/astronaut-kiosk/.local/share/
@@ -300,7 +303,7 @@ chmod -R 770 /home/astronaut
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
 # Increases the xrdp buffer
-sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
+sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
