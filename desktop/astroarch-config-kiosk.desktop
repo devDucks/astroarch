@@ -1,0 +1,20 @@
+[Desktop Entry]
+Categories=System
+Comment[fr_CH]=Tools for config AstroArch Kiosk
+Comment=Tools for config AstroArch Kiosk
+Encoding=UTF-8
+Exec=/home/astronaut/.astroarch/scripts/astroarch-config-kiosk.sh
+GenericName[fr_CH]=AstroArch config Kiosk
+GenericName=AstroArch config Kiosk
+Icon=/home/astronaut/.astroarch/assets/icons/novnc-192x192.png
+MimeType=
+Name[fr_CH]=AstroArch config Kiosk
+Name=AstroArch config Kiosk
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+Version=1.0
+X-KDE-SubstituteUID=false
+X-KDE-Username=

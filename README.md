@@ -33,6 +33,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [How to enable an FTP server?](#how-to-enable-ftp)
  - [Where can I find more packages?](#where-to-find-more-pacakges)
  - [How can I install Python packages?](#how-to-install-python-packages)
+ - [Use the kiosk session](#kiosk-session)
  - [reporting problems](#reporting-issues)
  - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
  - [Tips](#tips)
@@ -418,6 +419,54 @@ Sometimes vietual envs are not simply possible, so there are 3 ways to achieve t
 1) install the package via the package manager (pacman) - if the python package you want to install is a common one, there is a big chance it's been packaged for ArchLinux already and you can install it with pacman - BEST WAY
 2) open an issue here on github and let me know what python packages you would like to see available to be installed via `pacman`, it will take few days to few weeks depending on availability but it is doable - RECOMMENDED WAY if 1 is not possible
 3) bypass the pip check and force a global install running `sudo pip install --break-system-packages PACKAGE_NAME` - NOT RECOMMENDED and likely to break other dependencies in the long run, if you do so, we do not offer any support, sorry!
+
+# Kiosk session
+You can use a lighter KDE Plasma session by logging out of the astronaut session and logging in with the astronaut-kiosk user via your LAN or RDP/VNC software
+
+<img width="348" height="357" alt="image" src="https://github.com/user-attachments/assets/d832341b-f2e5-4a8f-92d0-1d32ac57ae05" />
+
+
+This session is designed to run only a few programs. During our astro outings, we only use one or two imaging programs. To do this, simply configure the session with the AstroArch-config-kiosk tool
+
+- You can request to have the software icon on the desktop and/or in the menu
+- You can request to launch the software directly when the session starts. You can also set the software to reopen if it is closed. The images folder is accessible from the astroarch user
+- You can request your software to save to a folder in the astroarch session or to a removable disk
+- You can also retrieve your Kstars configuration with astromonitor
+
+<img width="272" height="301" alt="image" src="https://github.com/user-attachments/assets/61291a8a-ef06-4d95-8d22-d2e39083e013" />
+
+After selecting the software to install, the following window shows you the configuration status. Either the status is disabled and the line is not highlighted. Click on it to select and enable or disable it
+
+<img width="272" height="301" alt="image" src="https://github.com/user-attachments/assets/29702eaa-a2fe-44d9-8f0e-350640b87ddb" />
+
+- Example: the window shows you the status for Kstars
+
+<img width="272" height="301" alt="image" src="https://github.com/user-attachments/assets/dbd79c40-e618-4a10-a14c-adb67b872107" />
+
+- Select the options and then click OK
+
+<img width="272" height="301" alt="image" src="https://github.com/user-attachments/assets/a997f694-767e-4b72-a855-4f85a2ca25c8" />
+
+- Reopen the window. Now the choices you made previously are active and automatically highlighted. To deactivate them, perform the reverse operation
+- Following the selection, you must log out and/or restart the pi
+
+You can see the status of all software with the status of the current configuration
+
+
+<img width="691" height="487" alt="image" src="https://github.com/user-attachments/assets/c591cb47-ce97-43a1-850a-8ffc6df9f148" />
+
+
+- Restore your Kstars configuration with your astromonitor key
+
+
+<img width="268" height="293" alt="image" src="https://github.com/user-attachments/assets/79c0b11f-d726-4e5a-ae53-97e3125559e4" />
+
+
+
+<img width="200" height="126" alt="image" src="https://github.com/user-attachments/assets/2ff1f30d-4519-4598-827a-4f42e7f6068d" />
+
+
+
 
 # Reporting issues
 AstroArch is actually in a stable state, however, should you find any issue please report them here https://github.com/MattBlack85/astroarch/issues this will help me tracking them and ship a fix for them
