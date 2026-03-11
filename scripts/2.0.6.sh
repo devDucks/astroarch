@@ -15,5 +15,5 @@ sudo sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.in
 sudo cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
 
 # NetworkManager WiFi Power Saving
-sudo ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+sudo ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /etc/NetworkManager/conf.d
 
