@@ -75,7 +75,7 @@ case $result in
     6)
         install_kstars=$(kdialog --combobox " Select the Kstars installation version" "Bleeding-edge" "Stable" --title "AstroArch Install Kstars")
         case $install_kstars in
-            Bleeding-edg)
+            Bleeding-edge)
                 use-astro-bleeding-edge
                 if [ $? -eq 0 ] ; then
                 notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Completed'
