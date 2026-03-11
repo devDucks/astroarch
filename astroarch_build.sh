@@ -100,6 +100,9 @@ systemctl stop smb
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
+# NetworkManager WiFi Power Saving
+ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
 sleep 5
@@ -109,6 +112,7 @@ rm -f /usr/lib/systemd/system/novnc.service
 
 # Synchronize the system time with the GPS if there is no Real Time Clock (RTC) or network connection to the Raspberry Pi
 sed -i '$a\refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' /etc/chrony.conf
+sed -i '$a\driftfile /var/lib/chrony/drift' /etc/chrony.conf
 
 # Disable systemd-timesyncd and enable chronyd
 systemctl disable systemd-timesyncd
@@ -160,8 +164,13 @@ chown root:xrdp /etc/xrdp/rsakeys.ini
 chmod u=rw,g=r /etc/xrdp/rsakeys.ini
 chmod 755 /etc/xrdp/cert.pem
 chmod 755 /etc/xrdp/key.pem
-# Allows adding devices from the xorg.conf.d section
-sed -i '/Option "AutoAddDevices" "off"/s/^/#/' /etc/X11/xrdp/xorg.conf
+# Disables the display's power management features
+sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
+# Disabling compression can speed up local connections on low-power devices
+sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
+sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
+# Improve xrdp & network
+cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
 
 #
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
