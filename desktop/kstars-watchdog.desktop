@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment=
+Comment=
+Exec=/home/astronaut/.astroarch/scripts/kstars-watchdog.sh
+GenericName=
+GenericName=
+Icon=application-x-shellscript
+MimeType=
+Name=kstars-watchdog.sh
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-AutostartScript=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=
