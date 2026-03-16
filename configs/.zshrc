@@ -75,10 +75,21 @@ function astro-rollback-kstars()
     rm -rf ~/.rollback/*
 }
 
+function restore-astroarch() {
+    bash "$HOME/.astroarch/scripts/restore-astroarch.sh"
+}
+
+function backup-astroarch() {
+    bash "$HOME/.astroarch/scripts/backup-astroarch.sh"
+}
+
 function update-astroarch()
 {
+    backup-astroarch &
+    wait $!
+
     # Store actual version
-    OLD_VER=$(cat /home/$USER/.astroarch.version)
+    OLD_VER=$(cat "/home/$USER/.astroarch/configs/.astroarch.version" | tr -d '[:space:]')
 
     # Store the current commit hash before the pull
     cd /home/$USER/.astroarch
@@ -89,18 +100,50 @@ function update-astroarch()
     git pull origin main
     cd - > /dev/null 2>&1
 
-    NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
+    # Store new version
+    NEW_VER=$(cat "/home/$USER/.astroarch/configs/.astroarch.version" | tr -d '[:space:]')
 
-    if [[ "$OLD_VER" != "$NEW_VER" ]]; then
-        zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
-        if [[ $? -ne 0 ]]; then
+    # Function convert to integer for comparison
+    function ver_to_int() {
+        local parts=(${(s:.:)1})
+        echo $(( ${parts[1]:-0} * 10000 + ${parts[2]:-0} * 100 + ${parts[3]:-0} ))
+    }
+
+    old_int=$(ver_to_int "$OLD_VER")
+    new_int=$(ver_to_int "$NEW_VER")
+
+    if [[ $old_int -lt $new_int ]]; then
+        local scripts_to_run=($(ls "/home/$USER/.astroarch/scripts/"*.sh | sort -V))
+        success=true
+
+        for script_path in "${scripts_to_run[@]}"; do
+            local script_name="${${script_path:t}:r}"
+
+            if [[ "$script_name" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                local script_int=$(ver_to_int "$script_name")
+
+                if (( script_int > old_int && script_int <= new_int )); then
+
+                    # Apply scripts less than or equal to new astroarch.version
+                    zsh "$script_path"
+
+                    if [[ $? -ne 0 ]]; then
+                        success=false
+                        break
+                    fi
+                fi
+            fi
+        done
+
+        if [[ "$success" = false ]]; then
             # Revert to the commit stored before the pull
             cd /home/$USER/.astroarch
             git reset --hard "$CURRENT_COMMIT"
             cd - > /dev/null 2>&1
             notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
+            else
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
         fi
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
     fi;
 
     # Temporary fix for kde-portal duplicated conf
@@ -199,8 +242,11 @@ function update-astroarch()
         local PROCEED_UPDATE=1
         # Test : GUI ?
         if [[ -n "$DISPLAY" && -z "$SSH_CLIENT" && -z "$SSH_TTY" ]]; then
-            kdialog --title "AstroArch Update - Risk of Addiction" \
-                --warningyesno "Warning! The following critical packages will have their dependencies changed:\n\n- $list_str\n\nDo you want to proceed the update anyway?"
+        kdialog --title "AstroArch Update - Risk of Addiction"  \
+        --warningyesno "Warning! The following critical packages will have their dependencies changed.\nClick “Yes” if you've made a backup.\n \
+        Click “No” to perform another update with a backup.\nFor more information, see the README on GitHub: \n\n \
+        - $list_str\n\nDo you want to proceed the update anyway?"
+
             [[ $? -ne 0 ]] && PROCEED_UPDATE=0
         else
             # Terminal mode no GUI

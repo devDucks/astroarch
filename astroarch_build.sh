@@ -57,7 +57,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync --noconfirm --ask 4
 fi
 
 
@@ -101,7 +101,7 @@ systemctl stop smb
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
 # NetworkManager WiFi Power Saving
-ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /etc/NetworkManager/conf.d
 
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
