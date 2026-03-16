@@ -1,0 +1,27 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+ "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+<Menu>
+    <Name>Applications</Name>
+
+    <DefaultAppDirs/>
+    <DefaultDirectoryDirs/>
+
+    <Include>
+
+<!-- <Filename>org.kde.kstars.desktop</Filename> -->
+<!-- <Filename>phd2.desktop</Filename> -->
+<!-- <Filename>astrodmx_capture.desktop</Filename> -->
+<!-- <Filename>xgps.desktop</Filename> -->
+        <Filename>org.kde.dolphin.desktop</Filename>
+        <Filename>org.kde.konsole.desktop</Filename>
+    </Include>
+
+    <Layout>
+<!-- <Filename>org.kde.kstars.desktop</Filename> -->
+<!-- <Filename>phd2.desktop</Filename> -->
+<!-- <Filename>astrodmx_capture.desktop</Filename> -->
+<!-- <Filename>xgps.desktop</Filename> -->
+        <Filename>org.kde.dolphin.desktop</Filename>
+        <Filename>org.kde.konsole.desktop</Filename>
+    </Layout>
+</Menu>

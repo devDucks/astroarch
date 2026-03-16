@@ -1,13 +1,13 @@
 #!/bin/zsh
-result=$(kdialog --menu "Select action" 1 "Update-astroarch" 2 "Set GPS" 3 "Set Bluetooth" 4 "Set FTP" 5 "Rollback Kstars/Indi" 6 "Install Kstars/Indi stable/bleeding-edge" --title "AstroArch Tweak Tool")
+result=$(kdialog --menu "Select action" 1 "Update-astroarch" 2 "Set GPS" 3 "Set Bluetooth" 4 "Set FTP" 5 "Rollback Kstars/Indi" 6 "Install Kstars/Indi stable/bleeding-edge"  7 "Backup/Restore astroarch" --title "AstroArch Tweak Tool")
 source ~/.zshrc
 case $result in
     1)
         update-astroarch
         if [ $? -eq 0 ] ; then
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Update completed'
+        notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Update completed'
         else
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Update returns an error'
+        notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'Update returns an error'
         fi
         ;;
     2)
@@ -49,25 +49,25 @@ case $result in
             Full-Kstars-Indi)
                 astro-rollback-full
                 if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback full' 'Completed'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback full' 'Completed'
                 else
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback full' 'Returns an error'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback full' 'Returns an error'
                 fi
                 ;;
             Indi)
                 astro-rollback-indi
                 if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Completed'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Completed'
                 else
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Returns an error'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback indi' 'Returns an error'
                 fi
                 ;;
             Kstars)
                 astro-rollback-kstars
                 if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback kstars' 'Completed'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback kstars' 'Completed'
                 else
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback kstars' 'Returns an error'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Rollback kstars' 'Returns an error'
                 fi
                 ;;
         esac
@@ -75,20 +75,41 @@ case $result in
     6)
         install_kstars=$(kdialog --combobox " Select the Kstars installation version" "Bleeding-edge" "Stable" --title "AstroArch Install Kstars")
         case $install_kstars in
-            Bleeding-edg)
+            Bleeding-edge)
                 use-astro-bleeding-edge
                 if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Completed'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Completed'
                 else
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Returns an error'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars bleeding-edge' 'Returns an error'
                 fi
                 ;;
             Stable)
                 use-astro-stable
                 if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars' 'Completed'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars' 'Completed'
                 else
-                notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars' 'Returns an error'
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Installation Kstars' 'Returns an error'
+                fi
+                ;;
+        esac
+        ;;
+    7)
+        backup_astroarch=$(kdialog --combobox " Select backup / restore" "Backup" "Restore" --title "AstroArch Backup / Restore")
+        case $backup_astroarch in
+            Backup)
+                backup-astroarch
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Backup' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Backup' 'Returns an error'
+                fi
+                ;;
+            Restore)
+                restore-astroarch
+                if [ $? -eq 0 ] ; then
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Restore' 'Completed'
+                else
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Restore' 'Returns an error'
                 fi
                 ;;
         esac
