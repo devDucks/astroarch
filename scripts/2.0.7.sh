@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 # Add drift file for chrony
-sudo pacman -Sy rsync
+sudo pacman -Sy rsync --noconfirm
 
