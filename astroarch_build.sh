@@ -57,7 +57,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync --noconfirm --ask 4
 fi
 
 

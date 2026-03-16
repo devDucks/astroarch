@@ -26,6 +26,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
  - [What are the passwords for the user and the hotspot?](#passwords)
  - [Protect VNC with a password](#how-to-protect-vnc-with-password)
  - [Useful commands](#useful-commands)
+ - [System Backup and Restore](#Backup-and-Restore)
  - [List of available software](#software-available)
  - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
  - [How to make a GPS dongle working?](#using-a-gps-dongle)
@@ -143,7 +144,27 @@ The following are some useful commands that you can run from the terminal so you
  - `astro-rollback-full` => rollback automatically indi and kstars to the previous version
  - `use-astro-bleeding-edge` => install bleeding edge packages for Kstars and INDI
  - `use-astro-stable` => install stable  packages for Kstars and INDI
+ - `backup-astroarch` => perform a full system backup
+ - `restore-astroarch` => Full recovery of the system
 
+# Backup and Restore
+You can back up the entire system using the `backup-astroarch` command or the `astroarch-tweak-tool` utility. You can perform a backup before updating with `update-astroarch`. 
+
+Use a disk with at least 64 GB of storage if the backup location is on your AstroArch disk.
+
+You can choose from several options stored in the /home/astronaut/.backup_dest file for your future backups:
+ - Yes (perform a backup)
+ - Yes, do not ask again (perform the backup without prompting)
+ - No (do not perform the backup)
+ - No, do not ask again (do not perform this backup again)
+ 
+If you selected “Do not ask again” and change your mind, open the .backup_dest file and change the value to AUTO_CHOICE="Ask"
+
+To restore your files, use the `restore-astroarch` command or the `astroarch-tweak-tool` utility.
+
+If you no longer have access to your system, back up your folder to another disk if it is on your AstroArch disk.
+Perform a fresh, updated installation, run the restore command, and specify the location of your backup folder.
+ 
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
