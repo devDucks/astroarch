@@ -9,33 +9,39 @@
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
- - [Quick video intro](#quick-video-intro-to-astroarch)
- - [What Raspberry is supported?](#what-raspberry-version-is-supported)
- - [Why ArchLinux?](#why-archlinux)
- - [Download](#download)
- - [Flash the image to SD](#flash-the-img-to-an-sd)
- - [On first boot - things to know](#first-boot)
- - [Performance and compositor](#performance-and-compositor)
- - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
- - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
- - [Connecting via XRDP client](#connecting-via-xrdp-client)
- - [Issues with VNC](#issues-with-vnc)
- - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
- - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
- - [Kstars hours is not correct, how can I fix it?](#set-timezone)
- - [What are the passwords for the user and the hotspot?](#passwords)
- - [Protect VNC with a password](#how-to-protect-vnc-with-password)
- - [Useful commands](#useful-commands)
- - [List of available software](#software-available)
- - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
- - [How to make a GPS dongle working?](#using-a-gps-dongle)
- - [How to enable bluetooth?](#how-to-enable-bluetooth)
- - [How to enable an FTP server?](#how-to-enable-ftp)
- - [Where can I find more packages?](#where-to-find-more-pacakges)
- - [How can I install Python packages?](#how-to-install-python-packages)
- - [reporting problems](#reporting-issues)
- - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
- - [Tips](#tips)
+- [Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pi, PC and mini PC (works also on Manjaro and all Arch derived distros)](#welcome-to-astroarch-astrophotography-on-archlinux-for-raspberry-pi-pc-and-mini-pc-works-also-on-manjaro-and-all-arch-derived-distros)
+- [What Raspberry version is supported?](#what-raspberry-version-is-supported)
+- [Download](#download)
+- [Why ArchLinux?](#why-archlinux)
+- [Flash the img to an SD](#flash-the-img-to-an-sd)
+- [First boot](#first-boot)
+- [Set timezone](#set-timezone)
+- [Passwords](#passwords)
+- [Performance and compositor](#performance-and-compositor)
+- [How to protect VNC with password](#how-to-protect-vnc-with-password)
+- [How can I use a raspberry camera](#how-can-i-use-a-raspberry-camera)
+- [Use only the astro packages maintained for AstroArch on PC and mini PC](#use-only-the-astro-packages-maintained-for-astroarch-on-pc-and-mini-pc)
+- [Useful commands](#useful-commands)
+- [Connecting via browser (noVNC)](#connecting-via-browser-novnc)
+- [Connecting via VNC client](#connecting-via-vnc-client)
+- [Connecting via XRDP client](#connecting-via-xrdp-client)
+- [Issues with VNC](#issues-with-vnc)
+- [Adding swap](#adding-swap)
+- [Boot from external disk (USB, HDD, SSD, NVME)](#boot-from-external-disk-usb-hdd-ssd-nvme)
+- [Software available](#software-available)
+    - [Astronomical](#astronomical)
+    - [OS](#os)
+    - [Connectivity](#connectivity)
+    - [Browser](#browser)
+- [How to add a RTC](#how-to-add-a-rtc)
+- [Using a GPS dongle](#using-a-gps-dongle)
+- [How to enable bluetooth](#how-to-enable-bluetooth)
+- [How to enable FTP](#how-to-enable-ftp)
+- [Where to find more packages?](#where-to-find-more-packages)
+- [How to install Python packages?](#how-to-install-python-packages)
+- [Reporting issues](#reporting-issues)
+- [Tips](#tips)
+- [Quick video intro to AstroArch](#quick-video-intro-to-astroarch)
 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
@@ -117,7 +123,7 @@ to this
 
 
 ```
-ExecStart=x0vncserver -display:0 -rfbauth /root/.vnc/passwd
+ExecStart=x0vncserver -display :0 -rfbauth /root/.vnc/passwd
 ```
 
 Reboot and now you should be prompted to input a password when connecting via VNC
