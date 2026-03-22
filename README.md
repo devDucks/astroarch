@@ -9,33 +9,39 @@
 
 
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
- - [Quick video intro](#quick-video-intro-to-astroarch)
- - [What Raspberry is supported?](#what-raspberry-version-is-supported)
- - [Why ArchLinux?](#why-archlinux)
- - [Download](#download)
- - [Flash the image to SD](#flash-the-img-to-an-sd)
- - [On first boot - things to know](#first-boot)
- - [Performance and compositor](#performance-and-compositor)
- - [Connecting via noVNC (browser)](#connecting-via-browser-novnc)
- - [Connecting via VNC client (this is the preferred way)](#connecting-via-vnc-client)
- - [Connecting via XRDP client](#connecting-via-xrdp-client)
- - [Issues with VNC](#issues-with-vnc)
- - [How can I use a raspberry camera?](#how-can-i-use-a-raspberry-camera)
- - [How can I boot from USB/SDD?](#boot-from-external-disk-usb-hdd-ssd-nvme)
- - [Kstars hours is not correct, how can I fix it?](#set-timezone)
- - [What are the passwords for the user and the hotspot?](#passwords)
- - [Protect VNC with a password](#how-to-protect-vnc-with-password)
- - [Useful commands](#useful-commands)
- - [List of available software](#software-available)
- - [How can I add a RTC to AstroArch?](#how-to-add-a-rtc)
- - [How to make a GPS dongle working?](#using-a-gps-dongle)
- - [How to enable bluetooth?](#how-to-enable-bluetooth)
- - [How to enable an FTP server?](#how-to-enable-ftp)
- - [Where can I find more packages?](#where-to-find-more-pacakges)
- - [How can I install Python packages?](#how-to-install-python-packages)
- - [reporting problems](#reporting-issues)
- - [For PC/mini PC running an ArchLinux derived distro (Manjaro, ArcoLinux, etc.)](#use-only-the-astro-packages-mantained-for-astroarch-on-pc-and-mini-pc)
- - [Tips](#tips)
+- [Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pi, PC and mini PC (works also on Manjaro and all Arch derived distros)](#welcome-to-astroarch-astrophotography-on-archlinux-for-raspberry-pi-pc-and-mini-pc-works-also-on-manjaro-and-all-arch-derived-distros)
+- [What Raspberry version is supported?](#what-raspberry-version-is-supported)
+- [Download](#download)
+- [Why ArchLinux?](#why-archlinux)
+- [Flash the img to an SD](#flash-the-img-to-an-sd)
+- [First boot](#first-boot)
+- [Set timezone](#set-timezone)
+- [Passwords](#passwords)
+- [Performance and compositor](#performance-and-compositor)
+- [How to protect VNC with password](#how-to-protect-vnc-with-password)
+- [How can I use a raspberry camera](#how-can-i-use-a-raspberry-camera)
+- [Use only the astro packages maintained for AstroArch on PC and mini PC](#use-only-the-astro-packages-maintained-for-astroarch-on-pc-and-mini-pc)
+- [Useful commands](#useful-commands)
+- [Connecting via browser (noVNC)](#connecting-via-browser-novnc)
+- [Connecting via VNC client](#connecting-via-vnc-client)
+- [Connecting via XRDP client](#connecting-via-xrdp-client)
+- [Issues with VNC](#issues-with-vnc)
+- [Adding swap](#adding-swap)
+- [Boot from external disk (USB, HDD, SSD, NVME)](#boot-from-external-disk-usb-hdd-ssd-nvme)
+- [Software available](#software-available)
+    - [Astronomical](#astronomical)
+    - [OS](#os)
+    - [Connectivity](#connectivity)
+    - [Browser](#browser)
+- [How to add a RTC](#how-to-add-a-rtc)
+- [Using a GPS dongle](#using-a-gps-dongle)
+- [How to enable bluetooth](#how-to-enable-bluetooth)
+- [How to enable FTP](#how-to-enable-ftp)
+- [Where to find more packages?](#where-to-find-more-packages)
+- [How to install Python packages?](#how-to-install-python-packages)
+- [Reporting issues](#reporting-issues)
+- [Tips](#tips)
+- [Quick video intro to AstroArch](#quick-video-intro-to-astroarch)
 
 # What Raspberry version is supported?
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
@@ -76,7 +82,7 @@ But I do. And that’s why we're here.
     But if that sounds like your kind of fun, welcome aboard.
 
 # Flash the img to an SD
-If you prefer a GUI, use [balenaHetcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
+If you prefer a GUI, use [balenaEtcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
 there is nothing I shall explain to you :)
 
 # First boot
@@ -89,7 +95,7 @@ Here a small video that will show you how to set the timezone without the termin
 
 https://github.com/devDucks/astroarch/assets/4163222/a935b491-5b7a-444d-9f89-a01a279063de
 
-If you want to use the terminal list first the available timezone with `timedatecl list-timezones` and then set the right one with `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
+If you want to use the terminal list first the available timezone with `timedatectl list-timezones` and then set the right one with `sudo timedatectl set-timezone Foo/Bar` where Foo/Bar is something like `Europe/Rome`
 
 Do not forget to set the right timezone!
 
@@ -117,7 +123,7 @@ to this
 
 
 ```
-ExecStart=x0vncserver -display:0 -rfbauth /root/.vnc/passwd
+ExecStart=x0vncserver -display :0 -rfbauth /root/.vnc/passwd
 ```
 
 Reboot and now you should be prompted to input a password when connecting via VNC
@@ -126,7 +132,7 @@ Reboot and now you should be prompted to input a password when connecting via VN
 AstroArch finally supports raspberry cameras via indi pylibcamera, to install it and having fun with it just run `sudo pacman -S indi-pylibcamera`
 
 # Use only the astro packages maintained for AstroArch on PC and mini PC
-If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I maintain (kstas, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
+If you have an x64 distro based on ArchLinux on your PC and you just want to access the packages I maintain (kstars, phd2, stellarsolver, indi, indi libs and drivers) add my repo to your pacman.conf file (under /etc/pacman.conf) **before** the [core] section, the repo looks like the following
 ```
 [astromatto]
 SigLevel = Optional TrustAll
@@ -145,7 +151,7 @@ The following are some useful commands that you can run from the terminal so you
  - `use-astro-stable` => install stable  packages for Kstars and INDI
 
 # Connecting via browser (noVNC)
-By default `AstroArch` will start a hostpot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
+By default `AstroArch` will start a hotspot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
 noVNC is installed and it will start by default, if your pi is wired to your network you can connect to it with the following methods:
 - **http://astroarch.local:8080/vnc.html**
@@ -163,7 +169,7 @@ The address is `astroarch.local` (or the IP if you prefer) and the port is 5900.
 
 If you have started an Xorg session with Xrdp, you can connect with your VNC client on port 5910.
 
-Few VNC client suggestions (work an all platforms):
+Few VNC client suggestions (work on all platforms):
 - TigerVNC (https://tigervnc.org/)
 - RealVNC (https://www.realvnc.com/en/)
 
@@ -303,7 +309,7 @@ $ sudo echo "/swapfile   none    swap    sw              0       0" | sudo tee -
 If you want to use an alternative media to boot AstroArch, just flash the image to your support and it will work out of the box for USB and SSDs! No special steps are required
 
 If you have a NVMe there are some additional steps to be able to boot from it:
-- install rpi-eeprom with `sudo pacman -S rpi5-eeprom` (or rpi4-eeprom if you have a rasberry4)
+- install rpi-eeprom with `sudo pacman -S rpi5-eeprom` (or rpi4-eeprom if you have a raspberry pi 4)
 - be sure to run the latest eeprom firmware `sudo rpi-eeprom-update -a`
 - *be sure to read this table https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#boot_order-fields*
 - decide the boot order for your raspberry, bear in mind that the priority goes right to left, so for example, if you want your boot
@@ -403,7 +409,7 @@ if you want to install packages using a GUI instead, open discovery (the blue ba
 
 If the package you are looking for is not there you may additionally have a look at the AUR https://aur.archlinux.org/ - AUR is a list of packages maintained by the community,
 they are not ready to be installed so they can't be installed with pacman but instead you need `paru` (already installed on AstroArch), if you find your package on the AUR run `paru -S PACKAGE_NAME`
-it will ask you for a review (confirm it) and then it will compile the package for you and install it. Please be patient, some packages are just huges and it may take some time to compile on lower hardware like the raspberry.
+it will ask you for a review (confirm it) and then it will compile the package for you and install it. Please be patient, some packages are just huge and it may take some time to compile on lower hardware like the raspberry.
 Even for AUR there is a graphical installer (although I never used it and I cannot guarantee if it works well or not), run `sudo pacman -S pamac-full` and you can run `pamac` to install graphically packages from the AUR.
 
 What if your package is not in the AUR or the official ArchLinux repository? Please let me know, it is not hard to package stuff for ArchLinux and in fact I already do it for few things, I can take a look at the source and if possible I will try to package
@@ -413,8 +419,8 @@ it for Arch so that you may be able to install it using pacman.
 PLEASE READ THIS CAREFULLY
 
 Python packages via pip installing has changed over time and it now looks way more different than it was years ago, this may looks like a cultural shock if you are coming from more stable distros (Debian and similar) that still didn't catch up with this change but bear with us;
-installing packages via pip globally is not supported anymore by default (`sudo pip install`) cause it messes up distro packaging. If you try to do so you will see an error message suggesting to use a virtual environment (which, by the way, is a GREAT suggestion).
-Sometimes vietual envs are not simply possible, so there are 3 ways to achieve the wanted result:
+installing packages via pip globally is not supported any more by default (`sudo pip install`) cause it messes up distro packaging. If you try to do so you will see an error message suggesting to use a virtual environment (which, by the way, is a GREAT suggestion).
+Sometimes virtual envs are not simply possible, so there are 3 ways to achieve the wanted result:
 1) install the package via the package manager (pacman) - if the python package you want to install is a common one, there is a big chance it's been packaged for ArchLinux already and you can install it with pacman - BEST WAY
 2) open an issue here on github and let me know what python packages you would like to see available to be installed via `pacman`, it will take few days to few weeks depending on availability but it is doable - RECOMMENDED WAY if 1 is not possible
 3) bypass the pip check and force a global install running `sudo pip install --break-system-packages PACKAGE_NAME` - NOT RECOMMENDED and likely to break other dependencies in the long run, if you do so, we do not offer any support, sorry!
