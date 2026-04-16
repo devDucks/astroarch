@@ -7,7 +7,7 @@ SSID=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8)
 IS_ACTIVE=$(nmcli -t -f NAME,DEVICE,STATE connection show --active | grep "^${CONN_NAME}:wlan0:activated$")
 
 if [ -n "$IS_ACTIVE" ]; then
-    exist 0
+    exit 0
 fi
 
 sleep 3

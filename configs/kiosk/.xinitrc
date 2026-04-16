@@ -45,6 +45,5 @@ watch_apps() {
 watch_apps &
 
 wait $KWIN_PID
-kill $WATCH_PID
 kill $SHELL_PID
 exit 0

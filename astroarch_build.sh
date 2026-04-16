@@ -295,6 +295,7 @@ chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 
 # Minimal desktop
 ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 
 # Allows access to the astronaut group
 chmod -R 770 /home/astronaut

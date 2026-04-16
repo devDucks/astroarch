@@ -276,16 +276,6 @@ while true; do
                 "xgps &" \
                 "pgrep -x xgps"
             ;;
-        astromonitor)
-            key=$(kdialog --title "astromonitor key" --inputbox "Enter your astromonitor key:")
-            password=$(kdialog --title "astromonitor key" --password "Enter the password")
-            echo password || sudo -u astronaut-kiosk astromonitor --retrieve-backup
-            if [ $? = 0 ]; then
-                kdialog --msgbox "Kstars backup successful"
-            else
-                kdialog --error "Kstars backup failed"
-            fi
-            ;;
         backup)
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             cp "$XINITRC" "${XINITRC}.backup.${TIMESTAMP}"

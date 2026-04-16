@@ -10,17 +10,17 @@ is_gui() { [[ -n "$DISPLAY" && -z "$SSH_CLIENT" ]]; }
 # Update specific keys in the config file
 update_config() { sed -i "s|^$1=.*|$1=\"$2\"|" "$CONFIG_FILE"; }
 
-# --- NOUVELLE FONCTION DE NETTOYAGE ---
+# --- NEW CLEANING FEATURE ---
 cleanup_canceled_backup() {
     local DEST="$1"
-    # Supprime le dossier corrompu (nécessite sudo car rsync préserve les permissions root)
-    if [ -d "$DEST" ]; then
+    # Deletes the corrupted folder (requires sudo because rsync preserves root permissions)
+    if [[ "$DEST" == */backup ]] && [[ "$DEST" != "/backup" ]]; then
         sudo rm -rf "$DEST"
+        rm -f "$CONFIG_FILE"
+        MSG="⚠️ Backup canceled. Folder and config removed."
+    else
+        MSG="⚠️ Backup canceled. Folder NOT removed (security check failed)."
     fi
-    # Supprime le fichier config pour forcer une réinitialisation propre au prochain lancement
-    rm -f "$CONFIG_FILE"
-
-    MSG="⚠️ Backup canceled. Destination folder and config removed to prevent corruption."
     if is_gui; then
         kdialog --title "Backup Aborted" --msgbox "$MSG"
     else
@@ -71,6 +71,9 @@ if [ ! -f "$CONFIG_FILE" ]; then
         DEST_PATH=$(kdialog --inputbox "First backup. Choose storage location:" "$DEFAULT_DEST")
     else
         read -p "First installation. Location [$DEFAULT_DEST]: " DEST_PATH
+    fi
+    if [[ "$DEST_PATH" != */backup ]]; then
+    DEST_PATH="${DEST_PATH%/}/backup"
     fi
     [ -z "$DEST_PATH" ] && DEST_PATH="$DEFAULT_DEST"
 

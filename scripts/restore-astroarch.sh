@@ -70,8 +70,8 @@ fi
 EXCLUSIONS=(--exclude='/dev/*' --exclude='/proc/*' --exclude='/sys/*' --exclude='/tmp/*' --exclude='/run/*' --exclude='/mnt/*' --exclude='/media/*' --exclude='/lost+found/' --exclude='/boot/*' --exclude='*/thinclient_drives' --exclude='*/.gvfs' --exclude="$ABS_DEST")
 
 if is_gui; then
-    # --- MÉTHODE DBUS POUR KDE ---
-    # On envoie la notification via gdbus pour récupérer son ID numérique unique
+    # --- DBUS METHOD FOR KDE ---
+    # We send the notification via GDBus to retrieve its unique ID
     NOTIFY_ID=$(gdbus call --session --dest org.freedesktop.Notifications \
         --object-path /org/freedesktop/Notifications \
         --method org.freedesktop.Notifications.Notify \
@@ -79,11 +79,11 @@ if is_gui; then
         "System Restore" "Restoration in progress... DO NOT interrupt." \
         [] '{"urgency": <byte 1>}' 0 | sed 's/(uint32 \([0-9]*\),)/\1/')
 
-    # Execute rsync (bloquant)
+    # Run rsync (blocking)
     sudo rsync -aAXxh -x --delete "${EXCLUSIONS[@]}" "$ABS_DEST/" /
     RSYNC_RESULT=$?
 
-    # FERMETURE FORCÉE via l'ID récupéré
+    # FORCED CLOSURE using the retrieved ID
     if [ -n "$NOTIFY_ID" ]; then
         gdbus call --session --dest org.freedesktop.Notifications \
             --object-path /org/freedesktop/Notifications \
@@ -98,7 +98,7 @@ if is_gui; then
                 -t 1000 --hint=int:transient:1
             sleep 1
         done
-        #sudo reboot
+        sudo reboot
     else
         # ERROR
         notify-send "Restore FAILED" "❌ Error code: $RSYNC_RESULT." --icon="dialog-error" --urgency=critical -t 0

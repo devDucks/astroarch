@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sudo pacman -Sy base-devel --noconfirm
+
 ## Add the kiosk session ##
 USERNAME="astronaut-kiosk"
 if ! id "$USERNAME" &>/dev/null; then
@@ -34,5 +36,6 @@ sudo chmod -R 770 /home/astronaut
 
 # Minimal desktop
 sudo ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/
+sudo ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 
 fi
