@@ -211,7 +211,7 @@ function update-astroarch()
         if [[ -n "$DISPLAY" && -z "$SSH_CLIENT" && -z "$SSH_TTY" ]]; then
         kdialog --title "AstroArch Update - Risk of Addiction"  \
         --warningyesno "Warning! The following critical packages will have their dependencies changed.\nClick “Yes” if you've made a backup.\n \
-        Click “No” to perform another update with a backup.\nFor more information, see the README on GitHub: \n\n \
+        Click no to exit the update, you can then make a backup and try again.\nFor more information, see the README on GitHub: \n\n \
         - $list_str\n\nDo you want to proceed the update anyway?"
 
             [[ $? -ne 0 ]] && PROCEED_UPDATE=0
