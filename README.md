@@ -460,7 +460,7 @@ This session is designed to run only a few programs. During our astro outings, w
 - You can request to launch the software directly when the session starts. You can also set the software to reopen if it is closed. The images folder is accessible from the astroarch user
 - You can request your software to save to a folder in the astroarch session or to a removable disk
 
-<img width="272" height="301" alt="image" src="https://github.com/user-attachments/assets/61291a8a-ef06-4d95-8d22-d2e39083e013" />
+<img width="277" height="301" alt="image" src="https://github.com/user-attachments/assets/c263ac1e-401b-4000-845b-b0c694e85b90" />
 
 After selecting the software to install, the following window shows you the configuration status. Either the status is disabled and the line is not highlighted. Click on it to select and enable or disable it
 
