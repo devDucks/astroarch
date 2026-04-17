@@ -5,7 +5,6 @@ export XDG_MENU_PREFIX=plasma-
 export KWIN_X11_NO_QUIRKS=1
 export KWIN_X11_FORCE_SOFTWARE_OPENGL=1
 export KWIN_COMPOSE=N
-export KWIN_X11_NO_QUIRKS=1
 
 rm -f $HOME/.cache/menus/*
 rm -f $HOME/.cache/ksycoca6*
