@@ -182,7 +182,7 @@ if is_gui; then
     while read -r percent; do
         ((count++))
         if (( count % 5 == 0 )); then
-            # SI ANNULÉ PAR L'UTILISATEUR
+            # IF CANCELED BY THE USER
             if ! qdbus6 $dbus_ref >/dev/null 2>&1; then
                 sudo pkill -f "rsync.*$ABS_DEST"
                 cleanup_canceled_backup "$ABS_DEST"
