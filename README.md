@@ -459,7 +459,6 @@ This session is designed to run only a few programs. During our astro outings, w
 - You can request to have the software icon on the desktop and/or in the menu
 - You can request to launch the software directly when the session starts. You can also set the software to reopen if it is closed. The images folder is accessible from the astroarch user
 - You can request your software to save to a folder in the astroarch session or to a removable disk
-- You can also retrieve your Kstars configuration with astromonitor
 
 <img width="272" height="301" alt="image" src="https://github.com/user-attachments/assets/61291a8a-ef06-4d95-8d22-d2e39083e013" />
 
@@ -482,16 +481,6 @@ You can see the status of all software with the status of the current configurat
 
 
 <img width="691" height="487" alt="image" src="https://github.com/user-attachments/assets/c591cb47-ce97-43a1-850a-8ffc6df9f148" />
-
-
-- Restore your Kstars configuration with your astromonitor key
-
-
-<img width="268" height="293" alt="image" src="https://github.com/user-attachments/assets/79c0b11f-d726-4e5a-ae53-97e3125559e4" />
-
-
-
-<img width="200" height="126" alt="image" src="https://github.com/user-attachments/assets/2ff1f30d-4519-4598-827a-4f42e7f6068d" />
 
 
 
