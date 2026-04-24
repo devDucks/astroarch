@@ -23,7 +23,7 @@ nmcli device set wlan0 managed yes
 sleep 1
 nmcli connection up $CONN_NAME
 
-# Détection de l'erreur -52
+# Error -52 detected
 if dmesg | grep "brcmf.*-52"; then
     /bin/zsh "$RESET_BRCMFMAC"
 fi
