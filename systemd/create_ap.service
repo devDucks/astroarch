@@ -7,6 +7,7 @@ Wants=NetworkManager-wait-online.service
 ExecStart=/bin/bash /home/astronaut/.astroarch/scripts/create_ap.sh
 ExecStop=/bin/systemctl disable create_ap.service
 Type=oneshot
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

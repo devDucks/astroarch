@@ -57,7 +57,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync --noconfirm --ask 4
 fi
 
 
@@ -101,7 +101,7 @@ systemctl stop smb
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 
 # NetworkManager WiFi Power Saving
-ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-on.conf /etc/NetworkManager/conf.d
+ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /etc/NetworkManager/conf.d
 
 # Start NetworkManager and sleep to create the hotspot
 systemctl start NetworkManager
@@ -255,11 +255,56 @@ install -o root -g root -m 644 /home/astronaut/.astroarch/configs/kdeglobals /et
 cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
 cp -r /home/astronaut/.astroarch/configs/layout-templates/astroarchPanel /usr/share/plasma/layout-templates/
 
+# Add user astronaut-kiosk
+useradd -G wheel -m astronaut-kiosk
+echo "astronaut-kiosk:astro" | chpasswd
+usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users,astronaut astronaut-kiosk
+usermod -aG astronaut-kiosk astronaut
+chmod -R 777 /home/astronaut-kiosk
+su astronaut-kiosk -c "LC_ALL=C.UTF-8 xdg-user-dirs-update --force"
+mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
+
+## Add the kiosk session ##
+# New Xrdp launcher for astronaut and astronaut-kiosk sessions
+cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-xrdp.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/startwm.sh /home/astronaut-kiosk/
+cp /home/astronaut/.astroarch/configs/kiosk/.xinitrc /home/astronaut-kiosk/
+
+# Copy wallpapers
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
+cp /home/astronaut/.astroarch/configs/kiosk/astroarch-kiosk.png /home/astronaut-kiosk/Pictures/wallpapers/
+
+# Add menu
+cp -r /home/astronaut/.astroarch/configs/kiosk/menus /home/astronaut-kiosk/.config/
+
+# Copy kstars folders
+cp -R /home/astronaut/.local/share/kstars /home/astronaut-kiosk/.local/share/
+
+su astronaut-kiosk -c "cat <<EOF >/home/astronaut-kiosk/.config/plasmanotifyrc
+[DoNotDisturb]
+WhenFullscreen=false
+WhenScreensMirrored=false
+EOF"
+
+# Copy the screensaver config, by default it is off
+su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
+
+# Adjustment of user rights
+chmod -R 777 /home/astronaut-kiosk
+chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
+
+# Minimal desktop
+ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
+
+# Allows access to the astronaut group
+chmod -R 770 /home/astronaut
+
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
 # Increases the xrdp buffer
-sudo sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
+sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"

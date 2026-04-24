@@ -75,8 +75,18 @@ function astro-rollback-kstars()
     rm -rf ~/.rollback/*
 }
 
+function restore-astroarch() {
+    bash "$HOME/.astroarch/scripts/restore-astroarch.sh"
+}
+
+function backup-astroarch() {
+    bash "$HOME/.astroarch/scripts/backup-astroarch.sh"
+}
+
 function update-astroarch()
 {
+    backup-astroarch
+
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
@@ -199,8 +209,11 @@ function update-astroarch()
         local PROCEED_UPDATE=1
         # Test : GUI ?
         if [[ -n "$DISPLAY" && -z "$SSH_CLIENT" && -z "$SSH_TTY" ]]; then
-            kdialog --title "AstroArch Update - Risk of Addiction" \
-                --warningyesno "Warning! The following critical packages will have their dependencies changed:\n\n- $list_str\n\nDo you want to proceed the update anyway?"
+        kdialog --title "AstroArch Update - Risk of Addiction"  \
+        --warningyesno "Warning! The following critical packages will have their dependencies changed.\nClick “Yes” if you've made a backup.\n \
+        Click no to exit the update, you can then make a backup and try again.\nFor more information, see the README on GitHub: \n\n \
+        - $list_str\n\nDo you want to proceed the update anyway?"
+
             [[ $? -ne 0 ]] && PROCEED_UPDATE=0
         else
             # Terminal mode no GUI
