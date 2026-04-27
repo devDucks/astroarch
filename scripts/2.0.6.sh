@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Invoke 2.0.5
+bash /home/astronaut/.astroarch/scripts/2.0.5.sh
+
 # Add drift file for chrony
 sudo sed -i '$a\driftfile /var/lib/chrony/drift' /etc/chrony.conf
 
