@@ -1,38 +1,24 @@
 #!/usr/bin/env bash
 
-# Invoke 2.0.5
-bash /home/astronaut/.astroarch/scripts/2.0.5.sh
+# Invoke 2.0.6
+bash /home/astronaut/.astroarch/scripts/2.0.6.sh
 
-# Add drift file for chrony
-sudo sed -i '$a\driftfile /var/lib/chrony/drift' /etc/chrony.conf
+# Remove if duplicate due to the execution of 2.0.5.sh & 2.0.6.sh
+sudo sed -i '/driftfile \/var\/lib\/chrony\/drift/ { x; s/^$/1/; t keep; d; :keep g; }' /etc/chrony.conf
+awk '!seen[$0]++ || !/refclock SHM 0 offset 0.5 delay 0.2 refid NMEA/' /etc/chrony.conf | sudo tee /etc/chrony.conf.tmp > /dev/null && sudo mv /etc/chrony.conf.tmp /etc/chrony.conf
 
-# Xrdp
-#Set AutoAddDevices to disabled to avoid device management conflicts between different sessions
-sudo sed -i -E '/AutoAddDevices/ s/^([[:space:]]*)#/\1/' /etc/X11/xrdp/xorg.conf
-# Disables the display's power management features
-sudo sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
-# Disabling compression can speed up local connections on low-power devices
-sudo sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
-sudo sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
-# Improve xrdp & network
-sudo cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
+# Removal of duplicates caused by 2.0.6.sh in /etc/X11/xrdp/xorg.conf
+sudo sed -i 's/^\([[:space:]]*Option[[:space:]]*"DPMS"\).*/\1 "false"/' /etc/X11/xrdp/xorg.conf
 
-# NetworkManager WiFi Power Saving
-sudo ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /etc/NetworkManager/conf.d
-
-# Add base-devel and rsync package
-sudo pacman -Sy base-devel rsync --noconfirm
-
-## Add the kiosk session ##
-USERNAME="astronaut-kiosk"
-if ! id "$USERNAME" &>/dev/null; then
+# If the `id` command in 2.0.6.sh didn't work, reinstall astronaut-kiosk using the `getent` command
+if ! getent passwd "astronaut-kiosk" > /dev/null 2>&1; then
 # Add user astronaut-kiosk
 sudo useradd -G wheel -m astronaut-kiosk
 echo "astronaut-kiosk:astro" | sudo chpasswd
 sudo usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users,astronaut astronaut-kiosk
 sudo usermod -aG astronaut-kiosk astronaut
 sudo chmod -R 770 /home/astronaut-kiosk
-sudo -u astronaut-kiosk  LC_ALL=C.UTF-8 xdg-user-dirs-update --force
+sudo -u astronaut-kiosk LC_ALL=C.UTF-8 xdg-user-dirs-update --force
 sudo mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
 
 # New Xrdp launcher for astronaut and astronaut-kiosk sessions
@@ -56,7 +42,8 @@ sudo chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 sudo chmod -R 770 /home/astronaut
 
 # Minimal desktop
-sudo ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/
+sudo ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
 sudo ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 
 fi
+
