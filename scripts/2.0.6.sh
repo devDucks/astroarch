@@ -24,14 +24,15 @@ sudo ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /e
 sudo pacman -Sy base-devel rsync --noconfirm
 
 ## Add the kiosk session ##
-if ! getent passwd "astronaut-kiosk" > /dev/null 2>&1; then
+USERNAME="astronaut-kiosk"
+if ! id "$USERNAME" &>/dev/null; then
 # Add user astronaut-kiosk
 sudo useradd -G wheel -m astronaut-kiosk
 echo "astronaut-kiosk:astro" | sudo chpasswd
 sudo usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users,astronaut astronaut-kiosk
 sudo usermod -aG astronaut-kiosk astronaut
 sudo chmod -R 770 /home/astronaut-kiosk
-sudo -u astronaut-kiosk LC_ALL=C.UTF-8 xdg-user-dirs-update --force
+sudo -u astronaut-kiosk  LC_ALL=C.UTF-8 xdg-user-dirs-update --force
 sudo mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
 
 # New Xrdp launcher for astronaut and astronaut-kiosk sessions
@@ -55,8 +56,7 @@ sudo chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 sudo chmod -R 770 /home/astronaut
 
 # Minimal desktop
-sudo ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+sudo ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/
 sudo ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 
 fi
-
