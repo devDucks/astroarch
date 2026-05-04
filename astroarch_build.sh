@@ -135,6 +135,9 @@ cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 # Copy udev rule to disable wifi power saving
 cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
 
+# Udev rule to force the brcmfmac driver to keep the name “wlan0” for Wi-Fi
+cp /home/astronaut/.astroarch/configs/99-brcmfmac.rules /etc/udev/rules.d/99-brcmfmac.rules
+
 # Polkit rules go here
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
