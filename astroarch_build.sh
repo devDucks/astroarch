@@ -286,9 +286,6 @@ WhenFullscreen=false
 WhenScreensMirrored=false
 EOF"
 
-# Copy the screensaver config, by default it is off
-su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
-
 # Adjustment of user rights
 chmod -R 777 /home/astronaut-kiosk
 chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
@@ -299,6 +296,9 @@ ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astrona
 
 # Allows access to the astronaut group
 chmod -R 770 /home/astronaut
+
+# Copy the screensaver config, by default it is off
+su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
