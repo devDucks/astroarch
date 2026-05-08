@@ -312,6 +312,10 @@ sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xr
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
 
+# Fix 'Insecure completion-dependent directories detected'
+chmod 755 /home/astronaut/.astroarch
+chmod 755 /home/astronaut/.oh-my-zsh
+
 # Override cmdline.txt (Only on QEMU)
 if [ "$HAS_VIRT" -eq 1 ]; then
     echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
