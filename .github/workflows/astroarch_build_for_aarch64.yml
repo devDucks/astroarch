@@ -17,12 +17,10 @@
 name: Build astroarch
 
 on:
-  workflow_dispatch:
-    branches:
-      - astroarch_build
   push:
     branches:
       - astroarch_build
+  workflow_dispatch:
 
 jobs:
   build-astroarch:
@@ -133,5 +131,17 @@ jobs:
           kpartx -dv "$LOOP"
           losetup -d "$LOOP"
 
-          pishrink.sh -za "$IMAGE"
+          pishrink.sh -a "$IMAGE"
+
+          LOOP2=$(losetup -f --show "$IMAGE")
+          kpartx -av "$LOOP2"
+          sleep 1
+          LOOPNAME2=$(basename "$LOOP2")
+          mount "/dev/mapper/${LOOPNAME2}p2" /mnt/root
+          rm -f /mnt/root/etc/rc.local
+          umount /mnt/root
+          kpartx -dv "$LOOP2"
+          losetup -d "$LOOP2"
+
+          gzip -1 -f "$IMAGE"
 
