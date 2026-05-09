@@ -19,7 +19,7 @@ name: Build astroarch
 on:
   push:
     branches:
-      - astroarch_build
+      - main
   workflow_dispatch:
 
 jobs:
@@ -139,6 +139,7 @@ jobs:
           LOOPNAME2=$(basename "$LOOP2")
           mount "/dev/mapper/${LOOPNAME2}p2" /mnt/root
           rm -f /mnt/root/etc/rc.local
+          rm -f /.dockerenv
           umount /mnt/root
           kpartx -dv "$LOOP2"
           losetup -d "$LOOP2"
