@@ -10,6 +10,35 @@ is_gui() { [[ -n "$DISPLAY" && -z "$SSH_CLIENT" ]]; }
 # Update specific keys in the config file
 update_config() { sed -i "s|^$1=.*|$1=\"$2\"|" "$CONFIG_FILE"; }
 
+ask_valid_dest() {
+    local PROMPT="$1"
+    local DEFAULT="$2"
+    local PATH_OK=false
+
+    while [ "$PATH_OK" = false ]; do
+        if is_gui; then
+            DEST_PATH=$(kdialog --inputbox "$PROMPT" "$DEFAULT")
+            [ -z "$DEST_PATH" ] && exit 0
+        else
+            read -p "$PROMPT (or Enter to quit): " DEST_PATH
+            [ -z "$DEST_PATH" ] && exit 0
+        fi
+
+        [[ "$DEST_PATH" != */backup ]] && DEST_PATH="${DEST_PATH%/}/backup"
+
+        if mkdir -p "$DEST_PATH" 2>/dev/null; then
+            PATH_OK=true
+        else
+            MSG_PERM="⚠️ Cannot create \"$DEST_PATH\": permission denied."
+            if is_gui; then
+                kdialog --title "Permission Denied" --error "$MSG_PERM"
+            else
+                echo -e "$MSG_PERM"
+            fi
+        fi
+    done
+}
+
 # --- NEW CLEANING FEATURE ---
 cleanup_canceled_backup() {
     local DEST="$1"
@@ -77,7 +106,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     fi
     [ -z "$DEST_PATH" ] && DEST_PATH="$DEFAULT_DEST"
 
-    mkdir -p "$DEST_PATH" 2>/dev/null
+    ask_valid_dest "First backup. Choose storage location:" "$DEFAULT_DEST"
     FIRST_BACKUP="yes"
     AUTO_CHOICE="Ask"
 
@@ -104,7 +133,7 @@ else
             ask_confirmation "New confirmation mode:"
         fi
 
-        mkdir -p "$DEST_PATH" 2>/dev/null
+        ask_valid_dest "New location:" "$DEST_PATH"
         update_config "DEST_PATH" "$DEST_PATH"
         update_config "AUTO_CHOICE" "$AUTO_CHOICE"
         SKIP_FINAL_PROMPT="true"
@@ -128,7 +157,21 @@ fi
 # --- 3. DISK SPACE VALIDATION LOOP ---
 VALID_SPACE=false
 while [ "$VALID_SPACE" = false ]; do
-    mkdir -p "$DEST_PATH" 2>/dev/null
+    if ! mkdir -p "$DEST_PATH" 2>/dev/null; then
+        MSG_PERM="⚠️ Cannot create folder \"$DEST_PATH\".\nPermission denied."
+        if is_gui; then
+            kdialog --title "Permission Denied" --warningcontinuecancel "$MSG_PERM" \
+                --continue-label "Choose another location" --cancel-label "Abort" || exit 0
+            DEST_PATH=$(kdialog --inputbox "New location:" "$DEFAULT_DEST")
+            [ -z "$DEST_PATH" ] && exit 0
+        else
+            echo -e "$MSG_PERM"
+            read -p "New path (or Enter to quit): " DEST_PATH
+            [ -z "$DEST_PATH" ] && exit 0
+        fi
+        update_config "DEST_PATH" "$DEST_PATH"
+        continue
+    fi
     ABS_DEST=$(realpath "$DEST_PATH")
     EXCLUSIONS=(--exclude='/dev/*' --exclude='/proc/*' --exclude='/sys/*' --exclude='/tmp/*' --exclude='/run/*' --exclude='/mnt/*' --exclude='/media/*' --exclude='/lost+found/' --exclude='/boot/*' --exclude='*/thinclient_drives' --exclude='*/.gvfs' --exclude="$ABS_DEST")
 
