@@ -18,9 +18,11 @@ name: Build astroarch
 
 on:
   workflow_dispatch:
+    branches:
+      - astroarch_build
   push:
     branches:
-      - astroarc_build
+      - astroarch_build
 
 jobs:
   build-astroarch:
