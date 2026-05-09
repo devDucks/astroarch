@@ -1,0 +1,135 @@
+###########################################################################################################################
+#
+# Install the runner on your Astroarch machine following the instructions on GitHub
+# Install Docker on your Astroarch machine:
+# - paru -Sy docker
+# - sudo systemctl enable docker.service
+# - sudo systemctl start docker.service
+# Add Docker to astronaut
+# - sudo usermod -a -G docker astronaut
+# - reboot
+# Launch the runner
+# The generated image is stored in the runner's /actions-runner/_work/astroarch folder
+# Don't forget to change the file's ownership
+#
+###########################################################################################################################
+
+name: Build astroarch
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - astroarc_build
+
+jobs:
+  build-astroarch:
+    name: "Build"
+    runs-on: ["self-hosted"]
+    permissions:
+      contents: write
+    container:
+      image: ghcr.io/devducks/archlinuxarm:latest
+      options: --privileged
+    timeout-minutes: 60
+    steps:
+      - name: Bootstrap pacman keyring
+        run: pacman-key --init && pacman-key --populate archlinuxarm && pacman -Syu --noconfirm
+
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat configs/.astroarch.version | tr -d '[:space:]')
+          DATE=$(date +'%Y%m%d')
+          FILENAME="astroarch-${VERSION}-${DATE}"
+          echo "version=$VERSION"   >> $GITHUB_OUTPUT
+          echo "date=$DATE"         >> $GITHUB_OUTPUT
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: astroarch
+        run: bash ci/astroarch_build_for_aarch64.sh
+
+      - name: Install image build tools
+        run: |
+          pacman -S parted dosfstools multipath-tools pigz --noconfirm
+          curl -fsSL https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh \
+            -o /usr/local/bin/pishrink.sh
+          chmod +x /usr/local/bin/pishrink.sh
+
+      - name: Create disk image
+        run: |
+          IMAGE="/__w/astroarch/${{ steps.version.outputs.filename }}.img"
+
+          rm -f "$IMAGE" "${IMAGE}.gz"
+
+          fallocate -l 15G "$IMAGE"
+
+          LOOP=$(losetup -f --show "$IMAGE")
+          echo "Loop device: $LOOP"
+
+          parted -s "$LOOP" mklabel msdos
+          parted -s "$LOOP" mkpart primary fat32 4MiB 537MiB
+          parted -s "$LOOP" set 1 boot on
+          parted -s "$LOOP" mkpart primary ext4 537MiB 100%
+
+          kpartx -av "$LOOP"
+          sleep 1
+
+          LOOPNAME=$(basename "$LOOP")
+          PART_BOOT="/dev/mapper/${LOOPNAME}p1"
+          PART_ROOT="/dev/mapper/${LOOPNAME}p2"
+
+          ls "$PART_BOOT" "$PART_ROOT"
+
+          mkfs.vfat -F32 -n BOOT "$PART_BOOT"
+          mkfs.ext4 -L ROOT -U c2cea082-7f3e-43e2-b6a1-0c8540d350cc "$PART_ROOT"
+
+          mkdir -p /mnt/root
+          mount "$PART_ROOT" /mnt/root
+          mkdir -p /mnt/root/boot
+          mount "$PART_BOOT" /mnt/root/boot
+
+          rsync -aAX \
+            --exclude=/proc \
+            --exclude=/sys \
+            --exclude=/dev \
+            --exclude=/run \
+            --exclude=/tmp \
+            --exclude=/mnt \
+            --exclude=/__w \
+            --exclude=/__e \
+            --exclude=/github \
+            --exclude=/var/cache/pacman/pkg \
+            --exclude=/var/log \
+            --exclude=/root/.bash_history \
+            / /mnt/root/
+
+          mkdir -p /mnt/root/{proc,sys,dev,run,tmp}
+
+          systemctl disable --root=/mnt/root systemd-timesyncd.service
+
+          systemctl enable --root=/mnt/root \
+            sddm.service \
+            novnc.service \
+            dhcpcd.service \
+            NetworkManager.service \
+            avahi-daemon.service \
+            nmb.service \
+            smb.service \
+            xrdp.service \
+            xrdp-sesman.service \
+            chronyd.service \
+            x0vncserver.service \
+            create_ap.service \
+            resize_once.service
+
+          umount /mnt/root/boot
+          umount /mnt/root
+
+          kpartx -dv "$LOOP"
+          losetup -d "$LOOP"
+
+          pishrink.sh -za "$IMAGE"
+
