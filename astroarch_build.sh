@@ -47,12 +47,12 @@ else
        network-manager-applet networkmanager-qt xorg konsole \
        gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
        knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
-       qt6-websockets qtkeychain stellarsolver xf86-video-fbdev \
+       qt6-websockets qtkeychain-qt6 stellarsolver xf86-video-fbdev \
        xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
        dolphin uboot-tools usbutils cloud-guest-utils samba paru \
        websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
        indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
-       i2c-tools indiserver-ui astro_dmx openssl-1.1 firefox chrony \
+       i2c-tools indiserver-ui astro_dmx openssl firefox chrony \
        ksystemlog discover kwalletmanager kgpg qt6-serialbus \
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
