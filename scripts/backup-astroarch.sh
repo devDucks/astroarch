@@ -1,4 +1,5 @@
 #!/bin/bash
+export LC_ALL=C
 
 # --- 1. INITIALIZATION ---
 CONFIG_FILE="$HOME/.backup_dest"
@@ -176,9 +177,9 @@ while [ "$VALID_SPACE" = false ]; do
     EXCLUSIONS=(--exclude='/dev/*' --exclude='/proc/*' --exclude='/sys/*' --exclude='/tmp/*' --exclude='/run/*' --exclude='/mnt/*' --exclude='/media/*' --exclude='/lost+found/' --exclude='/boot/*' --exclude='*/thinclient_drives' --exclude='*/.gvfs' --exclude="$ABS_DEST")
 
     echo "Analyzing space on $ABS_DEST..."
-    ROOT_SIZE=$(sudo -n rsync -aAXHvx --delete --dry-run --stats "${EXCLUSIONS[@]}" / "$ABS_DEST" | grep "Total transferred file size" | awk '{print $5}' | tr -d ',')
+    ROOT_SIZE=$(sudo -n env LC_ALL=C rsync -aAXHvx --delete --dry-run --stats "${EXCLUSIONS[@]}" / "$ABS_DEST" | grep "Total transferred file size" | awk '{print $5}' | tr -d ',.')
     [ -z "$ROOT_SIZE" ] && ROOT_SIZE=0
-    AVAILABLE_SIZE=$(df -B1 "$ABS_DEST" | tail -1 | awk '{print $4}')
+    AVAILABLE_SIZE=$(LC_ALL=C df --output=avail -B1 "$ABS_DEST" | tail -1 | tr -d ' ')
 
     TRANS_HUMAN=$(numfmt --to=iec-i --suffix=B $ROOT_SIZE)
     AVAIL_HUMAN=$(numfmt --to=iec-i --suffix=B $AVAILABLE_SIZE)
