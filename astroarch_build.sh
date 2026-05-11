@@ -72,7 +72,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw rsync --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp --noconfirm --ask 4
 fi
 
 
@@ -89,9 +89,6 @@ usermod -aG video sddm
 sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
-
-# Install AUR packages
-su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
 
 # Make all necessary folders
 mkdir /etc/sddm.conf.d
