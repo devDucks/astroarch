@@ -40,7 +40,7 @@ ask_valid_dest() {
     done
 }
 
-# --- NEW CLEANING FEATURE ---
+# --- CLEANING FEATURE ---
 cleanup_canceled_backup() {
     local DEST="$1"
     # Deletes the corrupted folder (requires sudo because rsync preserves root permissions)
@@ -97,16 +97,9 @@ if [ ! -f "$CONFIG_FILE" ]; then
                         <p>Please note: if you cancel the backup while it is in progress, the backup folder and the configuration file will be deleted</p>
                         <p><b>The backup will take some time...</b></p>
                         </html>" 600 500
-
-        DEST_PATH=$(kdialog --inputbox "First backup. Choose storage location:" "$DEFAULT_DEST")
-    else
-        read -p "First installation. Location [$DEFAULT_DEST]: " DEST_PATH
     fi
-    if [[ "$DEST_PATH" != */backup ]]; then
-    DEST_PATH="${DEST_PATH%/}/backup"
-    fi
-    [ -z "$DEST_PATH" ] && DEST_PATH="$DEFAULT_DEST"
 
+    # ask_valid_dest handles everything: prompt, validation, mkdir
     ask_valid_dest "First backup. Choose storage location:" "$DEFAULT_DEST"
     FIRST_BACKUP="yes"
     AUTO_CHOICE="Ask"
@@ -220,23 +213,48 @@ fi
 
 # --- 5. EXECUTION ---
 if is_gui; then
-    dbus_ref=$(kdialog --progressbar "Initializing backup..." 100)
-    sudo -n rsync -aAXHxh --delete --no-inc-recursive --info=progress2 "${EXCLUSIONS[@]}" / "$ABS_DEST" 2>/dev/null | \
-    stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]+(?=%)' | \
-    while read -r percent; do
-        ((count++))
-        if (( count % 5 == 0 )); then
-            # IF CANCELED BY THE USER
-            if ! qdbus6 $dbus_ref >/dev/null 2>&1; then
-                sudo pkill -f "rsync.*$ABS_DEST"
-                cleanup_canceled_backup "$ABS_DEST"
-            fi
-            qdbus6 $dbus_ref setLabelText "Copying: $percent% of $TRANS_HUMAN"
-            qdbus6 $dbus_ref Set "" value "$percent"
-        fi
+
+    # --- D-Bus session detection ---
+    # If DBUS_SESSION_BUS_ADDRESS is not set (e.g. launched from Calamares at session start
+    # before the bus is ready), build the standard systemd socket path for user astronaut.
+    if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+        USER_ID=$(id -u astronaut 2>/dev/null || id -u)
+        export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${USER_ID}/bus"
+    fi
+
+    # Wait until the D-Bus socket is actually available (max 30s).
+    # This handles the race condition where Calamares autostart launches
+    # before the KDE session bus is fully initialised.
+    DBUS_SOCKET=$(echo "$DBUS_SESSION_BUS_ADDRESS" | sed 's|unix:path=||')
+    WAIT=0
+    while [ ! -S "$DBUS_SOCKET" ] && [ "$WAIT" -lt 30 ]; do
+        sleep 1
+        ((WAIT++))
     done
-    qdbus6 $dbus_ref close 2>/dev/null
-    notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 "✅ Backup completed."
+
+    if [ ! -S "$DBUS_SOCKET" ]; then
+        # Fallback: D-Bus still not available after 30s → run in terminal mode
+        echo "⚠️ D-Bus session bus not available after 30s. Falling back to terminal mode."
+        sudo -n rsync -aAXHxh --delete --no-inc-recursive --info=progress2 "${EXCLUSIONS[@]}" / "$ABS_DEST"
+    else
+        dbus_ref=$(kdialog --progressbar "Initializing backup..." 100)
+        sudo -n rsync -aAXHxh --delete --no-inc-recursive --info=progress2 "${EXCLUSIONS[@]}" / "$ABS_DEST" 2>/dev/null | \
+        stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]+(?=%)' | \
+        while read -r percent; do
+            ((count++))
+            if (( count % 5 == 0 )); then
+                # IF CANCELED BY THE USER
+                if ! qdbus6 $dbus_ref >/dev/null 2>&1; then
+                    sudo pkill -f "rsync.*$ABS_DEST"
+                    cleanup_canceled_backup "$ABS_DEST"
+                fi
+                qdbus6 $dbus_ref setLabelText "Copying: $percent% of $TRANS_HUMAN"
+                qdbus6 $dbus_ref Set "" value "$percent"
+            fi
+        done
+        qdbus6 $dbus_ref close 2>/dev/null
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 "✅ Backup completed."
+    fi
 else
     sudo -n rsync -aAXHxh --delete --no-inc-recursive --info=progress2 "${EXCLUSIONS[@]}" / "$ABS_DEST"
 fi
