@@ -76,6 +76,9 @@ usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users astronaut
 # Add sddm user to video group
 usermod -aG video sddm
 
+# Set symlink for display manager
+ln -s  /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
+
 # Allow x11 forwarding over SSH
 sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
