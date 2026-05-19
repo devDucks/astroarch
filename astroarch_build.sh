@@ -316,10 +316,8 @@ bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/br
 chmod 755 /home/astronaut/.astroarch
 chmod 755 /home/astronaut/.oh-my-zsh
 
-# Override cmdline.txt (Only on QEMU)
-if [ "$HAS_VIRT" -eq 1 ]; then
-    echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
-fi
+# Override cmdline.txt
+echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 
 # Reboot and enjoy now, if QEMU stop and add indexes
 if [ "$HAS_VIRT" -eq 0 ]; then
