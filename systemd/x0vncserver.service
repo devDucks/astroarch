@@ -1,7 +1,7 @@
 [Unit]
 Description=Remote desktop service (VNC) for :0 display
-Requires=display-manager.service
-After=display-manager.service
+Requires=sddm.service
+After=sddm.service
 
 [Service]
 Type=simple
