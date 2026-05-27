@@ -5,15 +5,27 @@ set -e
 ARCH=$(uname -m)
 HAS_VIRT=$(command -v systemd-detect-virt >/dev/null 2>&1 && echo 1 || echo 0)
 
+is_container() {
+    # Docker / Podman
+    [ -f /.dockerenv ] && return 0
+
+    # systemd container env
+    [ -n "$container" ] && return 0
+
+    # cgroup inspection
+    grep -qaE '(docker|containerd|kubepods|podman|lxc)' /proc/1/cgroup 2>/dev/null && return 0
+
+    # mount namespace hints
+    grep -qa 'overlay' /proc/mounts 2>/dev/null && return 0
+
+    return 1
+}
+
 # Parallelize pacman download to 5 and use pacman as progress bar
 if [ "$HAS_VIRT" -eq 0 ]; then
     sed -i 's|#ParallelDownloads = 5|ParallelDownloads = 5|g' /etc/pacman.conf
     sed -i 's|ParallelDownloads = 5|ParallelDownloads = 5\nILoveCandy|g' /etc/pacman.conf
     sed -i 's|ParallelDownloads = 5|ParallelDownloads = 5\nDisableDownloadTimeout|g' /etc/pacman.conf
-fi
-
-# Add astroarch pacman repo to pacman.conf (it must go first)
-if [ "$HAS_VIRT" -eq 0 ]; then
     sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
 fi
 
@@ -37,6 +49,9 @@ su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astro
 # Uncomment en_US UTF8 and generate locale files
 sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 # If we are on QEMU, packages have already been pulled in the docker phase - install only the pi kernel
 if [ "$HAS_VIRT" -eq 1 ]; then
@@ -57,7 +72,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw rsync --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp --noconfirm --ask 4
 fi
 
 
@@ -75,9 +90,6 @@ sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
 sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
 
-# Install AUR packages
-su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
-
 # Make all necessary folders
 mkdir /etc/sddm.conf.d
 su astronaut -c "mkdir -p /home/astronaut/.config"
@@ -93,9 +105,9 @@ chown -R astronaut:astronaut /home/astronaut/.oh-my-zsh/
 
 # Set the samba pass
 ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
-systemctl start smb
+smbd --daemon
 (echo astro; echo astro) | smbpasswd -s -a astronaut
-systemctl stop smb
+pkill smbd || true
 
 # Link a zsh config for astronaut
 ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
@@ -104,7 +116,7 @@ ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
 ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /etc/NetworkManager/conf.d
 
 # Start NetworkManager and sleep to create the hotspot
-systemctl start NetworkManager
+NetworkManager &
 sleep 5
 
 # Remove eventually existing systemd configs we are going to substitute
@@ -115,8 +127,11 @@ sed -i '$a\refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' /etc/chrony.conf
 sed -i '$a\driftfile /var/lib/chrony/drift' /etc/chrony.conf
 
 # Disable systemd-timesyncd and enable chronyd
-systemctl disable systemd-timesyncd
-systemctl enable chronyd
+mkdir -p /etc/systemd/system/sysinit.target.wants
+mkdir -p /etc/systemd/system/multi-user.target.wants
+rm -f /etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
+ln -s /dev/null /etc/systemd/system/systemd-timesyncd.service
+ln -s /usr/lib/systemd/system/chronyd.service /etc/systemd/system/multi-user.target.wants/chronyd.service
 
 # Symlink now files
 ln -s /home/astronaut/.astroarch/configs/kde_settings.conf /etc/sddm.conf.d/kde_settings.conf
@@ -147,35 +162,42 @@ cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rule
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
 # Enable vncserver
-systemctl enable x0vncserver
+ln -s /etc/systemd/system/x0vncserver.service /etc/systemd/system/multi-user.target.wants/x0vncserver.service
 
 # Enable xrdp
 mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
 ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
 ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
+
 # Add user xrdp
 useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
+
 # Set user in xrdp.ini
 sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
 sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
 sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
+
 # Set user in xrdp.sesman.ini
 sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
 sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
-# Set permissions
+
+# Set xrdp permissions
 chown root:xrdp /etc/xrdp/rsakeys.ini
 chmod u=rw,g=r /etc/xrdp/rsakeys.ini
 chmod 755 /etc/xrdp/cert.pem
 chmod 755 /etc/xrdp/key.pem
+
 # Disables the display's power management features
 sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
+
 # Disabling compression can speed up local connections on low-power devices
 sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
 sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
+
 # Improve xrdp & network
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
 
-#
+# Nuke notifications
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
 [DoNotDisturb]
 WhenFullscreen=false
@@ -189,20 +211,20 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.c
 su astronaut -c "mkdir -p /home/astronaut/.local/share/kstars/astrometry"
 
 # Enable now all services
-systemctl enable sddm.service \
-	  novnc.service \
-	  dhcpcd.service \
-	  NetworkManager.service \
-	  avahi-daemon.service \
-	  nmb.service \
-	  smb.service \
-	  xrdp.service \
-	  xrdp-sesman.service
+mkdir -p /etc/systemd/system/graphical.target.wants
+ln -s /usr/lib/systemd/system/sddm.service /etc/systemd/system/graphical.target.wants/sddm.service
+ln -s /usr/lib/systemd/system/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
+ln -s /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
+ln -s /usr/lib/systemd/system/NetworkManager.service /etc/systemd/system/multi-user.target.wants/NetworkManager.service
+ln -s /usr/lib/systemd/system/avahi-daemon.service /etc/systemd/system/multi-user.target.wants/avahi-daemon.service
+ln -s /usr/lib/systemd/system/nmb.service /etc/systemd/system/multi-user.target.wants/nmb.service
+ln -s /usr/lib/systemd/system/smb.service /etc/systemd/system/multi-user.target.wants/smb.service
+ln -s /usr/lib/systemd/system/xrdp.service /etc/systemd/system/multi-user.target.wants/xrdp.service
+ln -s /usr/lib/systemd/system/xrdp-sesman.service /etc/systemd/system/multi-user.target.wants/xrdp-sesman.service
 
-# If we are on qemu, enable also the AP creation and resize scripts
-if [ "$HAS_VIRT" -eq 1 ]; then
-    systemctl enable create_ap.service resize_once.service
-fi
+# Enable also the AP creation and resize scripts
+ln -s /etc/systemd/system/create_ap.service /etc/systemd/system/multi-user.target.wants/create_ap.service
+ln -s /etc/systemd/system/resize_once.service /etc/systemd/system/multi-user.target.wants/resize_once.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -247,7 +269,7 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
 # Set a standard TZ to avoid breaking plasma clock widget
-timedatectl set-timezone Europe/London
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
@@ -316,10 +338,8 @@ bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/br
 chmod 755 /home/astronaut/.astroarch
 chmod 755 /home/astronaut/.oh-my-zsh
 
-# Override cmdline.txt (Only on QEMU)
-if [ "$HAS_VIRT" -eq 1 ]; then
-    echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
-fi
+# Override cmdline.txt
+echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 
 # Reboot and enjoy now, if QEMU stop and add indexes
 if [ "$HAS_VIRT" -eq 0 ]; then
