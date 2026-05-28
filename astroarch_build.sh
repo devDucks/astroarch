@@ -187,12 +187,20 @@ chmod u=rw,g=r /etc/xrdp/rsakeys.ini
 chmod 755 /etc/xrdp/cert.pem
 chmod 755 /etc/xrdp/key.pem
 
+# Increases the xrdp buffer
+sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
+
+# Prevents XRDP from creating a second virtual desktop for the same user
+sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
+sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
+
 # Disables the display's power management features
 sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
 
 # Disabling compression can speed up local connections on low-power devices
 sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
 sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
+awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
 
 # Improve xrdp & network
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
@@ -333,12 +341,6 @@ ln -s /etc/systemd/system/xrdp-autostart-kiosk.service /etc/systemd/system/multi
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
-# Increases the xrdp buffer
-sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
-# Prevents XRDP from creating a second virtual desktop for the same user
-sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
-sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
-
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
 
@@ -359,7 +361,8 @@ configure_user() {
   sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/.config/astroarch-bridge"
   sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/Pictures/Ekos"
   # 2. Linger
-  loginctl enable-linger "$USERNAME"
+  mkdir -p /var/lib/systemd/linger && \
+  touch /var/lib/systemd/linger/${USERNAME}
   # 3. Network port
   DROPIN_DIR="/home/$USERNAME/.config/systemd/user/astroarch-bridge.service.d"
   sudo -u "$USERNAME" mkdir -p "$DROPIN_DIR"
@@ -371,7 +374,11 @@ EOF
   ln -sf /usr/share/astroarch-bridge/desktop_dashboard/AstroarchBridge.desktop \
     "/home/$USERNAME/Desktop/AstroarchBridge.desktop"
   # 5. Services
-  systemctl --machine="${USERNAME}@.host" --user enable --now astroarch-bridge.service
+  UNIT_DIR="/home/${USERNAME}/.config/systemd/user"
+  WANTS_DIR="${UNIT_DIR}/default.target.wants"
+  mkdir -p "$WANTS_DIR"
+  ln -sf "${UNIT_DIR}/astroarch-bridge.service" \
+       "${WANTS_DIR}/astroarch-bridge.service"
 }
 for i in "${!USERS[@]}"; do
   configure_user "${USERS[$i]}" "${PORTS[$i]}"
