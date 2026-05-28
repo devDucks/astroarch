@@ -11,5 +11,8 @@ sudo sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
 sudo sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
 
 # XRDP Turn off compression
-sudo awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
+if ! grep -q "rfx_codec=false" /etc/xrdp/xrdp.ini; then
+    sudo awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp \
+    && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
+fi
 
