@@ -72,7 +72,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp fakeroot --noconfirm --ask 4
 fi
 
 
@@ -187,12 +187,20 @@ chmod u=rw,g=r /etc/xrdp/rsakeys.ini
 chmod 755 /etc/xrdp/cert.pem
 chmod 755 /etc/xrdp/key.pem
 
+# Increases the xrdp buffer
+sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
+
+# Prevents XRDP from creating a second virtual desktop for the same user
+sudo sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
+sudo sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
+
 # Disables the display's power management features
 sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
 
 # Disabling compression can speed up local connections on low-power devices
 sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
 sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
+sudo awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
 
 # Improve xrdp & network
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
@@ -327,9 +335,6 @@ su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /ho
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
-
-# Increases the xrdp buffer
-sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
 # Modprobe brcmfmac
 bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
