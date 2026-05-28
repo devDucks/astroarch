@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Invoke 2.0.8
+# Invoke 2.0.9
 bash /home/astronaut/.astroarch/scripts/2.0.9.sh
 
 # Install astroarch-bridge for the astronaut and astronaut-kiosk users
