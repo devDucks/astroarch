@@ -11,6 +11,7 @@
 Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
 - [Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pi, PC and mini PC (works also on Manjaro and all Arch derived distros)](#welcome-to-astroarch-astrophotography-on-archlinux-for-raspberry-pi-pc-and-mini-pc-works-also-on-manjaro-and-all-arch-derived-distros)
 - [What Raspberry version is supported?](#what-raspberry-version-is-supported)
+- [Resources](#resources)
 - [Download](#download)
 - [Why ArchLinux?](#why-archlinux)
 - [Flash the img to an SD](#flash-the-img-to-an-sd)
@@ -22,7 +23,7 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 - [How can I use a raspberry camera](#how-can-i-use-a-raspberry-camera)
 - [Use only the astro packages maintained for AstroArch on PC and mini PC](#use-only-the-astro-packages-maintained-for-astroarch-on-pc-and-mini-pc)
 - [Useful commands](#useful-commands)
-- [System Backup and Restore](#Backup-and-Restore)
+- [System Backup and Restore](#backup-and-restore)
 - [Connecting via browser (noVNC)](#connecting-via-browser-novnc)
 - [Connecting via VNC client](#connecting-via-vnc-client)
 - [Connecting via XRDP client](#connecting-via-xrdp-client)
@@ -49,6 +50,13 @@ Please find below some (hopefully) useful instructions, if you are here instead 
 AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry Pi 4` and of course `Raspberry Pi 5`
 
 Note on the possible back-powering of the raspberry by a mount, camera, powered USB hub or other devices having its own power source and connected to the raspberry by USB. Plug in your raspberry then connect each device so as not to have issues for your AstroArch.
+
+# Resources
+Setup guide:
+[resources/astroarch_rpi5_guide.pdf](https://github.com/devDucks/astroarch/blob/main/resources/astroarch_rpi5_guide.pdf)
+
+WiFi 5GHz guide:
+[resources/astroarch_rpi5_guide.pdf](https://github.com/devDucks/astroarch/blob/main/resources/astroarch_WiFi_5GHZ_Guide.pdf)
 
 # Download
 Please use this link to download the latest astroarch gzipped img file => 
