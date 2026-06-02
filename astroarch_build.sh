@@ -348,42 +348,6 @@ bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/br
 chmod 755 /home/astronaut/.astroarch
 chmod 755 /home/astronaut/.oh-my-zsh
 
-# Install astroarch-bridge for the astronaut and astronaut-kiosk users
-USERS=("astronaut" "astronaut-kiosk")
-PORTS=("8765" "8766")
-configure_user() {
-  local USERNAME=$1
-  local PORT=$2
-  if ! id "$USERNAME" &>/dev/null; then
-    return
-  fi
-  # 1. Folders
-  sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/.config/astroarch-bridge"
-  sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/Pictures/Ekos"
-  # 2. Linger
-  mkdir -p /var/lib/systemd/linger && \
-  touch /var/lib/systemd/linger/${USERNAME}
-  # 3. Network port
-  DROPIN_DIR="/home/$USERNAME/.config/systemd/user/astroarch-bridge.service.d"
-  sudo -u "$USERNAME" mkdir -p "$DROPIN_DIR"
-  cat <<EOF | sudo -u "$USERNAME" tee "$DROPIN_DIR/override.conf" > /dev/null
-[Service]
-Environment=ASTROARCH_PORT=$PORT
-EOF
-  # 4. Desktop shortcut
-  ln -sf /usr/share/astroarch-bridge/desktop_dashboard/AstroarchBridge.desktop \
-    "/home/$USERNAME/Desktop/AstroarchBridge.desktop"
-  # 5. Services
-  UNIT_DIR="/home/${USERNAME}/.config/systemd/user"
-  WANTS_DIR="${UNIT_DIR}/default.target.wants"
-  mkdir -p "$WANTS_DIR"
-  ln -sf "${UNIT_DIR}/astroarch-bridge.service" \
-       "${WANTS_DIR}/astroarch-bridge.service"
-}
-for i in "${!USERS[@]}"; do
-  configure_user "${USERS[$i]}" "${PORTS[$i]}"
-done
-
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 
