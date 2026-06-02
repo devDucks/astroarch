@@ -153,6 +153,9 @@ cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/
 # Udev rule to force the brcmfmac driver to keep the name “wlan0” for Wi-Fi
 cp /home/astronaut/.astroarch/configs/99-brcmfmac.rules /etc/udev/rules.d/99-brcmfmac.rules
 
+# Copy the GPIO ownership rule to get access to the GPIO as any user
+cp /home/astronaut/.astroarch/configs/99-arch-gpio.rules /etc/udev/rules.d/99-arch-gpio.rules
+
 # Polkit rules go here
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
