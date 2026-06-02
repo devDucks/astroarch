@@ -72,7 +72,7 @@ else
        qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
        fortune-mod cowsay pacman-contrib arandr neofetch \
        astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp fakeroot --noconfirm --ask 4
+       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp astroarch-bridge --noconfirm --ask 4
 fi
 
 
@@ -153,9 +153,6 @@ cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/
 # Udev rule to force the brcmfmac driver to keep the name “wlan0” for Wi-Fi
 cp /home/astronaut/.astroarch/configs/99-brcmfmac.rules /etc/udev/rules.d/99-brcmfmac.rules
 
-# Copy the GPIO ownership rule to get access to the GPIO as any user
-cp /home/astronaut/.astroarch/configs/99-arch-gpio.rules /etc/udev/rules.d/99-arch-gpio.rules
-
 # Polkit rules go here
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
@@ -194,8 +191,8 @@ chmod 755 /etc/xrdp/key.pem
 sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
 
 # Prevents XRDP from creating a second virtual desktop for the same user
-sudo sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
-sudo sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
+sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
+sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
 
 # Disables the display's power management features
 sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
@@ -203,7 +200,7 @@ sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
 # Disabling compression can speed up local connections on low-power devices
 sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
 sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
-sudo awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
+awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
 
 # Improve xrdp & network
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
@@ -336,6 +333,11 @@ chmod -R 770 /home/astronaut
 # Copy the screensaver config, by default it is off
 su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
 
+# Pre-launch of the Kiosk session
+sed -i '1s/^/auth sufficient pam_succeed_if.so user = astronaut-kiosk\n/' /etc/pam.d/xrdp-sesman
+cp /home/astronaut/.astroarch/systemd/xrdp-autostart-kiosk.service /etc/systemd/system/xrdp-autostart-kiosk.service
+ln -s /etc/systemd/system/xrdp-autostart-kiosk.service /etc/systemd/system/multi-user.target.wants/xrdp-autostart-kiosk.service
+
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
 
@@ -345,6 +347,42 @@ bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/br
 # Fix 'Insecure completion-dependent directories detected'
 chmod 755 /home/astronaut/.astroarch
 chmod 755 /home/astronaut/.oh-my-zsh
+
+# Install astroarch-bridge for the astronaut and astronaut-kiosk users
+USERS=("astronaut" "astronaut-kiosk")
+PORTS=("8765" "8766")
+configure_user() {
+  local USERNAME=$1
+  local PORT=$2
+  if ! id "$USERNAME" &>/dev/null; then
+    return
+  fi
+  # 1. Folders
+  sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/.config/astroarch-bridge"
+  sudo -u "$USERNAME" mkdir -p "/home/$USERNAME/Pictures/Ekos"
+  # 2. Linger
+  mkdir -p /var/lib/systemd/linger && \
+  touch /var/lib/systemd/linger/${USERNAME}
+  # 3. Network port
+  DROPIN_DIR="/home/$USERNAME/.config/systemd/user/astroarch-bridge.service.d"
+  sudo -u "$USERNAME" mkdir -p "$DROPIN_DIR"
+  cat <<EOF | sudo -u "$USERNAME" tee "$DROPIN_DIR/override.conf" > /dev/null
+[Service]
+Environment=ASTROARCH_PORT=$PORT
+EOF
+  # 4. Desktop shortcut
+  ln -sf /usr/share/astroarch-bridge/desktop_dashboard/AstroarchBridge.desktop \
+    "/home/$USERNAME/Desktop/AstroarchBridge.desktop"
+  # 5. Services
+  UNIT_DIR="/home/${USERNAME}/.config/systemd/user"
+  WANTS_DIR="${UNIT_DIR}/default.target.wants"
+  mkdir -p "$WANTS_DIR"
+  ln -sf "${UNIT_DIR}/astroarch-bridge.service" \
+       "${WANTS_DIR}/astroarch-bridge.service"
+}
+for i in "${!USERS[@]}"; do
+  configure_user "${USERS[$i]}" "${PORTS[$i]}"
+done
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
