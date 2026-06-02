@@ -225,7 +225,8 @@ if is_gui; then
     # Wait until the D-Bus socket is actually available (max 30s).
     # This handles the race condition where Calamares autostart launches
     # before the KDE session bus is fully initialised.
-    DBUS_SOCKET=$(echo "$DBUS_SESSION_BUS_ADDRESS" | sed 's|unix:path=||')
+    DBUS_SOCKET="${DBUS_SESSION_BUS_ADDRESS#unix:path=}"
+    DBUS_SOCKET="${DBUS_SOCKET%%,*}"
     WAIT=0
     while [ ! -S "$DBUS_SOCKET" ] && [ "$WAIT" -lt 30 ]; do
         sleep 1
