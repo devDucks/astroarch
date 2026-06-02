@@ -8,7 +8,7 @@
 ![astroarch](https://github.com/devDucks/astroarch/assets/4163222/d26c8d0b-a5ad-404b-8c2d-ef0a04f2f19a)
 
 
-Please find below some (hopefully) useful instructions, if you are here instead because you want to know how you can build this image from scratch, see [this](https://github.com/MattBlack85/astroarch/blob/main/BUILD.md)
+Please find below some (hopefully) useful instructions. If you want to build the image from scratch, see [BUILD.md](./BUILD.md).
 - [Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pi, PC and mini PC (works also on Manjaro and all Arch derived distros)](#welcome-to-astroarch-astrophotography-on-archlinux-for-raspberry-pi-pc-and-mini-pc-works-also-on-manjaro-and-all-arch-derived-distros)
 - [What Raspberry version is supported?](#what-raspberry-version-is-supported)
 - [Download](#download)
@@ -51,8 +51,11 @@ AstroArch runs on any raspberry capable to run aarch64 OS, this means `Raspberry
 Note on the possible back-powering of the raspberry by a mount, camera, powered USB hub or other devices having its own power source and connected to the raspberry by USB. Plug in your raspberry then connect each device so as not to have issues for your AstroArch.
 
 # Download
-Please use this link to download the latest astroarch gzipped img file => 
-https://drive.google.com/file/d/1CzN3f9_lNp2InT2PLvp_vflsW7gywFZB/view
+Prebuilt images are announced and shared via:
+- Discord (invite): https://discord.gg/uJEQCZKBT8 (check the #💾image-download channel)
+- GitHub Releases (tags/changelog): https://github.com/devDucks/astroarch/releases
+
+If you prefer to build an image yourself, follow: [BUILD.md](./BUILD.md)
 # Why ArchLinux?
 Why ArchLinux?
 
@@ -498,4 +501,3 @@ AstroArch is actually in a stable state, however, should you find any issue plea
 # Quick video intro to AstroArch
 
 https://github.com/devDucks/astroarch/assets/4163222/27bb0842-2db0-4db7-83e5-c513c8e02f5a
-
