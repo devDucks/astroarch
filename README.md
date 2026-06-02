@@ -52,7 +52,7 @@ Note on the possible back-powering of the raspberry by a mount, camera, powered 
 
 # Download
 Prebuilt images are announced and shared via:
-- Discord (invite): https://discord.gg/uJEQCZKBT8
+- Discord (invite): https://discord.gg/uJEQCZKBT8 (check the #💾image-download channel)
 - GitHub Releases (tags/changelog): https://github.com/devDucks/astroarch/releases
 
 If you prefer to build an image yourself, follow: [BUILD.md](./BUILD.md)
