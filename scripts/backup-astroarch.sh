@@ -1,5 +1,5 @@
 #!/bin/bash
-export LC_ALL=C
+export LC_ALL=C.UTF-8
 
 # --- 1. INITIALIZATION ---
 CONFIG_FILE="$HOME/.backup_dest"
@@ -43,7 +43,6 @@ ask_valid_dest() {
 # --- CLEANING FEATURE ---
 cleanup_canceled_backup() {
     local DEST="$1"
-    # Deletes the corrupted folder (requires sudo because rsync preserves root permissions)
     if [[ "$DEST" == */backup ]] && [[ "$DEST" != "/backup" ]]; then
         sudo rm -rf "$DEST"
         rm -f "$CONFIG_FILE"
@@ -56,7 +55,11 @@ cleanup_canceled_backup() {
     else
         echo -e "\e[31m$MSG\e[0m"
     fi
-    exit 0
+
+    sudo pkill -P $$ -f rsync 2>/dev/null || true
+    sleep 1
+
+    exit 130
 }
 
 # ADAPTIVE CONFIRMATION FUNCTION
@@ -148,6 +151,49 @@ if ! sudo -n true 2>/dev/null; then
 fi
 ( while true; do sudo -n -v; sleep 60; kill -0 "$$" || exit; done 2>/dev/null ) &
 
+ask_for_exclusions() {
+    # 1. Generating a list of directories in $HOME
+    local folders=()
+    while IFS= read -r dir; do
+        folders+=("$dir")
+    done < <(find "$HOME" -maxdepth 1 -mindepth 1 -type d -not -name ".*")
+
+    # 2. Selection of folders to exclude
+    if is_gui; then
+        local choices=()
+        for f in "${folders[@]}"; do choices+=("$(basename "$f")" "$f" "off"); done
+        local selected=$(kdialog --title "Folders available in HOME directory" --checklist "Select the folders to exclude from the backup :" "${choices[@]}")
+        [ $? -ne 0 ] && return
+
+        for folder in $selected; do
+            clean_folder=$(echo "$folder" | tr -d '"')
+            if [[ "$clean_folder" != "$ABS_DEST" ]]; then
+                EXCLUSIONS+=(--exclude="$clean_folder/*")
+            fi
+        done
+    else
+        echo "--- Folders available in $HOME ---"
+        for i in "${!folders[@]}"; do
+            echo "$((i+1))) ${folders[$i]}"
+        done
+        echo "0) None / Finish"
+
+        read -p "Enter the numbers to exclude, separated by spaces (ex: 1 3 5) : " -a choices
+
+        for choice in "${choices[@]}"; do
+            if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -gt 0 ] && [ "$choice" -le "${#folders[@]}" ]; then
+                local selected_path="${folders[$((choice-1))]}"
+                if [[ "$selected_path" != "$ABS_DEST" ]]; then
+                    EXCLUSIONS+=(--exclude="$selected_path/*")
+                    echo "Exclusion added : $selected_path"
+                else
+                    echo "Warning : $selected_path This is your backup folder."
+                fi
+            fi
+        done
+    fi
+}
+
 # --- 3. DISK SPACE VALIDATION LOOP ---
 VALID_SPACE=false
 while [ "$VALID_SPACE" = false ]; do
@@ -167,7 +213,16 @@ while [ "$VALID_SPACE" = false ]; do
         continue
     fi
     ABS_DEST=$(realpath "$DEST_PATH")
-    EXCLUSIONS=(--exclude='/dev/*' --exclude='/proc/*' --exclude='/sys/*' --exclude='/tmp/*' --exclude='/run/*' --exclude='/mnt/*' --exclude='/media/*' --exclude='/lost+found/' --exclude='/boot/*' --exclude='*/thinclient_drives' --exclude='*/.gvfs' --exclude="$ABS_DEST")
+    EXCLUSIONS=(
+    --exclude='/dev/*' --exclude='/proc/*' --exclude='/sys/*'
+    --exclude='/tmp/*' --exclude='/run/*' --exclude='/mnt/*'
+    --exclude='/media/*' --exclude='/lost+found/' --exclude='/boot/*'
+    --exclude='*/thinclient_drives' --exclude='*/.gvfs'
+    )
+
+    EXCLUSIONS+=(--exclude="$ABS_DEST")
+
+    ask_for_exclusions
 
     echo "Analyzing space on $ABS_DEST..."
     ROOT_SIZE=$(sudo -n env LC_ALL=C rsync -aAXHvx --delete --dry-run --stats "${EXCLUSIONS[@]}" / "$ABS_DEST" | grep "Total transferred file size" | awk '{print $5}' | tr -d ',.')
@@ -217,8 +272,10 @@ if is_gui; then
     # --- D-Bus session detection ---
     # If DBUS_SESSION_BUS_ADDRESS is not set (e.g. launched from Calamares at session start
     # before the bus is ready), build the standard systemd socket path for user astronaut.
+
     if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
         USER_ID=$(id -u astronaut 2>/dev/null || id -u)
+
         export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${USER_ID}/bus"
     fi
 
@@ -246,18 +303,27 @@ if is_gui; then
             if (( count % 5 == 0 )); then
                 # IF CANCELED BY THE USER
                 if ! qdbus6 $dbus_ref >/dev/null 2>&1; then
-                    sudo pkill -f "rsync.*$ABS_DEST"
-                    cleanup_canceled_backup "$ABS_DEST"
+                    sudo pkill -f "rsync.*$ABS_DEST" 2>/dev/null || true
+                    echo "CANCELED"
+                    exit 0
                 fi
-                qdbus6 $dbus_ref setLabelText "Copying: $percent% of $TRANS_HUMAN"
-                qdbus6 $dbus_ref Set "" value "$percent"
+                qdbus6 $dbus_ref setLabelText "Copying: $percent% of $TRANS_HUMAN" 2>/dev/null
+                qdbus6 $dbus_ref Set "" value "$percent" 2>/dev/null
             fi
-        done
+        done | grep -q "CANCELED" && BACKUP_CANCELED=1
+
         qdbus6 $dbus_ref close 2>/dev/null
+
+        if [ "$BACKUP_CANCELED" = 1 ]; then
+            cleanup_canceled_backup "$ABS_DEST"
+        fi
+
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 "✅ Backup completed."
     fi
 else
     sudo -n rsync -aAXHxh --delete --no-inc-recursive --info=progress2 "${EXCLUSIONS[@]}" / "$ABS_DEST"
 fi
 
-update_config "FIRST_BACKUP" "no"
+if [ "$BACKUP_CANCELED" != 1 ]; then
+    update_config "FIRST_BACKUP" "no"
+fi
