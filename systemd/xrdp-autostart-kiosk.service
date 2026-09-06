@@ -1,0 +1,14 @@
+# /etc/systemd/system/prelaunch-kiosk-session.service
+[Unit]
+Description=Pre-launch xrdp session for astronaut-kiosk
+After=xrdp-sesman.service xrdp.service
+Wants=xrdp-sesman.service xrdp.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/astronaut/.astroarch/scripts/prelaunch-kiosk-session.sh
+RemainAfterExit=yes
+User=root
+
+[Install]
+WantedBy=multi-user.target
