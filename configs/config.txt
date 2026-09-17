@@ -61,7 +61,7 @@ dtparam=audio=on
 disable_overscan=1
 gpu_mem=256
 #disable_splash=1
-3dtparam=krnbt=on
+dtparam=krnbt=on
 #hdmi_drive=2
 dtoverlay=i2c-rtc
 kernel=kernel8.img
