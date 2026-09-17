@@ -16,3 +16,5 @@ if ! grep -q "rfx_codec=false" /etc/xrdp/xrdp.ini; then
     && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
 fi
 
+# Let the GPS drivers set the system time without a password prompt
+sudo cp -f /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
