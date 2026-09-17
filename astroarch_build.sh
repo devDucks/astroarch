@@ -345,8 +345,7 @@ su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwall
 bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
 
 # Fix 'Insecure completion-dependent directories detected'
-chmod 755 /home/astronaut/.astroarch
-chmod 755 /home/astronaut/.oh-my-zsh
+chmod -R go-w /home/astronaut /home/astronaut-kiosk
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
