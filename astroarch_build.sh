@@ -157,6 +157,7 @@ cp /home/astronaut/.astroarch/configs/99-brcmfmac.rules /etc/udev/rules.d/99-brc
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
 
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/

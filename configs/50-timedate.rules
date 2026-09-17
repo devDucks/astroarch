@@ -1,0 +1,12 @@
+// libindi sets the system time from the GPS, and disables NTP first so that
+// the time server does not immediately overwrite it. Both actions need admin
+// authorization, so without this rule a password prompt pops up every time a
+// GPS driver starts. The astronaut group also covers astronaut-kiosk.
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("astronaut")) {
+        if (action.id == "org.freedesktop.timedate1.set-ntp" ||
+            action.id == "org.freedesktop.timedate1.set-time") {
+            return polkit.Result.YES;
+        }
+    }
+});
