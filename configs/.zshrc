@@ -235,21 +235,20 @@ function update-astroarch()
             echo "❌ Update canceled by user."
             notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Update canceled by user"
             return 0
-        else
-
-        # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
-        sudo pacman -Syu --noconfirm
-
-        if [ $? -eq 0 ]; then
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "✅ Successful update"
-        else
-        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Update failed"
-        fi
-
-        # Reinstall plasma-x11-session, cannot work on 1.9.0 cause of old kwin
-        sudo pacman -Sy plasma-x11-session --noconfirm
         fi
     fi
+
+    # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
+    sudo pacman -Syu --noconfirm
+
+    if [ $? -eq 0 ]; then
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "✅ Successful update"
+    else
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Update failed"
+    fi
+
+    # Reinstall plasma-x11-session, cannot work on 1.9.0 cause of old kwin
+    sudo pacman -Sy plasma-x11-session --noconfirm
 }
 
 function xyz () {
