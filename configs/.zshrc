@@ -96,7 +96,13 @@ function update-astroarch()
 
     # Checkout latest changes from git
     cd /home/$USER/.astroarch
-    git pull origin main
+    if ! git pull origin main; then
+        cd - > /dev/null 2>&1
+        echo "❌ Could not update the AstroArch repository, the update stops here."
+        echo "   Run 'git status' in /home/$USER/.astroarch to see what is in the way."
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Could not update the repository, nothing was changed"
+        return 1
+    fi
     cd - > /dev/null 2>&1
 
     NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
