@@ -64,7 +64,7 @@ Prebuilt images are announced and shared via:
 
 You will find the latest image always at https://releases.astroarch.me/latest
 
-If there is any other image available you can find it at https://astroarch.me/
+If there is any other image available you can find it at https://releases.astroarch.me/
 
 We do ship sha256sums as well, so be sure to validate the image using it, it will confirm the image is genuine!
 
