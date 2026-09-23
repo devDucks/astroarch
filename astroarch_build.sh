@@ -329,7 +329,9 @@ ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 
 # Allows access to the astronaut group
-chmod -R 770 /home/astronaut
+# X (not x) keeps file exec bits as they are, a recursive 770 marks every
+# tracked file in ~/.astroarch as executable and git pull refuses to run
+chmod -R u+rwX,g+rwX,o-rwx /home/astronaut
 
 # Copy the screensaver config, by default it is off
 su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
