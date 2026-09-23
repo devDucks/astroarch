@@ -11,3 +11,6 @@ sudo sed -i '1s/^/auth sufficient pam_succeed_if.so user = astronaut-kiosk\n/' /
 sudo cp -f /home/astronaut/.astroarch/systemd/xrdp-autostart-kiosk.service /etc/systemd/system/xrdp-autostart-kiosk.service
 sudo ln -sf /etc/systemd/system/xrdp-autostart-kiosk.service /etc/systemd/system/multi-user.target.wants/xrdp-autostart-kiosk.service
 sudo systemctl enable xrdp-autostart-kiosk.service
+
+# Give astronaut-kiosk rwx on the astronaut home through ACLs
+sudo bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh

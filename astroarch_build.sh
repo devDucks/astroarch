@@ -328,11 +328,6 @@ chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 
-# Allows access to the astronaut group
-# X (not x) keeps file exec bits as they are, a recursive 770 marks every
-# tracked file in ~/.astroarch as executable and git pull refuses to run
-chmod -R u+rwX,g+rwX,o-rwx /home/astronaut
-
 # Copy the screensaver config, by default it is off
 su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
 
@@ -349,6 +344,10 @@ bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/br
 
 # Fix 'Insecure completion-dependent directories detected'
 chmod -R go-w /home/astronaut /home/astronaut-kiosk
+
+# Give astronaut-kiosk rwx on the astronaut home, must run after any chmod
+# since chmod rewrites the ACL mask and drops the kiosk write access
+bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
