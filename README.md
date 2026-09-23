@@ -1,7 +1,10 @@
 # Welcome to AstroArch! Astrophotography on ArchLinux for Raspberry Pi, PC and mini PC (works also on Manjaro and all Arch derived distros)
 
+[![Website][website-badge]][website-url]
 [![Discord chat][discord-badge]][discord-url] <= Join us on discord!
 
+[website-badge]: https://img.shields.io/badge/Website-astroarch.me-blue?style=flat-square
+[website-url]: https://astroarch.me
 [discord-badge]: https://img.shields.io/discord/1100468635086106706?logo=discord&style=flat-square
 [discord-url]: https://discord.gg/uJEQCZKBT8
 
