@@ -1,0 +1,18 @@
+[Desktop Entry]
+Comment=
+Comment=
+Exec=/home/astronaut/.astroarch/scripts/update-astroarch-kiosk.sh
+GenericName=
+GenericName=
+Icon=application-x-shellscript
+MimeType=
+Name=update-astroarch
+Name=update-astroarch
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-AutostartScript=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=

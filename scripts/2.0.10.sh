@@ -14,3 +14,8 @@ sudo systemctl enable xrdp-autostart-kiosk.service
 
 # Give astronaut-kiosk rwx on the astronaut home through ACLs
 sudo bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
+
+# Let the kiosk run update-astroarch, as astronaut
+if [ -d /home/astronaut-kiosk/Desktop ]; then
+    sudo -u astronaut-kiosk ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
+fi
