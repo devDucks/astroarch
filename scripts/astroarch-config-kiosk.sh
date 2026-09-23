@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # File paths
 XINITRC="/home/astronaut-kiosk/.xinitrc"
