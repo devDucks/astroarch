@@ -61,7 +61,12 @@ WiFi 5GHz guide:
 # Download
 Prebuilt images are announced and shared via:
 - Discord (invite): https://discord.gg/uJEQCZKBT8 (check the #💾image-download channel)
-- GitHub Releases (tags/changelog): https://github.com/devDucks/astroarch/releases
+
+You will find the latest image always at https://releases.astroarch.me/latest
+
+If there is any other image available you can find it at https://astroarch.me/
+
+We do ship sha256sums as well, so be sure to validate the image using it, it will confirm the image is genuine!
 
 If you prefer to build an image yourself, follow: [BUILD.md](./BUILD.md)
 # Why ArchLinux?
