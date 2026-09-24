@@ -94,6 +94,8 @@ function update-astroarch()
     CURRENT_COMMIT=$(git rev-parse HEAD)
 
     # Checkout latest changes from git
+    # Ignore exec bit changes, a recursive chmod on the home must not block the pull
+    git config core.fileMode false
     if ! git pull origin main; then
         cd - > /dev/null 2>&1
         echo "❌ Could not update the AstroArch repository, the update stops here."
