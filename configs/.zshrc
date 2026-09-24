@@ -32,7 +32,6 @@ INDI_DRIVERS_ROLLBACK_VERSION=2.1.3-1
 KSTARS_ROLLBACK_VERSION=3.7.6-2
 
 # Alias section
-alias update-astromonitor='wget -O - https://raw.githubusercontent.com/MattBlack85/astro_monitor/main/install.sh | sh'
 alias astro-rollback-full='astro-rollback-indi && astro-rollback-kstars'
 alias apt=xyz
 alias apt-get=xyz
