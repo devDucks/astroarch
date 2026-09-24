@@ -329,9 +329,6 @@ ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
 
-# Copy the screensaver config, by default it is off
-su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
-
 # Pre-launch of the Kiosk session
 sed -i '1s/^/auth sufficient pam_succeed_if.so user = astronaut-kiosk\n/' /etc/pam.d/xrdp-sesman
 cp /home/astronaut/.astroarch/systemd/xrdp-autostart-kiosk.service /etc/systemd/system/xrdp-autostart-kiosk.service
@@ -349,6 +346,11 @@ chmod -R go-w /home/astronaut /home/astronaut-kiosk
 # Give astronaut-kiosk rwx on the astronaut home, must run after any chmod
 # since chmod rewrites the ACL mask and drops the kiosk write access
 bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
+
+# Copy the screensaver config, by default it is off
+# Must run after kiosk-home-acl.sh, which is what grants astronaut-kiosk
+# read access to ~astronaut/.astroarch in the first place
+su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
