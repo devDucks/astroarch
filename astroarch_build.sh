@@ -344,7 +344,7 @@ bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/br
 chmod -R go-w /home/astronaut /home/astronaut-kiosk
 
 # Give astronaut-kiosk rwx on the astronaut home, must run after any chmod
-# since chmod rewrites the ACL mask and drops the kiosk write access
+# since chmod -R go-w above strips the group-write bit it grants
 bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
 
 # Copy the screensaver config, by default it is off
