@@ -53,7 +53,7 @@ sudo cp -r /home/astronaut/.astroarch/configs/kiosk/menus /home/astronaut-kiosk/
 # Adjusting user rights for group access
 sudo chmod -R 770 /home/astronaut-kiosk
 sudo chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
-sudo chmod -R 770 /home/astronaut
+# Access to the astronaut home for the kiosk is granted by kiosk-home-acl.sh in 2.0.10
 
 # Minimal desktop
 sudo ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/
