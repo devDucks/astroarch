@@ -157,6 +157,8 @@ ask_for_exclusions() {
     while IFS= read -r dir; do
         folders+=("$dir")
     done < <(find "$HOME" -maxdepth 1 -mindepth 1 -type d -not -name ".*")
+    # The shared data folder is outside $HOME, ~/astro-data is only a symlink
+    [ -d /srv/astro-data ] && folders+=("/srv/astro-data")
 
     # 2. Selection of folders to exclude
     if is_gui; then

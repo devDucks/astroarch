@@ -352,6 +352,18 @@ bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
 # read access to ~astronaut/.astroarch in the first place
 su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
 
+# Shared data folder for astronaut and astronaut-kiosk (e.g. images saved by
+# KStars), outside both homes with a ~/astro-data symlink in each. The default
+# ACL that keeps it group writable is set at boot by systemd-tmpfiles, the
+# Docker build has no ACL support
+groupadd -f astro
+usermod -aG astro astronaut
+usermod -aG astro astronaut-kiosk
+install -d -o root -g astro -m 2775 /srv/astro-data
+cp /home/astronaut/.astroarch/configs/astro-data.conf /etc/tmpfiles.d/astro-data.conf
+su astronaut -c "ln -snf /srv/astro-data /home/astronaut/astro-data"
+su astronaut-kiosk -c "ln -snf /srv/astro-data /home/astronaut-kiosk/astro-data"
+
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 
