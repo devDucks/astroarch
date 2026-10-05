@@ -1,0 +1,310 @@
+#####################################################
+#
+# Script for the runner workflow on Astroarch
+#
+#####################################################
+
+
+# Exit on the first error, if any
+set -e
+
+# Grab the OS architecture for further forked logic
+ARCH=$(uname -m)
+
+# Parallelize pacman download to 5 and use pacman as progress bar
+    sed -i 's|#ParallelDownloads = 5|ParallelDownloads = 5|g' /etc/pacman.conf
+    sed -i 's|ParallelDownloads = 5|ParallelDownloads = 5\nILoveCandy|g' /etc/pacman.conf
+    sed -i 's|ParallelDownloads = 5|ParallelDownloads = 5\nDisableDownloadTimeout|g' /etc/pacman.conf
+    sed -i 's|\[core\]|\[astromatto\]\nSigLevel = Optional TrustAll\nServer = http://astroarch.astromatto.com:9000/$arch\n\n\[core\]|' /etc/pacman.conf
+
+# Bootstrap pacman-key
+pacman-key --init && pacman-key --populate archlinuxarm
+
+# Update all packages now
+pacman -Syu --noconfirm
+
+# Install just 2 packages for the next actions
+# list of commented locales
+pacman -S wget sudo git --noconfirm
+
+# create user astro with home, add it to wheel
+useradd -G wheel -m astronaut
+echo "astronaut:astro" | chpasswd
+
+# Pull the brain repo, this will be used for scripting out the final image
+su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astronaut/.astroarch"
+
+# Uncomment en_US UTF8 and generate locale files
+sed -i -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# Prevent PackageKit hook from failing in container (no D-Bus)
+printf '#!/bin/sh\nexit 0\n' > /usr/local/bin/pkcon
+chmod +x /usr/local/bin/pkcon
+
+# Packages
+pacman -Rdd linux-aarch64 --noconfirm
+pacman -Sy linux-rpi linux-rpi-headers linux-firmware --noconfirm
+
+pacman -Sy base-devel pipewire-jack gnu-free-fonts wireplumber \
+       zsh plasma-desktop sddm networkmanager xf86-video-dummy \
+       network-manager-applet networkmanager-qt xorg konsole \
+       gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
+       knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
+       qt6-websockets qtkeychain-qt6 stellarsolver xf86-video-fbdev \
+       xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
+       dolphin uboot-tools usbutils cloud-guest-utils samba paru \
+       websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
+       indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
+       i2c-tools indiserver-ui astro_dmx openssl firefox chrony \
+       ksystemlog discover kwalletmanager kgpg qt6-serialbus \
+       qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
+       fortune-mod cowsay pacman-contrib arandr neofetch \
+       astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
+       kdialog jq astroarch-onboarding dhcpcd iw rsync --noconfirm --ask 4
+
+
+# Allow wheelers to sudo without password to install packages
+sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+
+# Add astronaut to uucp for serial device ownership
+usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users astronaut
+
+# Add sddm user to video group
+usermod -aG video sddm
+
+# Set symlink for display manager
+ln -s  /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
+
+# Allow x11 forwarding over SSH
+sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
+sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
+sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
+
+# Install AUR packages
+su astronaut -c "paru -Sy xrdp xorgxrdp --noconfirm"
+
+# Make all necessary folders
+mkdir /etc/sddm.conf.d
+su astronaut -c "mkdir -p /home/astronaut/.config"
+su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
+su astronaut -c "mkdir -p /home/astronaut/Desktop"
+
+# install oh-my-zsh and set the default shell to zsh
+chsh -s /usr/bin/zsh astronaut
+rm /home/astronaut/.bash*
+cd /home/astronaut
+ZSH=/home/astronaut/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+chown -R astronaut:astronaut /home/astronaut/.oh-my-zsh/
+
+# Set the samba pass
+ln -s /home/astronaut/.astroarch/configs/smb.conf /etc/samba/smb.conf
+(echo astro; echo astro) | smbpasswd -s -a astronaut
+
+# Link a zsh config for astronaut
+ln -s /home/astronaut/.astroarch/configs/.zshrc /home/astronaut/.zshrc
+
+# NetworkManager WiFi Power Saving
+ln -s /home/astronaut/.astroarch/configs/default-wifi-powersave-off.conf /etc/NetworkManager/conf.d
+
+# Remove eventually existing systemd configs we are going to substitute
+rm -f /usr/lib/systemd/system/novnc.service
+
+# Synchronize the system time with the GPS if there is no Real Time Clock (RTC) or network connection to the Raspberry Pi
+sed -i '$a\refclock SHM 0 offset 0.5 delay 0.2 refid NMEA' /etc/chrony.conf
+sed -i '$a\driftfile /var/lib/chrony/drift' /etc/chrony.conf
+
+# Symlink now files
+ln -s /home/astronaut/.astroarch/configs/kde_settings.conf /etc/sddm.conf.d/kde_settings.conf
+ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
+ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
+ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
+ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
+ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
+
+# Copy xorg config
+cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
+
+# Copy v3d X config
+cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
+
+# Copy udev rule to disable wifi power saving
+cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
+
+# Udev rule to force the brcmfmac driver to keep the name “wlan0” for Wi-Fi
+cp /home/astronaut/.astroarch/configs/99-brcmfmac.rules /etc/udev/rules.d/99-brcmfmac.rules
+
+# Polkit rules go here
+cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/
+
+# Copy the systemd unit to create the AP the first boot
+cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
+
+# Enable xrdp
+mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
+ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
+ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
+# Add user xrdp
+useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
+# Set user in xrdp.ini
+sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
+sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
+# Set user in xrdp.sesman.ini
+sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
+sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
+# Set permissions
+chown root:xrdp /etc/xrdp/rsakeys.ini
+chmod u=rw,g=r /etc/xrdp/rsakeys.ini
+chmod 755 /etc/xrdp/cert.pem
+chmod 755 /etc/xrdp/key.pem
+# Disables the display's power management features
+sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
+# Disabling compression can speed up local connections on low-power devices
+sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
+sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
+# Improve xrdp & network
+cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
+
+#
+su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
+[DoNotDisturb]
+WhenFullscreen=false
+WhenScreensMirrored=false
+EOF"
+
+# Copy the config for kwinrc
+su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
+
+# Create the folder (owned by astronaut) to store index files that requires no root access
+su astronaut -c "mkdir -p /home/astronaut/.local/share/kstars/astrometry"
+
+# Take sudoers to the original state
+sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+
+# Copy wallpapers
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astronaut/Pictures/wallpapers"
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/astronaut/Pictures/wallpapers"
+su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
+
+# Autostart AstroArch-onboarding
+su astronaut -c "mkdir /home/astronaut/.config/autostart"
+
+# Copy desktop icons
+su astronaut -c "ln -snf /usr/share/applications/org.kde.konsole.desktop /home/astronaut/Desktop/Konsole"
+su astronaut -c "ln -snf /usr/share/applications/org.kde.kstars.desktop /home/astronaut/Desktop/Kstars"
+su astronaut -c "ln -snf /usr/share/applications/astrodmx_capture.desktop /home/astronaut/Desktop/AstroDMx_capture"
+su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/Desktop/PHD2"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
+su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
+su astronaut -c "ln -snf /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
+su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
+su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
+
+# Make the icons executable so there will be no ! on the first boot
+chmod +x /home/astronaut/Desktop/update-astroarch
+chmod +x /home/astronaut/Desktop/AstroArch-onboarding
+chmod +x /home/astronaut/Desktop/AstroArch-Tweak-Tool
+
+# Remove actual novnc icons
+rm -r /usr/share/webapps/novnc/app/images/icons/*
+
+# Copy custom novnc icons folder
+cp -r /home/astronaut/.astroarch/assets/icons/* /usr/share/webapps/novnc/app/images/icons
+
+# config hostnames
+echo "astroarch" > /etc/hostname
+echo "127.0.0.1          localhost" > /etc/hosts
+echo "127.0.1.1          astroarch" > /etc/hosts
+
+# Copy the screensaver config, by default it is off
+su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
+
+# Set a standard TZ to avoid breaking plasma clock widget
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+echo "Europe/London" > /etc/timezone
+
+# If we are on a raspberry let's adjust /boot/config.txt and /boot/cmdline.txt
+cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
+cp /home/astronaut/.astroarch/configs/cmdline.txt /boot/cmdline.txt
+
+install -o root -g root -m 644 /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
+
+# Config plasma theme AstroArch
+cp -r /home/astronaut/.astroarch/configs/look-and-feel/astroarch /usr/share/plasma/look-and-feel/
+cp -r /home/astronaut/.astroarch/configs/layout-templates/astroarchPanel /usr/share/plasma/layout-templates/
+
+# Astrometry index files
+mkdir -p /home/astronaut/.local/share/kstars/astrometry
+wget -P /home/astronaut/.local/share/kstars/astrometry https://data.astrometry.net/4100/index-41{07..19}.fits
+wget -P /home/astronaut/.local/share/kstars/astrometry https://data.astrometry.net/4200/index-4205-{00..11}.fits
+wget -P /home/astronaut/.local/share/kstars/astrometry https://data.astrometry.net/4200/index-4206-{00..11}.fits
+wget -P /home/astronaut/.local/share/kstars/astrometry https://data.astrometry.net/4200/index-4207-{00..11}.fits
+wget -P /home/astronaut/.local/share/kstars/astrometry https://data.astrometry.net/4200/index-42{08..19}.fits
+wget -P /home/astronaut/.local/share/kstars/astrometry https://portal.nersc.gov/project/cosmo/temp/dstn/index-5200/LITE/index-5205-{00..47}.fits
+wget -P /home/astronaut/.local/share/kstars/astrometry https://portal.nersc.gov/project/cosmo/temp/dstn/index-5200/LITE/index-5206-{00..47}.fits
+
+# Add user astronaut-kiosk
+useradd -G wheel -m astronaut-kiosk
+echo "astronaut-kiosk:astro" | chpasswd
+usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users,astronaut astronaut-kiosk
+usermod -aG astronaut-kiosk astronaut
+chmod -R 777 /home/astronaut-kiosk
+su astronaut-kiosk -c "LC_ALL=C.UTF-8 xdg-user-dirs-update --force"
+mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
+
+## Add the kiosk session ##
+# New Xrdp launcher for astronaut and astronaut-kiosk sessions
+cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-xrdp.rules /etc/polkit-1/rules.d/
+cp /home/astronaut/.astroarch/configs/startwm.sh /home/astronaut-kiosk/
+cp /home/astronaut/.astroarch/configs/kiosk/.xinitrc /home/astronaut-kiosk/
+
+# Copy wallpapers
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
+cp /home/astronaut/.astroarch/configs/kiosk/astroarch-kiosk.png /home/astronaut-kiosk/Pictures/wallpapers/
+
+# Add menu
+cp -r /home/astronaut/.astroarch/configs/kiosk/menus /home/astronaut-kiosk/.config/
+
+# Copy kstars folders
+cp -R /home/astronaut/.local/share/kstars /home/astronaut-kiosk/.local/share/
+
+su astronaut-kiosk -c "cat <<EOF >/home/astronaut-kiosk/.config/plasmanotifyrc
+[DoNotDisturb]
+WhenFullscreen=false
+WhenScreensMirrored=false
+EOF"
+
+# Adjustment of user rights
+chmod -R 777 /home/astronaut-kiosk
+chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
+
+# Minimal desktop
+ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
+
+# Allows access to the astronaut group
+chmod -R 770 /home/astronaut
+
+# Copy the screensaver config, by default it is off
+su astronaut-kiosk -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut-kiosk/.config/kscreenlockerrc"
+
+# Disable Kwallet by default
+su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
+
+# Increases the xrdp buffer
+sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
+
+# Modprobe brcmfmac
+bash -c "echo \"options brcmfmac feature_disable=0x282000\" > /etc/modprobe.d/brcmfmac.conf"
+
+# Fix 'Insecure completion-dependent directories detected'
+chmod 755 /home/astronaut/.astroarch
+chmod 755 /home/astronaut/.oh-my-zsh
+
