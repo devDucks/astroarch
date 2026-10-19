@@ -64,6 +64,12 @@ pacman -S wget git zsh vi dhcp dnsmasq paru usbutils uboot-tools cloud-guest-uti
 		xplanet astrometry.net gsc kstars phd2 stellarsolver astro_dmx \
 		indi-3rdparty-libs indi-3rdparty-drivers indiserver-ui libcamera-ipa astroarch-onboarding --noconfirm --ask 4
 
+# Plasma >= 6.8 is Wayland only and conflicts with plasma-x11-session, --ask 4 could silently remove it
+if ! pacman -Q plasma-x11-session &> /dev/null; then
+	echo "plasma-x11-session is not installed (Plasma >= 6.8 is Wayland only), aborting the build" >&2
+	exit 1
+fi
+
 # config hostnames
 echo "astroarch" > /etc/hostname
 echo "127.0.0.1          localhost" >> /etc/hosts

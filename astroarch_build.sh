@@ -75,6 +75,12 @@ else
        kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp astroarch-bridge --noconfirm --ask 4
 fi
 
+# Plasma >= 6.8 is Wayland only and conflicts with plasma-x11-session, --ask 4 could silently remove it
+if ! pacman -Q plasma-x11-session &> /dev/null; then
+    echo "plasma-x11-session is not installed (Plasma >= 6.8 is Wayland only), aborting the build" >&2
+    exit 1
+fi
+
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
