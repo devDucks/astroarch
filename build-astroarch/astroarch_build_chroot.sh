@@ -165,6 +165,9 @@ cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/
 # Copy the polkit script to allow rebooting, shutting down with no errors
 cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.d/
 
+# Copy the pacman hook that stops any update from removing plasma-x11-session
+install -Dm644 /home/astronaut/.astroarch/configs/astroarch-keep-x11-session.hook /etc/pacman.d/hooks/astroarch-keep-x11-session.hook
+
 # Copy the systemd unit to create AP / resize
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 

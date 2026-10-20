@@ -165,6 +165,9 @@ cp /home/astronaut/.astroarch/configs/50-udiskie.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-networkmanager.rules /etc/polkit-1/rules.d/
 cp /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
 
+# Copy the pacman hook that stops any update from removing plasma-x11-session
+install -Dm644 /home/astronaut/.astroarch/configs/astroarch-keep-x11-session.hook /etc/pacman.d/hooks/astroarch-keep-x11-session.hook
+
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 

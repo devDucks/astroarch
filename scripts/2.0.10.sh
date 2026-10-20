@@ -16,3 +16,6 @@ sudo bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
 if [ -d /home/astronaut-kiosk/Desktop ]; then
     sudo -u astronaut-kiosk ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
 fi
+
+# Stop any update, Discover included, from removing plasma-x11-session (Plasma >= 6.8 is Wayland only)
+sudo install -Dm644 /home/astronaut/.astroarch/configs/astroarch-keep-x11-session.hook /etc/pacman.d/hooks/astroarch-keep-x11-session.hook

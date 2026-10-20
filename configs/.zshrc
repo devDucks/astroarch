@@ -122,6 +122,9 @@ function update-astroarch()
         sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
     fi;
 
+    # Stop any update from removing plasma-x11-session (Plasma >= 6.8 is Wayland only), also for who already ran 2.0.10.sh
+    sudo install -Dm644 /home/$USER/.astroarch/configs/astroarch-keep-x11-session.hook /etc/pacman.d/hooks/astroarch-keep-x11-session.hook
+
     # Update the repo content
     sudo pacman -Sy --noconfirm
 
