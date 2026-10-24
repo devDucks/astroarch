@@ -1,0 +1,13 @@
+Description=AstroArch: authorize remote desktop portal (once per user)
+After=graphical-session.target
+ConditionPathExists=!%h/.config/astroarch/portal-permissions.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop org.kde.krdpserver yes
+ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop "" yes
+ExecStartPost=/usr/bin/mkdir -p %h/.config/astroarch
+ExecStartPost=/usr/bin/touch %h/.config/astroarch/portal-permissions.done
+
+[Install]
+WantedBy=graphical-session.target

@@ -59,7 +59,7 @@ if [ "$HAS_VIRT" -eq 1 ]; then
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
        zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-       network-manager-applet networkmanager-qt xorg konsole \
+       network-manager-applet networkmanager-qt konsole \
        gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
        knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
        qt6-websockets qtkeychain-qt6 stellarsolver xf86-video-fbdev \
@@ -69,12 +69,11 @@ else
        indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
        i2c-tools indiserver-ui astro_dmx openssl firefox chrony \
        ksystemlog discover kwalletmanager kgpg qt6-serialbus \
-       qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
+       qt6-serialport qt6ct udisks2 fuse2 kdialog jq \
        fortune-mod cowsay pacman-contrib arandr neofetch \
-       astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp astroarch-bridge --noconfirm --ask 4
+       astromonitor kscreen sddm-kcm flatpak dhcpcd iw rsync \
+       krdp plasma-login-manager astroarch-onboarding astroarch-bridge --noconfirm --ask 4
 fi
-
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -82,17 +81,10 @@ sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: AL
 # Add astronaut to uucp for serial device ownership
 usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users astronaut
 
-# Add sddm user to video group
-usermod -aG video sddm
-
-# Allow x11 forwarding over SSH
-sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
-sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
-sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
-
 # Make all necessary folders
-mkdir /etc/sddm.conf.d
-su astronaut -c "mkdir -p /home/astronaut/.config"
+mkdir -p /etc/plasmalogin.conf.d
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/graphical-session.target.wants"
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
 su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
 su astronaut -c "mkdir -p /home/astronaut/Desktop"
 
@@ -134,18 +126,10 @@ ln -s /dev/null /etc/systemd/system/systemd-timesyncd.service
 ln -s /usr/lib/systemd/system/chronyd.service /etc/systemd/system/multi-user.target.wants/chronyd.service
 
 # Symlink now files
-ln -s /home/astronaut/.astroarch/configs/kde_settings.conf /etc/sddm.conf.d/kde_settings.conf
+ln -s /home/astronaut/.astroarch/configs/autologin.conf /etc/plasmalogin.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
-ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
-ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
-
-# Copy xorg config
-cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
-
-# Copy v3d X config
-cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 
 # Copy udev rule to disable wifi power saving
 cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
@@ -162,49 +146,23 @@ cp /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
-# Enable vncserver
-ln -s /etc/systemd/system/x0vncserver.service /etc/systemd/system/multi-user.target.wants/x0vncserver.service
+# Enable astronaut permissions krdp/vnc
+ln -s /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/astroarch-portal-permissions.service
 
-# Enable xrdp
-mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
-ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
-ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
+# Config KRDP
+# astronaut
+mkdir -p /home/astronaut/.local/share/krdpserver
+certificatePath="/home/astronaut/.local/share/krdpserver/krdp.crt"
+certificateKeyPath="/home/astronaut/.local/share/krdpserver/krdp.key"
+su astronaut -c "openssl req -nodes -new -x509 -keyout '$certificateKeyPath' -out '$certificatePath' -days 1 -batch"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Certificate '$certificatePath'"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key CertificateKey '$certificateKeyPath'"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
+ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
 
-# Add user xrdp
-useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
-
-# Set user in xrdp.ini
-sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
-sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
-sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
-
-# Set user in xrdp.sesman.ini
-sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
-sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
-
-# Set xrdp permissions
-chown root:xrdp /etc/xrdp/rsakeys.ini
-chmod u=rw,g=r /etc/xrdp/rsakeys.ini
-chmod 755 /etc/xrdp/cert.pem
-chmod 755 /etc/xrdp/key.pem
-
-# Increases the xrdp buffer
-sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
-
-# Prevents XRDP from creating a second virtual desktop for the same user
-sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
-sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
-
-# Disables the display's power management features
-sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
-
-# Disabling compression can speed up local connections on low-power devices
-sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
-sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
-awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
-
-# Improve xrdp & network
-cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
+# Enable vnc
+ln -s /home/astronaut/.astroarch/systemd/w0vncserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/w0vncserver.service
 
 # Nuke notifications
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
@@ -221,15 +179,13 @@ su astronaut -c "mkdir -p /home/astronaut/.local/share/kstars/astrometry"
 
 # Enable now all services
 mkdir -p /etc/systemd/system/graphical.target.wants
-ln -s /usr/lib/systemd/system/sddm.service /etc/systemd/system/graphical.target.wants/sddm.service
+ln -s /usr/lib/systemd/system/plasmalogin.service /etc/systemd/system/graphical.target.wants/plasmalogin.service
 ln -s /usr/lib/systemd/system/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
 ln -s /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
 ln -s /usr/lib/systemd/system/NetworkManager.service /etc/systemd/system/multi-user.target.wants/NetworkManager.service
 ln -s /usr/lib/systemd/system/avahi-daemon.service /etc/systemd/system/multi-user.target.wants/avahi-daemon.service
 ln -s /usr/lib/systemd/system/nmb.service /etc/systemd/system/multi-user.target.wants/nmb.service
 ln -s /usr/lib/systemd/system/smb.service /etc/systemd/system/multi-user.target.wants/smb.service
-ln -s /usr/lib/systemd/system/xrdp.service /etc/systemd/system/multi-user.target.wants/xrdp.service
-ln -s /usr/lib/systemd/system/xrdp-sesman.service /etc/systemd/system/multi-user.target.wants/xrdp-sesman.service
 
 # Enable also the AP creation and resize scripts
 ln -s /etc/systemd/system/create_ap.service /etc/systemd/system/multi-user.target.wants/create_ap.service
@@ -296,13 +252,28 @@ usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users,astronaut 
 usermod -aG astronaut-kiosk astronaut
 chmod -R 777 /home/astronaut-kiosk
 su astronaut-kiosk -c "LC_ALL=C.UTF-8 xdg-user-dirs-update --force"
-mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}"
+su astronaut-kiosk -c "mkdir -p /home/astronaut/.config/systemd/user/graphical-session.target.wants"
+su astronaut/kiosk -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
 
-## Add the kiosk session ##
-# New Xrdp launcher for astronaut and astronaut-kiosk sessions
-cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-xrdp.rules /etc/polkit-1/rules.d/
-cp /home/astronaut/.astroarch/configs/startwm.sh /home/astronaut-kiosk/
-cp /home/astronaut/.astroarch/configs/kiosk/.xinitrc /home/astronaut-kiosk/
+# Enable kiosk permissions krdp/vnc
+ln -s /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/astroarch-portal-permissions.service
+
+## KRDP ##
+# astronaut-kiosk
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/share/krdpserver"
+kioskcertificatePath="/home/astronaut-kiosk/.local/share/krdpserver/krdp.crt"
+kioskcertificateKeyPath="/home/astronaut-kiosk/.local/share/krdpserver/krdp.key"
+su astronaut-kiosk -c "openssl req -nodes -new -x509 -keyout '$kioskcertificateKeyPath' -out '$kioskcertificatePath' -days 1 -batch"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key Certificate '$kioskcertificatePath'"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key CertificateKey '$kioskcertificateKeyPath'"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key ListenPort 3390"
+ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
+
+# Enable kiosk vnc
+ln -s /home/astronaut/.astroarch/systemd/w0vncserver-kiosk.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/w0vncserver-kiosk.service
 
 # Copy wallpapers
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
@@ -328,11 +299,6 @@ chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
-
-# Pre-launch of the Kiosk session
-sed -i '1s/^/auth sufficient pam_succeed_if.so user = astronaut-kiosk\n/' /etc/pam.d/xrdp-sesman
-cp /home/astronaut/.astroarch/systemd/xrdp-autostart-kiosk.service /etc/systemd/system/xrdp-autostart-kiosk.service
-ln -s /etc/systemd/system/xrdp-autostart-kiosk.service /etc/systemd/system/multi-user.target.wants/xrdp-autostart-kiosk.service
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
