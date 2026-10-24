@@ -1,0 +1,18 @@
+[Unit]
+Description=TigerVNC server for Wayland (shares the current local session)
+After=graphical-session.target
+PartOf=graphical-session.target
+# The portal permission is granted at first login by
+# astroarch-portal-permissions.service: until then w0vncserver may fail,
+# so never give up retrying.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Environment=XDG_CONFIG_HOME=%h/.config
+ExecStart=/usr/bin/w0vncserver -AlwaysShared -CompareFB 0 -rfbport 5901 -SecurityTypes None
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=graphical-session.target
