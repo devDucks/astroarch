@@ -1,13 +1,13 @@
-Description=AstroArch: authorize remote desktop portal (once per user)
-After=graphical-session.target
-ConditionPathExists=!%h/.config/astroarch/portal-permissions.done
+[Unit]
+Description=AstroArch: authorize krdp and VNC on the KDE remote desktop portal
 
 [Service]
 Type=oneshot
+RemainAfterExit=yes
 ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop org.kde.krdpserver yes
-ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop "" yes
-ExecStartPost=/usr/bin/mkdir -p %h/.config/astroarch
-ExecStartPost=/usr/bin/touch %h/.config/astroarch/portal-permissions.done
+ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop org.astroarch.vnc yes
+Restart=on-failure
+RestartSec=3
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=plasma-workspace.target

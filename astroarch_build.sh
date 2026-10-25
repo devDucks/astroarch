@@ -21,6 +21,21 @@ is_container() {
     return 1
 }
 
+# Enable a user unit shipped in the repo for one user.
+# The unit is linked into the user's unit search path (a symlink that only
+# exists inside a .wants directory is not a unit systemd can load), then wanted
+# by the given target (default graphical-session.target).
+enable_user_unit() {
+    local user=$1 unit=$2 target=${3:-graphical-session.target}
+    local dir="/home/$user/.config/systemd/user"
+    local name
+    name=$(basename "$unit")
+    su "$user" -c "mkdir -p '$dir/$target.wants'"
+    ln -sfn "$unit" "$dir/$name"
+    ln -sfn "$dir/$name" "$dir/$target.wants/$name"
+    chown -h "$user:$user" "$dir/$name" "$dir/$target.wants/$name"
+}
+
 # Parallelize pacman download to 5 and use pacman as progress bar
 if [ "$HAS_VIRT" -eq 0 ]; then
     sed -i 's|#ParallelDownloads = 5|ParallelDownloads = 5|g' /etc/pacman.conf
@@ -58,11 +73,11 @@ if [ "$HAS_VIRT" -eq 1 ]; then
     pacman -Syu linux-rpi linux-rpi-headers linux-firmware --noconfirm --ask 4
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
-       zsh plasma-desktop sddm networkmanager xf86-video-dummy \
+       zsh plasma-desktop networkmanager \
        network-manager-applet networkmanager-qt konsole \
        gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
        knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
-       qt6-websockets qtkeychain-qt6 stellarsolver xf86-video-fbdev \
+       qt6-websockets qtkeychain-qt6 stellarsolver \
        xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
        dolphin uboot-tools usbutils cloud-guest-utils samba paru \
        websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
@@ -70,8 +85,8 @@ else
        i2c-tools indiserver-ui astro_dmx openssl firefox chrony \
        ksystemlog discover kwalletmanager kgpg qt6-serialbus \
        qt6-serialport qt6ct udisks2 fuse2 kdialog jq \
-       fortune-mod cowsay pacman-contrib arandr neofetch \
-       astromonitor kscreen sddm-kcm flatpak dhcpcd iw rsync \
+       fortune-mod cowsay pacman-contrib neofetch \
+       astromonitor kscreen flatpak dhcpcd iw rsync \
        krdp plasma-login-manager astroarch-onboarding astroarch-bridge --noconfirm --ask 4
 fi
 
@@ -146,15 +161,24 @@ cp /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
+# VNC runs as app-org.astroarch.vnc.service: the unit name gives w0vncserver the
+# portal app id "org.astroarch.vnc", so the remote-desktop grant is limited to
+# krdp and VNC. The .desktop file is needed for the portal to resolve that id.
+ln -sfn /home/astronaut/.astroarch/configs/org.astroarch.vnc.desktop /usr/share/applications/org.astroarch.vnc.desktop
+
+# krdp starts only after the portal grant
+mkdir -p /etc/systemd/user/app-org.kde.krdpserver.service.d
+ln -sfn /home/astronaut/.astroarch/systemd/krdp-after-grant.conf /etc/systemd/user/app-org.kde.krdpserver.service.d/astroarch-grant.conf
+
 # Enable astronaut permissions krdp/vnc
-ln -s /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/astroarch-portal-permissions.service
+enable_user_unit astronaut /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service plasma-workspace.target
 
 # Config KRDP
 # astronaut
 mkdir -p /home/astronaut/.local/share/krdpserver
 certificatePath="/home/astronaut/.local/share/krdpserver/krdp.crt"
 certificateKeyPath="/home/astronaut/.local/share/krdpserver/krdp.key"
-su astronaut -c "openssl req -nodes -new -x509 -keyout '$certificateKeyPath' -out '$certificatePath' -days 1 -batch"
+su astronaut -c "openssl req -nodes -new -x509 -keyout '$certificateKeyPath' -out '$certificatePath' -days 3650 -batch -subj '/CN=astroarch' -addext 'subjectAltName = DNS:astroarch'"
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Certificate '$certificatePath'"
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key CertificateKey '$certificateKeyPath'"
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
@@ -162,7 +186,7 @@ su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Autosta
 ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
 
 # Enable vnc
-ln -s /home/astronaut/.astroarch/systemd/w0vncserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/w0vncserver.service
+enable_user_unit astronaut /home/astronaut/.astroarch/systemd/app-org.astroarch.vnc.service plasma-workspace.target
 
 # Nuke notifications
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
@@ -200,7 +224,7 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astro
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/astronaut/Pictures/wallpapers"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
-# Autostart AstroArch-onboarding
+# Autostart folder
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
 
 # Copy desktop icons
@@ -211,8 +235,6 @@ su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/De
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "ln -snf /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
-su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
-su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
@@ -253,18 +275,18 @@ usermod -aG astronaut-kiosk astronaut
 chmod -R 777 /home/astronaut-kiosk
 su astronaut-kiosk -c "LC_ALL=C.UTF-8 xdg-user-dirs-update --force"
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}"
-su astronaut-kiosk -c "mkdir -p /home/astronaut/.config/systemd/user/graphical-session.target.wants"
-su astronaut/kiosk -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants"
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/default.target.wants"
 
 # Enable kiosk permissions krdp/vnc
-ln -s /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/astroarch-portal-permissions.service
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service plasma-workspace.target
 
 ## KRDP ##
 # astronaut-kiosk
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/share/krdpserver"
 kioskcertificatePath="/home/astronaut-kiosk/.local/share/krdpserver/krdp.crt"
 kioskcertificateKeyPath="/home/astronaut-kiosk/.local/share/krdpserver/krdp.key"
-su astronaut-kiosk -c "openssl req -nodes -new -x509 -keyout '$kioskcertificateKeyPath' -out '$kioskcertificatePath' -days 1 -batch"
+su astronaut-kiosk -c "openssl req -nodes -new -x509 -keyout '$kioskcertificateKeyPath' -out '$kioskcertificatePath' -days 3650 -batch -subj '/CN=astroarch' -addext 'subjectAltName = DNS:astroarch'"
 su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key Certificate '$kioskcertificatePath'"
 su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key CertificateKey '$kioskcertificateKeyPath'"
 su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
@@ -273,7 +295,10 @@ su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key L
 ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
 
 # Enable kiosk vnc
-ln -s /home/astronaut/.astroarch/systemd/w0vncserver-kiosk.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/w0vncserver-kiosk.service
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/app-org.astroarch.vnc.service plasma-workspace.target
+# Same unit as astronaut (same portal app id), only the VNC port differs: 5901
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/app-org.astroarch.vnc.service.d"
+ln -sfn /home/astronaut/.astroarch/systemd/kiosk-vnc-port.conf /home/astronaut-kiosk/.config/systemd/user/app-org.astroarch.vnc.service.d/port.conf
 
 # Copy wallpapers
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"

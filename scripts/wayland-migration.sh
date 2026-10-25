@@ -1,10 +1,6 @@
 #!/usr/bin/bash
 # AstroArch - Plasma X11 -> Plasma Wayland (KDE 6.8)
 #
-#   wayland-migration.sh --detached  MIGRATION (root, from /run, internal)
-#       not a child of the Plasma session, so it can stop SDDM and upgrade
-#       Plasma without killing itself. Ends with a reboot.
-#
 # Safe to re-run by hand:  bash wayland-migration.sh
 
 ASTRO_HOME=/home/astronaut
@@ -130,10 +126,11 @@ migration() {
     }
 
     # Enable a user unit for one user by creating the "wants" link
-    # (what "systemctl --user enable" does, but without a user bus)
+    # (what "systemctl --user enable" does, but without a user bus).
+    # The unit itself must already be in a unit search path.
     enable_user_unit() {
-        local u=$1 path=$2
-        local dir="/home/$u/.config/systemd/user/graphical-session.target.wants"
+        local u=$1 path=$2 target=${3:-graphical-session.target}
+        local dir="/home/$u/.config/systemd/user/$target.wants"
         as_user "$u" mkdir -p "$dir" \
             && as_user "$u" ln -sfn "$path" "$dir/$(basename "$path")" \
             || step_fail "enable $(basename "$path") for $u"
@@ -179,8 +176,12 @@ EOF
     systemctl daemon-reload
 
     # -----------------------------------------------------------------------
-    # 3. Remove X11 session + XRDP packages
+    # 3. Remove X11 session + XRDP packages (xorgxrdp depends on xrdp)
     # -----------------------------------------------------------------------
+    # Tell the pacman hook of PR #278 (astroarch-keep-x11-session) that this
+    # system is going to Wayland, otherwise it aborts the removal below.
+    mkdir -p /etc/astroarch && touch /etc/astroarch/wayland
+
     local PKGS=() p
     for p in plasma-x11-session xorgxrdp xrdp; do
         pacman -Qq "$p" > /dev/null 2>&1 && PKGS+=("$p")
@@ -281,28 +282,31 @@ EOF
     # -----------------------------------------------------------------------
     log "Installing user services for: $SERVICE_USERS"
 
-    # w0vncserver unit (system-wide location, enabled per user below)
-    ln -sfn "$REPO/systemd/w0vncserver.service" /etc/systemd/user/w0vncserver.service
-    ln -sfn "$REPO/systemd/w0vncserver-kiosk.service" /etc/systemd/user/w0vncserver-kiosk.service
+    # Units shipped in the repo, visible to every user (enabled per user below).
+    # VNC runs as app-org.astroarch.vnc.service: the unit name gives w0vncserver
+    # the portal app id "org.astroarch.vnc", so only krdp and this id are granted.
+    local unit
+    for unit in app-org.astroarch.vnc.service astroarch-portal-permissions.service; do
+        ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
+    done
+    ln -sfn "$REPO/desktop/org.astroarch.vnc.desktop" /usr/share/applications/org.astroarch.vnc.desktop
 
-    # One-shot: "flatpak permission-set" needs the user's session bus, so it
-    # cannot run here. It runs once at the first Wayland login instead.
-    cat > /etc/systemd/user/astroarch-portal-permissions.service <<'EOF'
-[Unit]
-Description=AstroArch: authorize remote desktop portal (once per user)
-After=graphical-session.target
-ConditionPathExists=!%h/.config/astroarch/portal-permissions.done
+    # krdp starts only after the portal grant (first boot race)
+    mkdir -p /etc/systemd/user/app-org.kde.krdpserver.service.d
+    ln -sfn "$REPO/systemd/krdp-after-grant.conf" \
+        /etc/systemd/user/app-org.kde.krdpserver.service.d/astroarch-grant.conf
 
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop org.kde.krdpserver yes
-ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop "" yes
-ExecStartPost=/usr/bin/mkdir -p %h/.config/astroarch
-ExecStartPost=/usr/bin/touch %h/.config/astroarch/portal-permissions.done
-
-[Install]
-WantedBy=graphical-session.target
-EOF
+    # Leftovers of the previous VNC layout (plain w0vncserver.service + per-user
+    # links, portal grant on graphical-session.target): two VNC servers would
+    # fight for port 5900.
+    rm -f /etc/systemd/user/w0vncserver.service \
+          /etc/systemd/user/w0vncserver-kiosk.service \
+          /etc/systemd/user/graphical-session.target.wants/w0vncserver.service
+    for u in astronaut astronaut-kiosk; do
+        rm -f "/home/$u/.config/systemd/user/graphical-session.target.wants/w0vncserver.service" \
+              "/home/$u/.config/systemd/user/graphical-session.target.wants/w0vncserver-kiosk.service" \
+              "/home/$u/.config/systemd/user/graphical-session.target.wants/astroarch-portal-permissions.service"
+    done
 
     local KRDP_UNIT=/usr/lib/systemd/user/app-org.kde.krdpserver.service
     [ -e "$KRDP_UNIT" ] || step_fail "krdp unit not found"
@@ -310,7 +314,8 @@ EOF
     local u
     for u in $SERVICE_USERS; do
         [ -d "/home/$u" ] || continue
-        enable_user_unit "$u" /etc/systemd/user/astroarch-portal-permissions.service
+        enable_user_unit "$u" /etc/systemd/user/app-org.astroarch.vnc.service plasma-workspace.target
+        enable_user_unit "$u" /etc/systemd/user/astroarch-portal-permissions.service plasma-workspace.target
         [ -e "$KRDP_UNIT" ] && enable_user_unit "$u" "$KRDP_UNIT"
 
         # krdp server certificate (self-signed), as in the KDE/krdp README.
@@ -321,6 +326,7 @@ EOF
         if [ ! -s "$crt" ] || [ ! -s "$key" ]; then
             as_user "$u" openssl req -nodes -new -x509 -keyout "$key" -out "$crt" \
                 -days 3650 -batch -subj "/CN=astroarch" \
+                -addext "subjectAltName = DNS:astroarch" \
                 || step_fail "krdp certificate for $u"
         fi
         chmod 600 "$key" 2> /dev/null
@@ -329,12 +335,19 @@ EOF
         as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key CertificateKey "$key"
         as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true
         as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key Autostart true
+
+        # astronaut-kiosk has its own ports: krdp 3390, VNC 5901
+        if [ "$u" = astronaut-kiosk ]; then
+            as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key ListenPort 3390
+            as_user "$u" mkdir -p "/home/$u/.config/systemd/user/app-org.astroarch.vnc.service.d"
+            as_user "$u" ln -sfn "$REPO/systemd/kiosk-vnc-port.conf" \
+                "/home/$u/.config/systemd/user/app-org.astroarch.vnc.service.d/port.conf" \
+                || step_fail "kiosk VNC port drop-in"
+        fi
     done
 
-    enable_user_unit "astronaut" /etc/systemd/user/w0vncserver.service
-    enable_user_unit "astronaut-kiosk" /etc/systemd/user/w0vncserver-kiosk.service
-    as_user "astronaut-kiosk" kwriteconfig6 --file krdpserverrc --group General --key ListenPort 3390
-
+    # Keeps the user manager of astronaut alive (does not start services by itself)
+    loginctl enable-linger astronaut
     systemctl daemon-reload
 
     # -----------------------------------------------------------------------
@@ -349,7 +362,7 @@ EOF
     touch "$STATE/done"
     log "Migration finished. Rebooting in 10 seconds."
     sync
-        for i in 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1; do
+    for i in 10 9 8 7 6 5 4 3 2 1; do
         printf "\rReboot in %2ds " "$i"
         sleep 1
     done
