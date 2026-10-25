@@ -346,6 +346,28 @@ EOF
         fi
     done
 
+    # Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP
+    # would stop getting frames
+    install -m644 "$REPO/configs/powerdevilrc" /etc/xdg/powerdevilrc
+
+    # Kiosk: a headless Plasma session next to the desktop, started at boot by
+    # the kiosk user manager (linger below). KWin draws on a virtual output,
+    # KRdp gives each RDP client an output sized to its window
+    if [ -d /home/astronaut-kiosk ]; then
+        log "Setting up the headless kiosk session"
+        local kdir=/home/astronaut-kiosk/.config/systemd/user
+        for unit in astroarch-kiosk-session.service astroarch-kiosk-rdp-output.service; do
+            ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
+        done
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-session.service default.target
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-rdp-output.service
+        as_user astronaut-kiosk mkdir -p "$kdir/plasma-kwin_wayland.service.d" "$kdir/app-org.kde.krdpserver.service.d" \
+            && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/kwin-headless.conf" "$kdir/plasma-kwin_wayland.service.d/headless.conf" \
+            && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/krdpserver-kiosk.conf" "$kdir/app-org.kde.krdpserver.service.d/kiosk.conf" \
+            || step_fail "headless kiosk session"
+        install -m644 "$REPO/configs/kiosk/45-allow-shutdown-kiosk.rules" /etc/polkit-1/rules.d/45-allow-shutdown-kiosk.rules
+    fi
+
     # Keeps the user manager of astronaut and astronaut-kiosk alive (does not start services by itself)
     loginctl enable-linger astronaut
     loginctl enable-linger astronaut-kiosk

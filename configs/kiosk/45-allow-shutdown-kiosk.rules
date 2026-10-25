@@ -1,0 +1,11 @@
+// The kiosk session runs next to the astronaut desktop, so logind sees two users logged in and
+// asks for a password to shut down or reboot from either of them. Allow it without one.
+polkit.addRule(function(action, subject) {
+    if ((action.id == "org.freedesktop.login1.reboot" ||
+         action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
+         action.id == "org.freedesktop.login1.power-off" ||
+         action.id == "org.freedesktop.login1.power-off-multiple-sessions") &&
+        (subject.user == "astronaut" || subject.user == "astronaut-kiosk")) {
+        return polkit.Result.YES;
+    }
+});
