@@ -1,7 +1,8 @@
 # Plasma >= 6.8 is Wayland only and conflicts with plasma-x11-session, which AstroArch needs
 # (SDDM, VNC, XRDP and the kiosk all run on X11). Abort any transaction that would remove it,
 # including the ones started by Discover, which accepts package conflicts without asking.
-# Delete /etc/pacman.d/hooks/astroarch-keep-x11-session.hook to remove plasma-x11-session on purpose.
+# The Wayland migration creates /etc/astroarch/wayland before removing plasma-x11-session: from
+# then on the hook lets it go, even though update-astroarch keeps reinstalling it.
 [Trigger]
 Operation = Remove
 Type = Package
@@ -10,5 +11,5 @@ Target = plasma-x11-session
 [Action]
 Description = Keeping plasma-x11-session, AstroArch needs the Plasma X11 session...
 When = PreTransaction
-Exec = /usr/bin/sh -c 'echo "This update would remove plasma-x11-session (Plasma >= 6.8 is Wayland only), AstroArch would lose its desktop and VNC: update aborted" >&2; exit 1'
+Exec = /usr/bin/sh -c '[ -e /etc/astroarch/wayland ] && exit 0; echo "This update would remove plasma-x11-session (Plasma >= 6.8 is Wayland only), AstroArch would lose its desktop and VNC: update aborted" >&2; exit 1'
 AbortOnFail
