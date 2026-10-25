@@ -164,7 +164,7 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 # VNC runs as app-org.astroarch.vnc.service: the unit name gives w0vncserver the
 # portal app id "org.astroarch.vnc", so the remote-desktop grant is limited to
 # krdp and VNC. The .desktop file is needed for the portal to resolve that id.
-ln -sfn /home/astronaut/.astroarch/configs/org.astroarch.vnc.desktop /usr/share/applications/org.astroarch.vnc.desktop
+ln -sfn /home/astronaut/.astroarch/desktop/org.astroarch.vnc.desktop /usr/share/applications/org.astroarch.vnc.desktop
 
 # krdp starts only after the portal grant
 mkdir -p /etc/systemd/user/app-org.kde.krdpserver.service.d
@@ -175,7 +175,7 @@ enable_user_unit astronaut /home/astronaut/.astroarch/systemd/astroarch-portal-p
 
 # Config KRDP
 # astronaut
-mkdir -p /home/astronaut/.local/share/krdpserver
+su astronaut -c "mkdir -p /home/astronaut/.local/share/krdpserver"
 certificatePath="/home/astronaut/.local/share/krdpserver/krdp.crt"
 certificateKeyPath="/home/astronaut/.local/share/krdpserver/krdp.key"
 su astronaut -c "openssl req -nodes -new -x509 -keyout '$certificateKeyPath' -out '$certificatePath' -days 3650 -batch -subj '/CN=astroarch' -addext 'subjectAltName = DNS:astroarch'"
@@ -354,6 +354,10 @@ install -d -o root -g astro -m 2775 /srv/astro-data
 cp /home/astronaut/.astroarch/configs/astro-data.conf /etc/tmpfiles.d/astro-data.conf
 su astronaut -c "ln -snf /srv/astro-data /home/astronaut/astro-data"
 su astronaut-kiosk -c "ln -snf /srv/astro-data /home/astronaut-kiosk/astro-data"
+
+# Linger
+loginctl enable-linger astronaut
+loginctl enable-linger astronaut-kiosk
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt

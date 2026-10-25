@@ -346,8 +346,9 @@ EOF
         fi
     done
 
-    # Keeps the user manager of astronaut alive (does not start services by itself)
+    # Keeps the user manager of astronaut and astronaut-kiosk alive (does not start services by itself)
     loginctl enable-linger astronaut
+    loginctl enable-linger astronaut-kiosk
     systemctl daemon-reload
 
     # -----------------------------------------------------------------------
