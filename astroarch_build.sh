@@ -356,8 +356,13 @@ su astronaut -c "ln -snf /srv/astro-data /home/astronaut/astro-data"
 su astronaut-kiosk -c "ln -snf /srv/astro-data /home/astronaut-kiosk/astro-data"
 
 # Linger
-loginctl enable-linger astronaut
-loginctl enable-linger astronaut-kiosk
+mkdir -p /var/lib/systemd/linger
+touch /var/lib/systemd/linger/astronaut
+chown root:root /var/lib/systemd/linger/astronaut
+chmod 644 /var/lib/systemd/linger/astronaut
+touch /var/lib/systemd/linger/astronaut-kiosk
+chown root:root /var/lib/systemd/linger/astronaut-kiosk
+chmod 644 /var/lib/systemd/linger/astronaut-kiosk
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
