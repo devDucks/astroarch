@@ -255,6 +255,9 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
+# Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP would stop getting frames
+install -m644 /home/astronaut/.astroarch/configs/powerdevilrc /etc/xdg/powerdevilrc
+
 # Set a standard TZ to avoid breaking plasma clock widget
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
@@ -299,6 +302,18 @@ enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/app-org.astr
 # Same unit as astronaut (same portal app id), only the VNC port differs: 5901
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/app-org.astroarch.vnc.service.d"
 ln -sfn /home/astronaut/.astroarch/systemd/kiosk-vnc-port.conf /home/astronaut-kiosk/.config/systemd/user/app-org.astroarch.vnc.service.d/port.conf
+
+# Kiosk session: headless Plasma next to the desktop, started at boot by the kiosk user
+# manager (astronaut-kiosk lingers, see below). KWin draws on a virtual output, KRdp gives
+# each RDP client an output sized to its window
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-session.service default.target
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-rdp-output.service
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d"
+ln -sfn /home/astronaut/.astroarch/configs/kiosk/kwin-headless.conf /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d/headless.conf
+ln -sfn /home/astronaut/.astroarch/configs/kiosk/krdpserver-kiosk.conf /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d/kiosk.conf
+
+# Shutdown and reboot without a password, from the desktop or the kiosk
+cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-kiosk.rules /etc/polkit-1/rules.d/
 
 # Copy wallpapers
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
