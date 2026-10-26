@@ -11,6 +11,10 @@ LOG=/var/log/astroarch-wayland-migration.log
 STATE=/var/lib/astroarch/wayland-migration
 ICON="$REPO/assets/icons/novnc-icon.svg"
 
+# Packages the X11 system loses, and the ones the Wayland setup needs
+X11_PKGS="plasma-x11-session xorgxrdp xrdp"
+NEW_PKGS="krdp plasma-login-manager flatpak tigervnc jq kscreen"
+
 # Users that get the remote desktop services (krdp + w0vncserver)
 SERVICE_USERS="astronaut astronaut-kiosk"
 
@@ -74,16 +78,25 @@ EOF
         /usr/bin/bash "$RUN_DIR/wayland-migration.sh" --detached || return 1
 
     echo "Migration started. Log: $LOG"
-    echo "The desktop will close in a few seconds. DO NOT POWER OFF."
+    echo "The update is checked and downloaded first, with the desktop still running."
+    echo "Then the desktop closes. DO NOT POWER OFF."
 
     # Block here so update-astroarch does not go on with its own pacman run.
     # The migration stops SDDM, which ends this session (and this script).
+    # Show the progress here too, until the migration ends or the session closes
+    tail -n 0 -F "$LOG" 2> /dev/null &
+    local tail_pid=$!
     while systemctl is-active --quiet "$UNIT"; do
         sleep 2
     done
+    kill "$tail_pid" 2> /dev/null
 
     # Still alive and the unit is gone: the migration ended without reboot.
-    echo "❌ The migration stopped without rebooting. See $LOG"
+    if tail -n 5 "$LOG" 2> /dev/null | grep -q "NOTHING WAS CHANGED"; then
+        echo "❌ The migration stopped before changing anything: the system works as before. See $LOG"
+    else
+        echo "❌ The migration stopped without rebooting. See $LOG"
+    fi
     return 1
 }
 
@@ -152,10 +165,84 @@ EOF
     log "Backup of removed files: $BK"
 
     # -----------------------------------------------------------------------
+    # 0. Check and download everything BEFORE changing anything. If this
+    #    fails, the system is left as it was: desktop, VNC and XRDP working.
+    # -----------------------------------------------------------------------
+    log "Checking and downloading the update, nothing is changed yet"
+    local REMOVE=() p
+    for p in $X11_PKGS; do
+        pacman -Qq "$p" > /dev/null 2>&1 && REMOVE+=("$p")
+    done
+    local KEYRINGS="archlinux-keyring"
+    pacman -Qq archlinuxarm-keyring > /dev/null 2>&1 && KEYRINGS+=" archlinuxarm-keyring"
+    # All of it runs on a copy of the package database, with its own log:
+    # the real system is not touched until step 1
+    local TMPDB=/var/tmp/astroarch-wayland-db pre_ok=0 why="" try avail_kb gone=""
+    local TMPPAC=(--dbpath "$TMPDB" --logfile "$TMPDB.log")
+    rm -rf "$TMPDB" "$TMPDB.log"
+    # What the removal of step 3 takes away, with the dependencies it leaves
+    # unneeded. --print changes nothing, and fails if other installed packages
+    # need the X11 ones
+    if [ ${#REMOVE[@]} -gt 0 ]; then
+        if gone=$(pacman -Rs --print --print-format '%n-%v' --noconfirm "${REMOVE[@]}" 2> /dev/null); then
+            gone=$(printf '%s\n' "$gone" | sed 's/\x1b\[[0-9;?]*[a-zA-Z]//g')
+        else
+            why="other installed packages need ${REMOVE[*]}"
+        fi
+    fi
+    if [ -n "$why" ]; then
+        :
+    elif ! cp -a /var/lib/pacman "$TMPDB"; then
+        why="could not copy the package database"
+    else
+        # Take them out of the copy by hand: pacman -R --dbonly would still run
+        # the hooks on the real system (the #278 one would stop it)
+        for p in $gone; do
+            [ -d "$TMPDB/local/$p" ] && rm -rf "${TMPDB:?}/local/$p" || why="unexpected package entry $p"
+        done
+    fi
+    if [ -z "$why" ]; then
+        # The whole upgrade on that database: dependency problems show up here,
+        # and every package lands in the cache, so step 6 needs no network
+        for try in 1 2 3; do
+            pacman "${TMPPAC[@]}" -Syuw --noconfirm $KEYRINGS $NEW_PKGS && { pre_ok=1; break; }
+            [ "$try" -lt 3 ] || break
+            log "download failed (attempt $try/3), retrying in 15s"
+            sleep 15
+        done
+        [ "$pre_ok" -eq 1 ] || why="the download failed, check the network"
+    fi
+    if [ "$pre_ok" -eq 1 ]; then
+        # pacman -w doesn't check the space the upgrade itself needs
+        avail_kb=$(df --output=avail -k / | tail -n1 | tr -d ' ')
+        if [ "$avail_kb" -lt 2000000 ]; then
+            pre_ok=0
+            why="not enough free space on / after the download ($((avail_kb / 1024)) MB, 2 GB needed)"
+        # The package databases the download was checked against, swapped in whole
+        elif ! { rm -rf /var/lib/pacman/sync.new && cp -a "$TMPDB/sync" /var/lib/pacman/sync.new \
+                 && rm -rf /var/lib/pacman/sync.old && mv /var/lib/pacman/sync /var/lib/pacman/sync.old \
+                 && mv /var/lib/pacman/sync.new /var/lib/pacman/sync; }; then
+            [ -d /var/lib/pacman/sync ] || mv /var/lib/pacman/sync.old /var/lib/pacman/sync
+            pre_ok=0
+            why="could not update the package databases"
+        fi
+        rm -rf /var/lib/pacman/sync.new /var/lib/pacman/sync.old
+    fi
+    rm -rf "$TMPDB" "$TMPDB.log"
+    if [ "$pre_ok" -ne 1 ]; then
+        log "CRITICAL: $why."
+        log "NOTHING WAS CHANGED, the desktop stays as it is. See $LOG"
+        touch "$STATE/FAILED"
+        wall "AstroArch: the Wayland migration stopped before changing anything ($why). The system works as before." 2> /dev/null
+        return 1
+    fi
+    rm -f "$STATE/FAILED"
+
+    # -----------------------------------------------------------------------
     # 1. Stop the graphical session
     # -----------------------------------------------------------------------
     log "Stopping the graphical session"
-    systemctl stop sddm.service plasmalogin.service 2> /dev/null
+    systemctl stop sddm.service plasmalogin.service packagekit.service 2> /dev/null
     for u in astronaut astronaut-kiosk; do
         loginctl terminate-user "$u" 2> /dev/null
     done
@@ -167,9 +254,18 @@ EOF
     #    (BEFORE deleting their unit files)
     # -----------------------------------------------------------------------
     log "Disabling X11 VNC and XRDP services"
+    # What was enabled, and the unit files (disable removes linked ones), in case
+    # step 3 fails and this has to be undone
+    local WAS_ENABLED=() user_vnc=0 f
+    for f in /etc/systemd/system/x0vncserver.service /etc/systemd/user/x0vncserver-xrdp.service \
+             /etc/systemd/system/xrdp-autostart-kiosk.service; do
+        { [ -e "$f" ] || [ -L "$f" ]; } && cp -a --parents "$f" "$BK/" 2> /dev/null
+    done
     for u in x0vncserver xrdp xrdp-sesman xrdp-autostart-kiosk; do
+        systemctl is-enabled --quiet "$u.service" 2> /dev/null && WAS_ENABLED+=("$u.service")
         systemctl disable --now "$u.service" 2> /dev/null
     done
+    systemctl --global is-enabled --quiet x0vncserver-xrdp.service 2> /dev/null && user_vnc=1
     systemctl --global disable x0vncserver-xrdp.service 2> /dev/null
 
     trash /etc/systemd/system/x0vncserver.service \
@@ -185,13 +281,23 @@ EOF
     # system is going to Wayland, otherwise it aborts the removal below.
     mkdir -p /etc/astroarch && touch /etc/astroarch/wayland
 
-    local PKGS=() p
-    for p in plasma-x11-session xorgxrdp xrdp; do
-        pacman -Qq "$p" > /dev/null 2>&1 && PKGS+=("$p")
-    done
-    if [ ${#PKGS[@]} -gt 0 ]; then
-        log "Removing packages: ${PKGS[*]}"
-        pacman -Rns --noconfirm "${PKGS[@]}" || step_fail "pacman -Rns ${PKGS[*]}"
+    if [ ${#REMOVE[@]} -gt 0 ]; then
+        # Nothing else may hold the package database (a pacman still running)
+        for i in $(seq 60); do [ -e /var/lib/pacman/db.lck ] || break; sleep 2; done
+        log "Removing packages: ${REMOVE[*]}"
+        if ! pacman -Rns --noconfirm "${REMOVE[@]}"; then
+            # Checked in step 0, so this should not happen. The system is still
+            # X11: put back step 2 and the marker for the #278 hook.
+            log "CRITICAL: removing ${REMOVE[*]} failed. Putting the X11 remote access back, not rebooting."
+            cp -a "$BK/etc/." /etc/ 2> /dev/null
+            rm -f /etc/astroarch/wayland
+            systemctl daemon-reload
+            [ ${#WAS_ENABLED[@]} -eq 0 ] || systemctl enable --now "${WAS_ENABLED[@]}"
+            [ "$user_vnc" -eq 0 ] || systemctl --global enable x0vncserver-xrdp.service
+            touch "$STATE/FAILED"
+            systemctl start sddm.service
+            return 1
+        fi
     fi
 
     # The xrdp system user is named "xrdp" ("xrdp daemon" is its comment).
@@ -244,7 +350,8 @@ EOF
     log "Upgrading the system, this is the long part. DO NOT POWER OFF."
     local upgrade_ok=0 try
     for try in 1 2 3; do
-        if pacman -Sy --noconfirm archlinux-keyring && pacman -Su --noconfirm krdp plasma-login-manager flatpak tigervnc jq kscreen; then
+        # No -y: the databases are the ones step 0 downloaded everything for
+        if pacman -S --needed --noconfirm $KEYRINGS && pacman -Su --needed --noconfirm $NEW_PKGS; then
             upgrade_ok=1
             break
         fi
