@@ -1,0 +1,18 @@
+[Unit]
+Description=AstroArch kiosk app %i
+# Start once Plasma is up; like the VNC unit, drop the implicit ordering that would make
+# plasma-workspace.target wait for the app and so cycle with After=plasma-workspace.target
+DefaultDependencies=no
+After=basic.target plasma-workspace.target
+Conflicts=shutdown.target
+Before=shutdown.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/home/astronaut/.astroarch/scripts/astroarch-kiosk-app.sh %i
+# The kiosk configurator adds Restart=always in a watchdog.conf drop-in
+Restart=no
+RestartSec=10
+
+[Install]
+WantedBy=plasma-workspace.target
