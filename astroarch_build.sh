@@ -71,7 +71,7 @@ else
        ksystemlog discover kwalletmanager kgpg qt6-serialbus \
        qt6-serialport qt6ct udisks2 fuse2 kdialog jq \
        fortune-mod cowsay pacman-contrib neofetch \
-       astromonitor kscreen flatpak dhcpcd iw rsync xrdp xorgxrdp \
+       astromonitor kscreen flatpak dhcpcd iw rsync \
        plasma-login-manager astroarch-onboarding astroarch-bridge --noconfirm --ask 4
 fi
 
@@ -127,10 +127,8 @@ ln -s /usr/lib/systemd/system/chronyd.service /etc/systemd/system/multi-user.tar
 # Symlink now files
 ln -s /home/astronaut/.astroarch/configs/autologin.conf /etc/plasmalogin.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
-ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
-ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
 
 # Copy udev rule to disable wifi power saving
 cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
@@ -147,48 +145,7 @@ cp /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
-# Enable vncserver
-ln -s /etc/systemd/system/x0vncserver.service /etc/systemd/system/multi-user.target.wants/x0vncserver.service
-
-# Enable xrdp
-mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh-old
-ln -sfn /home/astronaut/.astroarch/configs/startwm.sh /etc/xrdp/startwm.sh
-ln -sfn /home/astronaut/.astroarch/configs/Xwrapper.config /etc/xrdp/Xwrapper.config
-
-# Add user xrdp
-useradd xrdp -d / -c 'xrdp daemon' -s /usr/sbin/nologin
-
-# Set user in xrdp.ini
-sed -i '/#runtime_user=xrdp/s/^#//' /etc/xrdp/xrdp.ini
-sed -i '/#runtime_group=xrdp/s/^#//' /etc/xrdp/xrdp.ini
-sed -i 's/bitmap_cache=true/bitmap_cache=false/g' /etc/xrdp/xrdp.ini
-
-# Set user in xrdp.sesman.ini
-sed -i '/#SessionSockdirGroup=xrdp/s/^#//' /etc/xrdp/sesman.ini
-sed -i '/TerminalServerUsers=tsusers/s/^/#/' /etc/xrdp/sesman.ini
-
-# Set xrdp permissions
-chown root:xrdp /etc/xrdp/rsakeys.ini
-chmod u=rw,g=r /etc/xrdp/rsakeys.ini
-chmod 755 /etc/xrdp/cert.pem
-chmod 755 /etc/xrdp/key.pem
-
-# Increases the xrdp buffer
-sed -i 's|#tcp_send_buffer_bytes=32768|tcp_send_buffer_bytes= 4194304|g' /etc/xrdp/xrdp.ini
-
-# Prevents XRDP from creating a second virtual desktop for the same user
-sed -i 's/^Policy=.*/Policy=UHQ/' /etc/xrdp/sesman.ini
-sed -i '/^\[Xorg\]/a fork=true' /etc/xrdp/xrdp.ini
-
-# Disables the display's power management features
-sed -i 's/Option "DPMS"/& "false"/' /etc/X11/xrdp/xorg.conf
-
-# Disabling compression can speed up local connections on low-power devices
-sed -i 's|bitmap_compression=true|bitmap_compression=false|g' /etc/xrdp/xrdp.ini
-sed -i 's|bulk_compression=true|bulk_compression=false|g' /etc/xrdp/xrdp.ini
-awk '1; /^tcp_keepalive=true$/ {print "\n; Turn off compression\nrfx_codec=false\njpeg_codec=false"}' /etc/xrdp/xrdp.ini > /tmp/xrdp.ini.tmp && sudo mv /tmp/xrdp.ini.tmp /etc/xrdp/xrdp.ini
-
-# Improve xrdp & network
+# Network and memory tuning
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
 
 # Nuke notifications
@@ -213,8 +170,6 @@ ln -s /usr/lib/systemd/system/NetworkManager.service /etc/systemd/system/multi-u
 ln -s /usr/lib/systemd/system/avahi-daemon.service /etc/systemd/system/multi-user.target.wants/avahi-daemon.service
 ln -s /usr/lib/systemd/system/nmb.service /etc/systemd/system/multi-user.target.wants/nmb.service
 ln -s /usr/lib/systemd/system/smb.service /etc/systemd/system/multi-user.target.wants/smb.service
-ln -s /usr/lib/systemd/system/xrdp.service /etc/systemd/system/multi-user.target.wants/xrdp.service
-ln -s /usr/lib/systemd/system/xrdp-sesman.service /etc/systemd/system/multi-user.target.wants/xrdp-sesman.service
 
 # Enable also the AP creation and resize scripts
 ln -s /etc/systemd/system/create_ap.service /etc/systemd/system/multi-user.target.wants/create_ap.service
@@ -229,7 +184,7 @@ su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/bubble.jpg /home/astro
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/south-milky.jpg /home/astronaut/Pictures/wallpapers"
 su astronaut -c "cp /home/astronaut/.astroarch/wallpapers/pacman.jpg /home/astronaut/Pictures/wallpapers"
 
-# Autostart AstroArch-onboarding
+# Autostart folder
 su astronaut -c "mkdir /home/astronaut/.config/autostart"
 
 # Copy desktop icons
@@ -240,7 +195,6 @@ su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/De
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "ln -snf /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
-su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
@@ -282,12 +236,6 @@ chmod -R 777 /home/astronaut-kiosk
 su astronaut-kiosk -c "LC_ALL=C.UTF-8 xdg-user-dirs-update --force"
 mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
 
-## Add the kiosk session ##
-# New Xrdp launcher for astronaut and astronaut-kiosk sessions
-cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-xrdp.rules /etc/polkit-1/rules.d/
-cp /home/astronaut/.astroarch/configs/startwm.sh /home/astronaut-kiosk/
-cp /home/astronaut/.astroarch/configs/kiosk/.xinitrc /home/astronaut-kiosk/
-
 # Copy wallpapers
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
 cp /home/astronaut/.astroarch/configs/kiosk/astroarch-kiosk.png /home/astronaut-kiosk/Pictures/wallpapers/
@@ -312,11 +260,6 @@ chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
-
-# Pre-launch of the Kiosk session
-sed -i '1s/^/auth sufficient pam_succeed_if.so user = astronaut-kiosk\n/' /etc/pam.d/xrdp-sesman
-cp /home/astronaut/.astroarch/systemd/xrdp-autostart-kiosk.service /etc/systemd/system/xrdp-autostart-kiosk.service
-ln -s /etc/systemd/system/xrdp-autostart-kiosk.service /etc/systemd/system/multi-user.target.wants/xrdp-autostart-kiosk.service
 
 # Disable Kwallet by default
 su astronaut -c "echo $'[Wallet]\nEnabled=false' > /home/astronaut/.config/kwalletrc"
