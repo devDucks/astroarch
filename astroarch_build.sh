@@ -284,7 +284,7 @@ su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}"
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants"
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/default.target.wants"
 
-# Enable kiosk permissions krdp
+# Enable kiosk permissions krdp/vnc
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service plasma-workspace.target
 
 ## KRDP ##
@@ -299,6 +299,12 @@ su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key S
 su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
 su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key ListenPort 3390"
 ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
+
+# Enable kiosk vnc
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/app-org.astroarch.vnc.service plasma-workspace.target
+# Same unit as astronaut (same portal app id), only the VNC port differs: 5901
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/app-org.astroarch.vnc.service.d"
+ln -sfn /home/astronaut/.astroarch/systemd/kiosk-vnc-port.conf /home/astronaut-kiosk/.config/systemd/user/app-org.astroarch.vnc.service.d/port.conf
 
 # Kiosk session: headless Plasma next to the desktop, started at boot by the kiosk user
 # manager (astronaut-kiosk lingers, see below). KWin draws on a virtual output, KRdp gives
