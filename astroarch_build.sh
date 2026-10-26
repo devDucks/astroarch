@@ -21,6 +21,21 @@ is_container() {
     return 1
 }
 
+# Enable a user unit shipped in the repo for one user.
+# The unit is linked into the user's unit search path (a symlink that only
+# exists inside a .wants directory is not a unit systemd can load), then wanted
+# by the given target (default graphical-session.target).
+enable_user_unit() {
+    local user=$1 unit=$2 target=${3:-graphical-session.target}
+    local dir="/home/$user/.config/systemd/user"
+    local name
+    name=$(basename "$unit")
+    su "$user" -c "mkdir -p '$dir/$target.wants'"
+    ln -sfn "$unit" "$dir/$name"
+    ln -sfn "$dir/$name" "$dir/$target.wants/$name"
+    chown -h "$user:$user" "$dir/$name" "$dir/$target.wants/$name"
+}
+
 # Parallelize pacman download to 5 and use pacman as progress bar
 if [ "$HAS_VIRT" -eq 0 ]; then
     sed -i 's|#ParallelDownloads = 5|ParallelDownloads = 5|g' /etc/pacman.conf
@@ -72,7 +87,7 @@ else
        qt6-serialport qt6ct udisks2 fuse2 kdialog jq \
        fortune-mod cowsay pacman-contrib neofetch \
        astromonitor kscreen flatpak dhcpcd iw rsync \
-       plasma-login-manager astroarch-onboarding astroarch-bridge --noconfirm --ask 4
+       krdp plasma-login-manager astroarch-onboarding astroarch-bridge --noconfirm --ask 4
 fi
 
 # Allow wheelers to sudo without password to install packages
@@ -83,7 +98,8 @@ usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users astronaut
 
 # Make all necessary folders
 mkdir -p /etc/plasmalogin.conf.d
-su astronaut -c "mkdir -p /home/astronaut/.config"
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/graphical-session.target.wants"
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
 su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
 su astronaut -c "mkdir -p /home/astronaut/Desktop"
 
@@ -147,6 +163,25 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
 # Network and memory tuning
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
+
+# krdp starts only after the portal grant
+mkdir -p /etc/systemd/user/app-org.kde.krdpserver.service.d
+ln -sfn /home/astronaut/.astroarch/systemd/krdp-after-grant.conf /etc/systemd/user/app-org.kde.krdpserver.service.d/astroarch-grant.conf
+
+# Enable astronaut permissions krdp
+enable_user_unit astronaut /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service plasma-workspace.target
+
+# Config KRDP
+# astronaut
+su astronaut -c "mkdir -p /home/astronaut/.local/share/krdpserver"
+certificatePath="/home/astronaut/.local/share/krdpserver/krdp.crt"
+certificateKeyPath="/home/astronaut/.local/share/krdpserver/krdp.key"
+su astronaut -c "openssl req -nodes -new -x509 -keyout '$certificateKeyPath' -out '$certificatePath' -days 3650 -batch -subj '/CN=astroarch' -addext 'subjectAltName = DNS:astroarch'"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Certificate '$certificatePath'"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key CertificateKey '$certificateKeyPath'"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
+su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
+ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
 
 # Nuke notifications
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc
