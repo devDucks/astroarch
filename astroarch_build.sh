@@ -311,6 +311,8 @@ ln -sfn /home/astronaut/.astroarch/systemd/kiosk-vnc-port.conf /home/astronaut-k
 # each RDP client an output sized to its window
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-session.service default.target
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-rdp-output.service
+# On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-layout.service plasma-workspace.target
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d"
 ln -sfn /home/astronaut/.astroarch/configs/kiosk/kwin-headless.conf /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d/headless.conf
 ln -sfn /home/astronaut/.astroarch/configs/kiosk/krdpserver-kiosk.conf /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d/kiosk.conf
