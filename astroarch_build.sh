@@ -58,23 +58,22 @@ if [ "$HAS_VIRT" -eq 1 ]; then
     pacman -Syu linux-rpi linux-rpi-headers linux-firmware --noconfirm --ask 4
 else
     pacman -Syu base-devel pipewire-jack gnu-free-fonts wireplumber \
-       zsh plasma-desktop sddm networkmanager xf86-video-dummy \
-       network-manager-applet networkmanager-qt xorg konsole \
+       zsh plasma-desktop networkmanager \
+       network-manager-applet networkmanager-qt konsole \
        gpsd breeze-icons hicolor-icon-theme knewstuff tigervnc \
        knotifyconfig kplotting qt6-datavis3d qt5-quickcontrols \
-       qt6-websockets qtkeychain-qt6 stellarsolver xf86-video-fbdev \
+       qt6-websockets qtkeychain-qt6 stellarsolver \
        xplanet plasma-nm dhcp dnsmasq kate plasma-systemmonitor \
        dolphin uboot-tools usbutils cloud-guest-utils samba paru \
        websockify novnc astrometry.net gsc kstars phd2 packagekit-qt6 \
        indi-3rdparty-libs indi-3rdparty-drivers linux-rpi linux-rpi-headers \
        i2c-tools indiserver-ui astro_dmx openssl firefox chrony \
        ksystemlog discover kwalletmanager kgpg qt6-serialbus \
-       qt6-serialport qt6ct udisks2 xorg-fonts-misc fuse2 \
-       fortune-mod cowsay pacman-contrib arandr neofetch \
-       astromonitor kscreen sddm-kcm flatpak plasma-x11-session \
-       kdialog jq astroarch-onboarding dhcpcd iw rsync xrdp xorgxrdp astroarch-bridge --noconfirm --ask 4
+       qt6-serialport qt6ct udisks2 fuse2 kdialog jq \
+       fortune-mod cowsay pacman-contrib neofetch \
+       astromonitor kscreen flatpak dhcpcd iw rsync xrdp xorgxrdp \
+       plasma-login-manager astroarch-onboarding astroarch-bridge --noconfirm --ask 4
 fi
-
 
 # Allow wheelers to sudo without password to install packages
 sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -82,16 +81,8 @@ sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: AL
 # Add astronaut to uucp for serial device ownership
 usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users astronaut
 
-# Add sddm user to video group
-usermod -aG video sddm
-
-# Allow x11 forwarding over SSH
-sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
-sed -i 's/#X11DisplayOffset 10/X11DisplayOffset 10/g' /etc/ssh/sshd_config
-sed -i 's/#X11UseLocalhost yes/X11UseLocalhost yes/g' /etc/ssh/sshd_config
-
 # Make all necessary folders
-mkdir /etc/sddm.conf.d
+mkdir -p /etc/plasmalogin.conf.d
 su astronaut -c "mkdir -p /home/astronaut/.config"
 su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
 su astronaut -c "mkdir -p /home/astronaut/Desktop"
@@ -134,18 +125,12 @@ ln -s /dev/null /etc/systemd/system/systemd-timesyncd.service
 ln -s /usr/lib/systemd/system/chronyd.service /etc/systemd/system/multi-user.target.wants/chronyd.service
 
 # Symlink now files
-ln -s /home/astronaut/.astroarch/configs/kde_settings.conf /etc/sddm.conf.d/kde_settings.conf
+ln -s /home/astronaut/.astroarch/configs/autologin.conf /etc/plasmalogin.conf.d/autologin.conf
 ln -s /home/astronaut/.astroarch/systemd/novnc.service /usr/lib/systemd/system/novnc.service
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver.service /etc/systemd/system/x0vncserver.service
 ln -s /home/astronaut/.astroarch/systemd/resize_once.service /etc/systemd/system/resize_once.service
 ln -s /home/astronaut/.astroarch/configs/.astroarch.version /home/astronaut/.astroarch.version
 ln -s /home/astronaut/.astroarch/systemd/x0vncserver-xrdp.service /etc/systemd/user/x0vncserver-xrdp.service
-
-# Copy xorg config
-cp /home/astronaut/.astroarch/configs/xorg.conf /etc/X11/
-
-# Copy v3d X config
-cp /home/astronaut/.astroarch/configs/99-v3d.conf /etc/X11/xorg.conf.d
 
 # Copy udev rule to disable wifi power saving
 cp /home/astronaut/.astroarch/configs/81-wifi-powersave.rules /etc/udev/rules.d/81-wifi-powersave.rules
@@ -221,7 +206,7 @@ su astronaut -c "mkdir -p /home/astronaut/.local/share/kstars/astrometry"
 
 # Enable now all services
 mkdir -p /etc/systemd/system/graphical.target.wants
-ln -s /usr/lib/systemd/system/sddm.service /etc/systemd/system/graphical.target.wants/sddm.service
+ln -s /usr/lib/systemd/system/plasmalogin.service /etc/systemd/system/graphical.target.wants/plasmalogin.service
 ln -s /usr/lib/systemd/system/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
 ln -s /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
 ln -s /usr/lib/systemd/system/NetworkManager.service /etc/systemd/system/multi-user.target.wants/NetworkManager.service
@@ -255,7 +240,6 @@ su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/De
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "ln -snf /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
-su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-x11.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-x11.desktop"
 su astronaut -c "cp /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding-xrdp.desktop /home/astronaut/.config/autostart/AstroArch-onboarding-xrdp.desktop"
 
 # Make the icons executable so there will be no ! on the first boot
