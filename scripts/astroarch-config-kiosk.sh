@@ -1,10 +1,55 @@
 #!/usr/bin/env bash
 
 # File paths
-XINITRC="/home/astronaut-kiosk/.xinitrc"
 MENU_FILE="/home/astronaut-kiosk/.config/menus/plasma-applications.menu"
 
 DESKTOP_DIR="/home/astronaut-kiosk/Desktop"
+
+# Apps start as systemd user units of the kiosk session (astroarch-kiosk-app@<app>)
+UNIT_DIR="$HOME/.config/systemd/user"
+declare -A UNIT_APP
+UNIT_APP["kstars &"]=kstars
+UNIT_APP["pgrep -x kstars"]=kstars
+UNIT_APP["phd2 &"]=phd2
+UNIT_APP['pgrep -x "phd2.bin"']=phd2
+UNIT_APP["AstroDMx-Capture/bin/AstroDMx-Capture &"]=astrodmx
+UNIT_APP["pgrep -f AstroDMx-Capture"]=astrodmx
+UNIT_APP["xgps &"]=xgps
+UNIT_APP["pgrep -x xgps"]=xgps
+
+# Auto launch = unit enabled with the session; watchdog = Restart=always drop-in
+unit_state() {
+    local pattern="$1"
+    local unit="astroarch-kiosk-app@${UNIT_APP[$pattern]}.service"
+
+    if [[ "$pattern" == pgrep* ]]; then
+        [ -f "$UNIT_DIR/$unit.d/watchdog.conf" ] && echo "Enabled" || echo "Disabled"
+    else
+        systemctl --user is-enabled --quiet "$unit" && echo "Enabled" || echo "Disabled"
+    fi
+}
+
+set_unit_state() {
+    local state="$1"
+    local pattern="$2"
+    local unit="astroarch-kiosk-app@${UNIT_APP[$pattern]}.service"
+
+    if [[ "$pattern" == pgrep* ]]; then
+        if [ "$state" = "on" ]; then
+            mkdir -p "$UNIT_DIR/$unit.d"
+            printf '[Service]\nRestart=always\n' > "$UNIT_DIR/$unit.d/watchdog.conf"
+            # As with the X11 watchdog loop, a watched app is started even without auto launch
+            systemctl --user enable --quiet "$unit"
+        else
+            rm -f "$UNIT_DIR/$unit.d/watchdog.conf"
+        fi
+    elif [ "$state" = "on" ]; then
+        systemctl --user enable --quiet "$unit"
+    else
+        systemctl --user disable --quiet "$unit"
+    fi
+    systemctl --user daemon-reload
+}
 
 declare -A DESKTOP_APPS
 DESKTOP_APPS['APPS\["/usr/share/applications/org.kde.kstars.desktop"\]']="/usr/share/applications/org.kde.kstars.desktop|Kstars"
@@ -43,11 +88,13 @@ set_desktop_icon() {
 }
 
 
-# Verify that the files exist
-if [ ! -f "$XINITRC" ]; then
-    kdialog --error "File $XINITRC not found!"
+# The units belong to the kiosk user manager
+if [ "$(id -un)" != "astronaut-kiosk" ]; then
+    kdialog --error "Run this from the kiosk session (user astronaut-kiosk)"
     exit 1
 fi
+
+# Verify that the files exist
 
 if [ ! -f "$MENU_FILE" ]; then
     kdialog --error "File $MENU_FILE not found!"
@@ -60,6 +107,11 @@ is_active() {
 
     if [[ -n "${DESKTOP_APPS[$pattern]}" ]]; then
         desktop_icon_state "$pattern"
+        return
+    fi
+
+    if [[ -n "${UNIT_APP[$pattern]}" ]]; then
+        unit_state "$pattern"
         return
     fi
 
@@ -88,10 +140,8 @@ set_state_bash() {
         return
     fi
 
-    if [ "$state" = "on" ]; then
-        sed -i "s|^\([[:space:]]*\)#\+\(.*$pattern.*\)|\1\2|g" "$XINITRC"
-    else
-        sed -i "/^[[:space:]]*#/! s|^\([[:space:]]*\)\(.*$pattern.*\)|\1#\2|g" "$XINITRC"
+    if [[ -n "${UNIT_APP[$pattern]}" ]]; then
+        set_unit_state "$state" "$pattern"
     fi
 }
 
@@ -108,28 +158,28 @@ set_state_xml() {
 
 get_all_states() {
     # KStars
-    KS_DESK=$(is_active "$XINITRC" 'APPS\["/usr/share/applications/org.kde.kstars.desktop"\]')
+    KS_DESK=$(is_active "" 'APPS\["/usr/share/applications/org.kde.kstars.desktop"\]')
     KS_MENU=$(is_active "$MENU_FILE" "org.kde.kstars.desktop")
-    KS_START=$(is_active "$XINITRC" "kstars &")
-    KS_WATCH=$(is_active "$XINITRC" "pgrep -x kstars")
+    KS_START=$(is_active "" "kstars &")
+    KS_WATCH=$(is_active "" "pgrep -x kstars")
 
     # PHD2
-    PH_DESK=$(is_active "$XINITRC" 'APPS\["/usr/share/applications/phd2.desktop"\]')
+    PH_DESK=$(is_active "" 'APPS\["/usr/share/applications/phd2.desktop"\]')
     PH_MENU=$(is_active "$MENU_FILE" "phd2.desktop")
-    PH_START=$(is_active "$XINITRC" "phd2 &")
-    PH_WATCH=$(is_active "$XINITRC" 'pgrep -x "phd2.bin"')
+    PH_START=$(is_active "" "phd2 &")
+    PH_WATCH=$(is_active "" 'pgrep -x "phd2.bin"')
 
     # AstroDMx
-    AD_DESK=$(is_active "$XINITRC" 'APPS\["/usr/share/applications/astrodmx_capture.desktop"\]')
+    AD_DESK=$(is_active "" 'APPS\["/usr/share/applications/astrodmx_capture.desktop"\]')
     AD_MENU=$(is_active "$MENU_FILE" "astrodmx_capture.desktop")
-    AD_START=$(is_active "$XINITRC" "AstroDMx-Capture/bin/AstroDMx-Capture &")
-    AD_WATCH=$(is_active "$XINITRC" "pgrep -f AstroDMx-Capture")
+    AD_START=$(is_active "" "AstroDMx-Capture/bin/AstroDMx-Capture &")
+    AD_WATCH=$(is_active "" "pgrep -f AstroDMx-Capture")
 
     # xgps
-    XG_DESK=$(is_active "$XINITRC" 'APPS\["/usr/share/applications/xgps.desktop"\]')
+    XG_DESK=$(is_active "" 'APPS\["/usr/share/applications/xgps.desktop"\]')
     XG_MENU=$(is_active "$MENU_FILE" "xgps.desktop")
-    XG_START=$(is_active "$XINITRC" "xgps &")
-    XG_WATCH=$(is_active "$XINITRC" "pgrep -x xgps")
+    XG_START=$(is_active "" "xgps &")
+    XG_WATCH=$(is_active "" "pgrep -x xgps")
 }
 
 show_current_state() {
@@ -176,10 +226,10 @@ configure_element() {
     local watch_pattern_bash="$5"
 
     # Get the current status
-    local desk_state=$(is_active "$XINITRC" "$desk_pattern_bash")
+    local desk_state=$(is_active "" "$desk_pattern_bash")
     local menu_state=$(is_active "$MENU_FILE" "$menu_pattern_xml")
-    local start_state=$(is_active "$XINITRC" "$start_pattern_bash")
-    local watch_state=$(is_active "$XINITRC" "$watch_pattern_bash")
+    local start_state=$(is_active "" "$start_pattern_bash")
+    local watch_state=$(is_active "" "$watch_pattern_bash")
 
     # Create options for radiolist
     local desk_current="off"; [ "$desk_state" = "Enabled" ] && desk_current="on"
@@ -278,7 +328,6 @@ while true; do
             ;;
         backup)
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-            cp "$XINITRC" "${XINITRC}.backup.${TIMESTAMP}"
             cp "$MENU_FILE" "${MENU_FILE}.backup.${TIMESTAMP}"
             kdialog --msgbox "Backup created successfully !\n\nTimestamp: $TIMESTAMP"
             ;;
