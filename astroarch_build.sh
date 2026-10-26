@@ -280,7 +280,37 @@ usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users,astronaut 
 usermod -aG astronaut-kiosk astronaut
 chmod -R 777 /home/astronaut-kiosk
 su astronaut-kiosk -c "LC_ALL=C.UTF-8 xdg-user-dirs-update --force"
-mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/{bin,share,state}"
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants"
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/default.target.wants"
+
+# Enable kiosk permissions krdp
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service plasma-workspace.target
+
+## KRDP ##
+# astronaut-kiosk
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.local/share/krdpserver"
+kioskcertificatePath="/home/astronaut-kiosk/.local/share/krdpserver/krdp.crt"
+kioskcertificateKeyPath="/home/astronaut-kiosk/.local/share/krdpserver/krdp.key"
+su astronaut-kiosk -c "openssl req -nodes -new -x509 -keyout '$kioskcertificateKeyPath' -out '$kioskcertificatePath' -days 3650 -batch -subj '/CN=astroarch' -addext 'subjectAltName = DNS:astroarch'"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key Certificate '$kioskcertificatePath'"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key CertificateKey '$kioskcertificateKeyPath'"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
+su astronaut-kiosk -c "kwriteconfig6 --file krdpserverrc --group General --key ListenPort 3390"
+ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut-kiosk/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
+
+# Kiosk session: headless Plasma next to the desktop, started at boot by the kiosk user
+# manager (astronaut-kiosk lingers, see below). KWin draws on a virtual output, KRdp gives
+# each RDP client an output sized to its window
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-session.service default.target
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-rdp-output.service
+su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d"
+ln -sfn /home/astronaut/.astroarch/configs/kiosk/kwin-headless.conf /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d/headless.conf
+ln -sfn /home/astronaut/.astroarch/configs/kiosk/krdpserver-kiosk.conf /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d/kiosk.conf
+
+# Shutdown and reboot without a password, from the desktop or the kiosk
+cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-kiosk.rules /etc/polkit-1/rules.d/
 
 # Copy wallpapers
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/Pictures/wallpapers"
@@ -336,6 +366,15 @@ install -d -o root -g astro -m 2775 /srv/astro-data
 cp /home/astronaut/.astroarch/configs/astro-data.conf /etc/tmpfiles.d/astro-data.conf
 su astronaut -c "ln -snf /srv/astro-data /home/astronaut/astro-data"
 su astronaut-kiosk -c "ln -snf /srv/astro-data /home/astronaut-kiosk/astro-data"
+
+# Linger
+mkdir -p /var/lib/systemd/linger
+touch /var/lib/systemd/linger/astronaut
+chown root:root /var/lib/systemd/linger/astronaut
+chmod 644 /var/lib/systemd/linger/astronaut
+touch /var/lib/systemd/linger/astronaut-kiosk
+chown root:root /var/lib/systemd/linger/astronaut-kiosk
+chmod 644 /var/lib/systemd/linger/astronaut-kiosk
 
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
