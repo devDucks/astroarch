@@ -7,7 +7,7 @@ notify-send --app-name 'AstroArch' \
 CONN_NAME="astroarch-hotspot"
 
 # End of services
-systemctl stop NetworkManager wpa_supplicant x0vncserver
+systemctl stop NetworkManager wpa_supplicant
 killall -9 wpa_supplicant 2>/dev/null
 
 # Delete ALL hotspot connections
@@ -25,7 +25,6 @@ sleep 2
 # Restarting services
 systemctl start wpa_supplicant
 systemctl start NetworkManager
-systemctl start x0vncserver
 sleep 3
 
 reboot
