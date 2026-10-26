@@ -12,7 +12,7 @@ STATE=/var/lib/astroarch/wayland-migration
 ICON="$REPO/assets/icons/novnc-icon.svg"
 
 # Users that get the remote desktop services (krdp + w0vncserver)
-SERVICE_USERS="astronaut"
+SERVICE_USERS="astronaut astronaut-kiosk"
 
 # ===========================================================================
 # LAUNCHER
@@ -244,7 +244,7 @@ EOF
     log "Upgrading the system, this is the long part. DO NOT POWER OFF."
     local upgrade_ok=0 try
     for try in 1 2 3; do
-        if pacman -Sy --noconfirm archlinux-keyring && pacman -Su --noconfirm krdp plasma-login-manager flatpak tigervnc; then
+        if pacman -Sy --noconfirm archlinux-keyring && pacman -Su --noconfirm krdp plasma-login-manager flatpak tigervnc jq kscreen; then
             upgrade_ok=1
             break
         fi
@@ -318,7 +318,7 @@ EOF
 
     local u
     for u in $SERVICE_USERS; do
-        [ -d "/home/$u" ] || continue
+        id "$u" > /dev/null 2>&1 && [ -d "/home/$u" ] || continue
         enable_user_unit "$u" /etc/systemd/user/app-org.astroarch.vnc.service plasma-workspace.target
         enable_user_unit "$u" /etc/systemd/user/astroarch-portal-permissions.service plasma-workspace.target
         [ -e "$KRDP_UNIT" ] && enable_user_unit "$u" "$KRDP_UNIT"
@@ -340,12 +340,78 @@ EOF
         as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key CertificateKey "$key"
         as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true
         as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key Autostart true
+
+        # astronaut-kiosk has its own ports: krdp 3390, VNC 5901
+        if [ "$u" = astronaut-kiosk ]; then
+            as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key ListenPort 3390
+            as_user "$u" mkdir -p "/home/$u/.config/systemd/user/app-org.astroarch.vnc.service.d"
+            as_user "$u" ln -sfn "$REPO/systemd/kiosk-vnc-port.conf" \
+                "/home/$u/.config/systemd/user/app-org.astroarch.vnc.service.d/port.conf" \
+                || step_fail "kiosk VNC port drop-in"
+        fi
     done
 
     # Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP
     # would stop getting frames
     install -m644 "$REPO/configs/powerdevilrc" /etc/xdg/powerdevilrc
 
+    # Kiosk: a headless Plasma session next to the desktop, started at boot by
+    # the kiosk user manager (linger below). KWin draws on a virtual output,
+    # KRdp gives each RDP client an output sized to its window
+    local has_kiosk=0
+    id astronaut-kiosk > /dev/null 2>&1 && [ -d /home/astronaut-kiosk ] && has_kiosk=1
+    if [ "$has_kiosk" -eq 1 ]; then
+        log "Setting up the headless kiosk session"
+        # The kiosk units and scripts are links into $REPO: the kiosk user must be
+        # able to read it. Only 2.0.10.sh granted that, and update-astroarch runs
+        # only the version script of the version it moves to.
+        bash "$REPO/scripts/kiosk-home-acl.sh" || step_fail "kiosk access to $ASTRO_HOME"
+        local kdir=/home/astronaut-kiosk/.config/systemd/user
+        for unit in astroarch-kiosk-session.service astroarch-kiosk-rdp-output.service astroarch-kiosk-layout.service astroarch-kiosk-app@.service; do
+            ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
+        done
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-session.service default.target
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-rdp-output.service
+        # On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start (skipped if it already did)
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-layout.service plasma-workspace.target
+        as_user astronaut-kiosk mkdir -p "$kdir/plasma-kwin_wayland.service.d" "$kdir/app-org.kde.krdpserver.service.d" \
+            && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/kwin-headless.conf" "$kdir/plasma-kwin_wayland.service.d/headless.conf" \
+            && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/krdpserver-kiosk.conf" "$kdir/app-org.kde.krdpserver.service.d/kiosk.conf" \
+            || step_fail "headless kiosk session"
+        install -m644 "$REPO/configs/kiosk/45-allow-shutdown-kiosk.rules" /etc/polkit-1/rules.d/45-allow-shutdown-kiosk.rules
+
+        # Kiosk apps: keep the automatic launch and watchdog chosen in the old
+        # .xinitrc as astroarch-kiosk-app@<app> units. Step 4 moved it to the
+        # backup; on a re-run it is in the backup of the first run.
+        local xinitrc
+        xinitrc=$(ls -1d "$STATE"/backup-*/home/astronaut-kiosk/.xinitrc 2> /dev/null | tail -1)
+        # Only those units start apps: Plasma session restore would start a second copy
+        as_user astronaut-kiosk kwriteconfig6 --file ksmserverrc --group General --key loginMode emptySession
+        _migrate_kiosk_app() {
+            local app=$1 start=$2 watch=$3 unit="astroarch-kiosk-app@$1.service"
+            if grep -qE "^[[:space:]]*$start" "$xinitrc" || grep -qE "^[[:space:]]*$watch" "$xinitrc"; then
+                as_user astronaut-kiosk mkdir -p "$kdir/plasma-workspace.target.wants" \
+                    && as_user astronaut-kiosk ln -sfn /etc/systemd/user/astroarch-kiosk-app@.service \
+                        "$kdir/plasma-workspace.target.wants/$unit" \
+                    || step_fail "kiosk app $app"
+            fi
+            if grep -qE "^[[:space:]]*$watch" "$xinitrc"; then
+                as_user astronaut-kiosk mkdir -p "$kdir/$unit.d" \
+                    && printf '[Service]\nRestart=always\n' | as_user astronaut-kiosk tee "$kdir/$unit.d/watchdog.conf" > /dev/null \
+                    || step_fail "kiosk app $app watchdog"
+            fi
+        }
+        if [ -n "$xinitrc" ] && [ -f "$xinitrc" ]; then
+            _migrate_kiosk_app kstars 'kstars &' 'pgrep -x kstars'
+            _migrate_kiosk_app phd2 'phd2 &' 'pgrep -x "phd2.bin"'
+            _migrate_kiosk_app astrodmx '/opt/AstroDMx-Capture/bin/AstroDMx-Capture &' 'pgrep -f AstroDMx-Capture'
+            _migrate_kiosk_app xgps 'xgps &' 'pgrep -x xgps'
+        fi
+    fi
+
+    # Keeps the user manager of astronaut and astronaut-kiosk alive (does not start services by itself)
+    loginctl enable-linger astronaut
+    [ "$has_kiosk" -eq 1 ] && loginctl enable-linger astronaut-kiosk
     systemctl daemon-reload
 
     # -----------------------------------------------------------------------
