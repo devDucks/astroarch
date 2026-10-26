@@ -308,9 +308,17 @@ ln -sfn /home/astronaut/.astroarch/systemd/kiosk-vnc-port.conf /home/astronaut-k
 # each RDP client an output sized to its window
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-session.service default.target
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-rdp-output.service
+# On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start
+enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-layout.service plasma-workspace.target
 su astronaut-kiosk -c "mkdir -p /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d"
 ln -sfn /home/astronaut/.astroarch/configs/kiosk/kwin-headless.conf /home/astronaut-kiosk/.config/systemd/user/plasma-kwin_wayland.service.d/headless.conf
 ln -sfn /home/astronaut/.astroarch/configs/kiosk/krdpserver-kiosk.conf /home/astronaut-kiosk/.config/systemd/user/app-org.kde.krdpserver.service.d/kiosk.conf
+
+# Kiosk apps: astroarch-kiosk-app@<app> units, turned on and off by the kiosk configurator
+ln -sfn /home/astronaut/.astroarch/systemd/astroarch-kiosk-app@.service /home/astronaut-kiosk/.config/systemd/user/astroarch-kiosk-app@.service
+chown -h astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk/.config/systemd/user/astroarch-kiosk-app@.service
+# Only those units start apps: Plasma session restore would start a second copy
+su astronaut-kiosk -c "kwriteconfig6 --file ksmserverrc --group General --key loginMode emptySession"
 
 # Shutdown and reboot without a password, from the desktop or the kiosk
 cp /home/astronaut/.astroarch/configs/kiosk/45-allow-shutdown-kiosk.rules /etc/polkit-1/rules.d/

@@ -1,0 +1,16 @@
+[Unit]
+Description=AstroArch kiosk: first-start layout (wallpaper, empty favorites and launchers, no screen lock)
+# 00-init-layout.sh creates this file when done, so it runs once
+ConditionPathExists=!%h/.config/kiosk_setup_done
+DefaultDependencies=no
+After=basic.target plasma-workspace.target
+Conflicts=shutdown.target
+Before=shutdown.target
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/astronaut/.astroarch/configs/kiosk/00-init-layout.sh
+
+[Install]
+WantedBy=plasma-workspace.target

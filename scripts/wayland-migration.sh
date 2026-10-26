@@ -356,16 +356,44 @@ EOF
     if [ -d /home/astronaut-kiosk ]; then
         log "Setting up the headless kiosk session"
         local kdir=/home/astronaut-kiosk/.config/systemd/user
-        for unit in astroarch-kiosk-session.service astroarch-kiosk-rdp-output.service; do
+        for unit in astroarch-kiosk-session.service astroarch-kiosk-rdp-output.service astroarch-kiosk-layout.service astroarch-kiosk-app@.service; do
             ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
         done
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-session.service default.target
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-rdp-output.service
+        # On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start (skipped if it already did)
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-layout.service plasma-workspace.target
         as_user astronaut-kiosk mkdir -p "$kdir/plasma-kwin_wayland.service.d" "$kdir/app-org.kde.krdpserver.service.d" \
             && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/kwin-headless.conf" "$kdir/plasma-kwin_wayland.service.d/headless.conf" \
             && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/krdpserver-kiosk.conf" "$kdir/app-org.kde.krdpserver.service.d/kiosk.conf" \
             || step_fail "headless kiosk session"
         install -m644 "$REPO/configs/kiosk/45-allow-shutdown-kiosk.rules" /etc/polkit-1/rules.d/45-allow-shutdown-kiosk.rules
+
+        # Kiosk apps: keep the automatic launch and watchdog chosen in the old
+        # .xinitrc (step 4 moved it to the backup) as astroarch-kiosk-app@<app> units
+        local xinitrc="$BK/home/astronaut-kiosk/.xinitrc"
+        # Only those units start apps: Plasma session restore would start a second copy
+        as_user astronaut-kiosk kwriteconfig6 --file ksmserverrc --group General --key loginMode emptySession
+        _migrate_kiosk_app() {
+            local app=$1 start=$2 watch=$3 unit="astroarch-kiosk-app@$1.service"
+            if grep -qE "^[[:space:]]*$start" "$xinitrc" || grep -qE "^[[:space:]]*$watch" "$xinitrc"; then
+                as_user astronaut-kiosk mkdir -p "$kdir/plasma-workspace.target.wants" \
+                    && as_user astronaut-kiosk ln -sfn /etc/systemd/user/astroarch-kiosk-app@.service \
+                        "$kdir/plasma-workspace.target.wants/$unit" \
+                    || step_fail "kiosk app $app"
+            fi
+            if grep -qE "^[[:space:]]*$watch" "$xinitrc"; then
+                as_user astronaut-kiosk mkdir -p "$kdir/$unit.d" \
+                    && printf '[Service]\nRestart=always\n' | as_user astronaut-kiosk tee "$kdir/$unit.d/watchdog.conf" > /dev/null \
+                    || step_fail "kiosk app $app watchdog"
+            fi
+        }
+        if [ -f "$xinitrc" ]; then
+            _migrate_kiosk_app kstars 'kstars &' 'pgrep -x kstars'
+            _migrate_kiosk_app phd2 'phd2 &' 'pgrep -x "phd2.bin"'
+            _migrate_kiosk_app astrodmx '/opt/AstroDMx-Capture/bin/AstroDMx-Capture &' 'pgrep -f AstroDMx-Capture'
+            _migrate_kiosk_app xgps 'xgps &' 'pgrep -x xgps'
+        fi
     fi
 
     # Keeps the user manager of astronaut and astronaut-kiosk alive (does not start services by itself)
