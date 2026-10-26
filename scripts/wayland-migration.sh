@@ -356,11 +356,13 @@ EOF
     if [ -d /home/astronaut-kiosk ]; then
         log "Setting up the headless kiosk session"
         local kdir=/home/astronaut-kiosk/.config/systemd/user
-        for unit in astroarch-kiosk-session.service astroarch-kiosk-rdp-output.service astroarch-kiosk-app@.service; do
+        for unit in astroarch-kiosk-session.service astroarch-kiosk-rdp-output.service astroarch-kiosk-layout.service astroarch-kiosk-app@.service; do
             ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
         done
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-session.service default.target
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-rdp-output.service
+        # On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start (skipped if it already did)
+        enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-layout.service plasma-workspace.target
         as_user astronaut-kiosk mkdir -p "$kdir/plasma-kwin_wayland.service.d" "$kdir/app-org.kde.krdpserver.service.d" \
             && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/kwin-headless.conf" "$kdir/plasma-kwin_wayland.service.d/headless.conf" \
             && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/krdpserver-kiosk.conf" "$kdir/app-org.kde.krdpserver.service.d/kiosk.conf" \
