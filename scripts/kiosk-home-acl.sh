@@ -36,6 +36,10 @@ for entry in "$ASTRO_HOME"/*; do
     chmod -R g+rwX "$entry"
 done
 
+# The loop above opened ~/.local to the group, including the private key of
+# astronaut's RDP server: only krdp, running as astronaut, needs it
+chmod -f 600 "$ASTRO_HOME/.local/share/krdpserver/krdp.key" || true
+
 # The kiosk desktop runs scripts and uses icons from the repo: read only.
 # New files pulled in later by git keep group-read from the default umask,
 # so this does not need to be re-run after every update-astroarch.
