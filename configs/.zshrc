@@ -245,8 +245,6 @@ function update-astroarch()
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Update failed"
     fi
 
-    # Reinstall plasma-x11-session, cannot work on 1.9.0 cause of old kwin
-    sudo pacman -Sy plasma-x11-session --noconfirm
 }
 
 function xyz () {
