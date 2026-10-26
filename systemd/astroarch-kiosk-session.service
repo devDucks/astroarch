@@ -1,0 +1,16 @@
+[Unit]
+Description=AstroArch kiosk: headless Plasma session next to the desktop
+# astronaut-kiosk lingers, so its user manager starts this at boot without anyone logging in
+
+[Service]
+Environment=XDG_SESSION_TYPE=wayland XDG_CURRENT_DESKTOP=KDE XDG_SESSION_DESKTOP=KDE
+ExecStart=/usr/lib/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland
+# startplasma exits before the session services have stopped: wait for them, or a restart
+# would start the new session while the old one is still shutting down. KWin stops last
+ExecStopPost=/usr/bin/systemctl --user stop graphical-session.target plasma-kwin_wayland.service
+# Logging out of the kiosk starts a fresh session
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

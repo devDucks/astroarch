@@ -1,0 +1,12 @@
+[Unit]
+Description=AstroArch kiosk: show the desktop on the RDP client output
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/home/astronaut/.astroarch/scripts/kiosk-rdp-output.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
