@@ -11,6 +11,9 @@ LOG=/var/log/astroarch-wayland-migration.log
 STATE=/var/lib/astroarch/wayland-migration
 ICON="$REPO/assets/icons/novnc-icon.svg"
 
+# Users that get the remote desktop services (krdp + w0vncserver)
+SERVICE_USERS="astronaut"
+
 # ===========================================================================
 # LAUNCHER
 # ===========================================================================
@@ -118,6 +121,24 @@ migration() {
         done
     }
 
+    # Run a command as another user, without needing a login session
+    as_user() {
+        local u=$1
+        shift
+        runuser -u "$u" -- env HOME="/home/$u" XDG_CONFIG_HOME="/home/$u/.config" "$@"
+    }
+
+    # Enable a user unit for one user by creating the "wants" link
+    # (what "systemctl --user enable" does, but without a user bus).
+    # The unit itself must already be in a unit search path.
+    enable_user_unit() {
+        local u=$1 path=$2 target=${3:-graphical-session.target}
+        local dir="/home/$u/.config/systemd/user/$target.wants"
+        as_user "$u" mkdir -p "$dir" \
+            && as_user "$u" ln -sfn "$path" "$dir/$(basename "$path")" \
+            || step_fail "enable $(basename "$path") for $u"
+    }
+
     cat <<'EOF'
 
 ==================================================================
@@ -217,12 +238,13 @@ EOF
     done
 
     # -----------------------------------------------------------------------
-    # 6. Upgrade (Plasma 6.8) + install plasma-login-manager, in ONE transaction
+    # 6. Upgrade (Plasma 6.8) + install what remote access needs, in ONE transaction
+    #    (flatpak sets the portal grant; systems from older images may lack it)
     # -----------------------------------------------------------------------
     log "Upgrading the system, this is the long part. DO NOT POWER OFF."
     local upgrade_ok=0 try
     for try in 1 2 3; do
-        if pacman -Sy --noconfirm archlinux-keyring && pacman -Su --noconfirm plasma-login-manager; then
+        if pacman -Sy --noconfirm archlinux-keyring && pacman -Su --noconfirm krdp plasma-login-manager flatpak tigervnc; then
             upgrade_ok=1
             break
         fi
@@ -257,6 +279,68 @@ EOF
     else
         step_fail "enable plasmalogin.service (sddm kept)"
     fi
+
+    # -----------------------------------------------------------------------
+    # 7. Remote access user services (only enabled here, NOT started:
+    #    the reboot below is the real test that they start by themselves)
+    # -----------------------------------------------------------------------
+    log "Installing user services for: $SERVICE_USERS"
+
+    # Units shipped in the repo, visible to every user (enabled per user below).
+    # VNC runs as app-org.astroarch.vnc.service: the unit name gives w0vncserver
+    # the portal app id "org.astroarch.vnc", so only krdp and this id are granted.
+    local unit
+    for unit in app-org.astroarch.vnc.service astroarch-portal-permissions.service; do
+        ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
+    done
+    ln -sfn "$REPO/desktop/org.astroarch.vnc.desktop" /usr/share/applications/org.astroarch.vnc.desktop
+
+    # krdp starts only after the portal grant (first boot race)
+    mkdir -p /etc/systemd/user/app-org.kde.krdpserver.service.d
+    ln -sfn "$REPO/systemd/krdp-after-grant.conf" \
+        /etc/systemd/user/app-org.kde.krdpserver.service.d/astroarch-grant.conf
+
+    # Leftovers of the previous VNC layout (plain w0vncserver.service + per-user
+    # links, portal grant on graphical-session.target): two VNC servers would
+    # fight for port 5900.
+    rm -f /etc/systemd/user/w0vncserver.service \
+          /etc/systemd/user/w0vncserver-kiosk.service \
+          /etc/systemd/user/graphical-session.target.wants/w0vncserver.service
+    for u in astronaut astronaut-kiosk; do
+        rm -f "/home/$u/.config/systemd/user/graphical-session.target.wants/w0vncserver.service" \
+              "/home/$u/.config/systemd/user/graphical-session.target.wants/w0vncserver-kiosk.service" \
+              "/home/$u/.config/systemd/user/graphical-session.target.wants/astroarch-portal-permissions.service"
+    done
+
+    local KRDP_UNIT=/usr/lib/systemd/user/app-org.kde.krdpserver.service
+    [ -e "$KRDP_UNIT" ] || step_fail "krdp unit not found"
+    [ -x /usr/bin/w0vncserver ] || step_fail "w0vncserver not found (tigervnc too old?)"
+
+    local u
+    for u in $SERVICE_USERS; do
+        [ -d "/home/$u" ] || continue
+        enable_user_unit "$u" /etc/systemd/user/app-org.astroarch.vnc.service plasma-workspace.target
+        enable_user_unit "$u" /etc/systemd/user/astroarch-portal-permissions.service plasma-workspace.target
+        [ -e "$KRDP_UNIT" ] && enable_user_unit "$u" "$KRDP_UNIT"
+
+        # krdp server certificate (self-signed), as in the KDE/krdp README.
+        # The README example uses -days 1; here it is valid 10 years.
+        local cdir="/home/$u/.local/share/krdpserver"
+        local crt="$cdir/krdp.crt" key="$cdir/krdp.key"
+        as_user "$u" mkdir -p "$cdir"
+        if [ ! -s "$crt" ] || [ ! -s "$key" ]; then
+            as_user "$u" openssl req -nodes -new -x509 -keyout "$key" -out "$crt" \
+                -days 3650 -batch -subj "/CN=astroarch" \
+                -addext "subjectAltName = DNS:astroarch" \
+                || step_fail "krdp certificate for $u"
+        fi
+        chmod 600 "$key" 2> /dev/null
+
+        as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key Certificate "$crt"
+        as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key CertificateKey "$key"
+        as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true
+        as_user "$u" kwriteconfig6 --file krdpserverrc --group General --key Autostart true
+    done
 
     # Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP
     # would stop getting frames
