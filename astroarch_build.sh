@@ -164,11 +164,16 @@ cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 # Network and memory tuning
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
 
+# VNC runs as app-org.astroarch.vnc.service: the unit name gives w0vncserver the
+# portal app id "org.astroarch.vnc", so the remote-desktop grant is limited to
+# krdp and VNC. The .desktop file is needed for the portal to resolve that id.
+ln -sfn /home/astronaut/.astroarch/desktop/org.astroarch.vnc.desktop /usr/share/applications/org.astroarch.vnc.desktop
+
 # krdp starts only after the portal grant
 mkdir -p /etc/systemd/user/app-org.kde.krdpserver.service.d
 ln -sfn /home/astronaut/.astroarch/systemd/krdp-after-grant.conf /etc/systemd/user/app-org.kde.krdpserver.service.d/astroarch-grant.conf
 
-# Enable astronaut permissions krdp
+# Enable astronaut permissions krdp/vnc
 enable_user_unit astronaut /home/astronaut/.astroarch/systemd/astroarch-portal-permissions.service plasma-workspace.target
 
 # Config KRDP
@@ -182,6 +187,9 @@ su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Certifi
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
 ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
+
+# Enable vnc
+enable_user_unit astronaut /home/astronaut/.astroarch/systemd/app-org.astroarch.vnc.service plasma-workspace.target
 
 # Nuke notifications
 su astronaut -c "cat <<EOF >/home/astronaut/.config/plasmanotifyrc

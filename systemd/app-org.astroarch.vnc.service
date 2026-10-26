@@ -1,0 +1,25 @@
+# Designed by Teoteo
+[Unit]
+Description=AstroArch VNC (TigerVNC w0vncserver through the KDE portal)
+# The unit name app-org.astroarch.vnc.service gives w0vncserver the portal app id
+# "org.astroarch.vnc" (the matching org.astroarch.vnc.desktop must exist), so only
+# this id needs the remote-desktop grant, not every non-sandboxed program.
+#
+# w0vncserver fails if it starts before the portal. The portal starts after
+# graphical-session.target, which waits for everything plasma-workspace.target
+# pulls in by default: drop that implicit ordering.
+DefaultDependencies=no
+Wants=xdg-desktop-portal.service astroarch-portal-permissions.service
+After=basic.target xdg-desktop-portal.service plasma-xdg-desktop-portal-kde.service astroarch-portal-permissions.service
+Conflicts=shutdown.target
+Before=shutdown.target
+PartOf=graphical-session.target
+
+[Service]
+# Optional: add -FrameRate=5 to trim the encoder (the portal capture keeps KWin busy anyway)
+ExecStart=/usr/bin/w0vncserver -rfbport=5900 -AlwaysShared -CompareFB 0 -SecurityTypes None
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=plasma-workspace.target

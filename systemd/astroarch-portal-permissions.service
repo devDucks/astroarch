@@ -1,10 +1,11 @@
 [Unit]
-Description=AstroArch: authorize krdp on the KDE remote desktop portal
+Description=AstroArch: authorize krdp and VNC on the KDE remote desktop portal
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop org.kde.krdpserver yes
+ExecStart=/usr/bin/flatpak permission-set kde-authorized remote-desktop org.astroarch.vnc yes
 Restart=on-failure
 RestartSec=3
 
