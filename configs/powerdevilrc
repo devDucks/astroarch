@@ -1,0 +1,7 @@
+# Never dim, blank or suspend: a headless Pi would stop sending frames to VNC and RDP
+[AC][Display]
+DimDisplayWhenIdle=false
+TurnOffDisplayWhenIdle=false
+
+[AC][SuspendAndShutdown]
+AutoSuspendAction=0

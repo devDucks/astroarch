@@ -258,6 +258,9 @@ echo "127.0.1.1          astroarch" >> /etc/hosts
 # Copy the screensaver config, by default it is off
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/astronaut/.config/kscreenlockerrc"
 
+# Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP would stop getting frames
+install -m644 /home/astronaut/.astroarch/configs/powerdevilrc /etc/xdg/powerdevilrc
+
 # Set a standard TZ to avoid breaking plasma clock widget
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
