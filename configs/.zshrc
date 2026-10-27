@@ -117,6 +117,53 @@ function update-astroarch()
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
     fi;
 
+    # Plasma 6.8 has no X11 session: an X11 system can't be upgraded any more.
+    # A new 3.0 image is the recommended way, the switch in place is an opt-in.
+    # Asked at every update until the switch is done, so a refused, failed or
+    # interrupted one is offered again
+    local WL_STATE=/var/lib/astroarch/wayland-migration
+    if [[ ! -e $WL_STATE/done ]] && [[ -d $WL_STATE || -n "$(pacman -Qq plasma-x11-session xrdp xorgxrdp 2> /dev/null)" ]]; then
+        local WL_MSG="AstroArch 3.0 moves to KDE Plasma 6.8, which has no X11 desktop: this system can't be updated any more as it is.
+
+Recommended: install the AstroArch 3.0 image (https://releases.astroarch.me/latest) and set it up again.
+
+Otherwise this system can switch to the Wayland desktop in place, AT YOUR OWN RISK. Have a backup first: the one offered at the start of this update, or a copy of the SD card. The desktop closes (KStars, PHD2 and INDI stop), the switch takes 10 to 30 minutes and the system reboots by itself. Do not power it off meanwhile.
+
+Afterwards VNC (port 5900) and RDP (port 3389) reach the desktop as before. The kiosk, if you use it, moves to RDP port 3390 and VNC port 5901."
+        local WL_GO=0
+        if [[ -n "$DISPLAY" && -z "$SSH_CLIENT" && -z "$SSH_TTY" ]]; then
+            kdialog --title "AstroArch Update - Switch to Wayland" --yes-label "Switch at my own risk" --no-label "Not now" --warningyesno "$WL_MSG
+
+Switch this system in place now?" && WL_GO=1
+        else
+            echo "\n⚠️  $WL_MSG\n"
+            echo -n "Switch this system in place now, at your own risk? (y/N): "
+            read -r response
+            [[ "$response" =~ ^[yY][eE]?[sS]?$ ]] && WL_GO=1
+        fi
+        if [ $WL_GO -eq 0 ]; then
+            echo "❌ Update stopped: this system can't be updated on X11. Install the AstroArch 3.0 image, or run update-astroarch again to switch in place."
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ Update stopped: install AstroArch 3.0, or switch to Wayland in place"
+            return 1
+        fi
+        # Reboots when it is done: back here only if it didn't start or stopped,
+        # if Ctrl+C stopped the progress display while it goes on, or over SSH
+        # (the session outlives the desktop) when it finished and reboots
+        bash /home/$USER/.astroarch/scripts/wayland-migration.sh
+        if [[ -e $WL_STATE/done ]]; then
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "✅ The switch to Wayland is done, the system reboots"
+            return 0
+        fi
+        if systemctl is-active --quiet astroarch-wayland-migration; then
+            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "The switch to Wayland goes on: do not power off, the system reboots by itself"
+            return 0
+        fi
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ The switch to Wayland did not complete, see /var/log/astroarch-wayland-migration.log"
+        # The Konsole window closes with the function: keep the reason readable
+        read -r "?Press Enter to close "
+        return 1
+    fi
+
     # Temporary fix for kde-portal duplicated conf
     if [ -f /usr/share/xdg-desktop-portal/kde-portal.conf ]; then
         sudo mv /usr/share/xdg-desktop-portal/kde-portal.conf /usr/share/xdg-desktop-portal/kde-portal.conf.old
