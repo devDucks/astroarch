@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-# Invoke 2.0.10
-bash /home/astronaut/.astroarch/scripts/2.0.10.sh
+# Invoke 2.0.10. It and the scripts before it set up the X11 desktop, XRDP and
+# the X11 kiosk: a Wayland system (a new image, or after the migration) skips them
+if [ -n "$(pacman -Qq plasma-x11-session xrdp xorgxrdp 2> /dev/null)" ]; then
+    bash /home/astronaut/.astroarch/scripts/2.0.10.sh
+fi
 
 # Shared data folder for astronaut and astronaut-kiosk
 sudo groupadd -f astro
