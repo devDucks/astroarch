@@ -86,7 +86,13 @@ EOF
     # Show the progress here too, until the migration ends or the session closes
     tail -n 0 -F "$LOG" 2> /dev/null &
     local tail_pid=$!
-    while systemctl is-active --quiet "$UNIT"; do
+    # Only a state systemctl really prints ends the wait: when the migration
+    # upgrades systemd, systemctl is missing or fails for a moment, and that
+    # is not the end of the migration
+    while :; do
+        case $(systemctl is-active "$UNIT" 2> /dev/null) in
+            inactive|failed) break ;;
+        esac
         sleep 2
     done
     kill "$tail_pid" 2> /dev/null

@@ -154,7 +154,9 @@ Switch this system in place now?" && WL_GO=1
             notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "✅ The switch to Wayland is done, the system reboots"
             return 0
         fi
-        if systemctl is-active --quiet astroarch-wayland-migration; then
+        # Only a state systemctl really prints: it fails for a moment while
+        # the migration upgrades systemd
+        if [[ $(systemctl is-active astroarch-wayland-migration 2> /dev/null) != (inactive|failed) ]]; then
             notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "The switch to Wayland goes on: do not power off, the system reboots by itself"
             return 0
         fi
