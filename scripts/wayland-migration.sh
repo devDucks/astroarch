@@ -277,6 +277,12 @@ EOF
     trash /etc/systemd/system/x0vncserver.service \
           /etc/systemd/user/x0vncserver-xrdp.service \
           /etc/systemd/system/xrdp-autostart-kiosk.service
+    # The images of October 2025 enabled it per user too (links in
+    # ~/.config/systemd/user), which the --global disable above doesn't touch
+    for f in /home/*/.config/systemd/user/x0vncserver-xrdp.service \
+             /home/*/.config/systemd/user/*.wants/x0vncserver-xrdp.service; do
+        [ -L "$f" ] && trash "$f"
+    done
     find /etc/systemd -xtype l \( -name 'x0vncserver*' -o -name 'xrdp*' \) -print -delete
     systemctl daemon-reload
 
@@ -296,6 +302,7 @@ EOF
             # X11: put back step 2 and the marker for the #278 hook.
             log "CRITICAL: removing ${REMOVE[*]} failed. Putting the X11 remote access back, not rebooting."
             cp -a "$BK/etc/." /etc/ 2> /dev/null
+            [ -d "$BK/home" ] && cp -a "$BK/home/." /home/ 2> /dev/null
             rm -f /etc/astroarch/wayland
             systemctl daemon-reload
             [ ${#WAS_ENABLED[@]} -eq 0 ] || systemctl enable --now "${WAS_ENABLED[@]}"
