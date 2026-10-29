@@ -187,6 +187,10 @@ su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Certifi
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key SystemUserEnabled true"
 su astronaut -c "kwriteconfig6 --file krdpserverrc --group General --key Autostart true"
 ln -s /lib/systemd/user/app-org.kde.krdpserver.service /home/astronaut/.config/systemd/user/graphical-session.target.wants/app-org.kde.krdpserver.service
+# The desktop RDP follows the client window (RemoteAccess); the HDMI seat comes back on disconnect
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/app-org.kde.krdpserver.service.d"
+su astronaut -c "ln -sfn /home/astronaut/.astroarch/configs/krdpserver-desktop.conf /home/astronaut/.config/systemd/user/app-org.kde.krdpserver.service.d/desktop.conf"
+ln -sfn /home/astronaut/.astroarch/systemd/astroarch-rdp-return.service /etc/systemd/system/astroarch-rdp-return.service
 
 # Enable vnc
 enable_user_unit astronaut /home/astronaut/.astroarch/systemd/app-org.astroarch.vnc.service plasma-workspace.target
@@ -207,6 +211,7 @@ su astronaut -c "mkdir -p /home/astronaut/.local/share/kstars/astrometry"
 # Enable now all services
 mkdir -p /etc/systemd/system/graphical.target.wants
 ln -s /usr/lib/systemd/system/plasmalogin.service /etc/systemd/system/graphical.target.wants/plasmalogin.service
+ln -s /etc/systemd/system/astroarch-rdp-return.service /etc/systemd/system/graphical.target.wants/astroarch-rdp-return.service
 ln -s /usr/lib/systemd/system/novnc.service /etc/systemd/system/multi-user.target.wants/novnc.service
 ln -s /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
 ln -s /usr/lib/systemd/system/NetworkManager.service /etc/systemd/system/multi-user.target.wants/NetworkManager.service

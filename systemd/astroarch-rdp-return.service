@@ -1,0 +1,11 @@
+[Unit]
+Description=AstroArch: give the HDMI screen back to the desktop after an RDP client leaves
+After=systemd-logind.service display-manager.service
+
+[Service]
+ExecStart=/home/astronaut/.astroarch/scripts/astroarch-rdp-return.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target
