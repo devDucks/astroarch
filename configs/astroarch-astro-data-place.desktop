@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=AstroArch data folder in Places
+Comment=Adds /srv/astro-data to the Places panel of Dolphin and of the file dialogs
+Exec=/home/astronaut/.astroarch/scripts/astro-data-place.sh
+NoDisplay=true
+OnlyShowIn=KDE;

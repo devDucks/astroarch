@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" width="22" height="22">
+  <style type="text/css" id="current-color-scheme">.ColorScheme-Text { color:#232629; }</style>
+  <g class="ColorScheme-Text" fill="currentColor">
+    <path d="M5.19 2.08A4 4 0 1 0 9.92 6.81A3.4 3.4 0 0 1 5.19 2.08Z"/>
+    <g transform="rotate(-30 12.5 12)">
+      <rect x="7" y="10.6" width="10.5" height="2.8" rx="0.5"/>
+      <rect x="17.8" y="10" width="2" height="4" rx="0.5"/>
+      <rect x="5" y="11.2" width="1.6" height="1.6" rx="0.3"/>
+    </g>
+    <path d="M12.5 13.4 8.6 20.5h1.3l2.6-4.9 2.6 4.9h1.3Z"/>
+    <rect x="11.9" y="14" width="1.2" height="6.5"/>
+  </g>
+</svg>
