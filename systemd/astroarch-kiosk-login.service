@@ -1,0 +1,17 @@
+[Unit]
+Description=AstroArch kiosk: a login session for the kiosk user, so that password windows open
+# The kiosk Plasma session runs in the kiosk user manager (astronaut-kiosk lingers), which
+# logind does not count as a login: KDE's password agent then finds no session to register
+# for, and every action that asks for a password (pkexec) fails in the kiosk. This keeps a
+# graphical login session of astronaut-kiosk open; the agent registers for it
+After=systemd-user-sessions.service
+
+[Service]
+User=astronaut-kiosk
+PAMName=login
+Environment=XDG_SESSION_TYPE=wayland XDG_SESSION_CLASS=user XDG_SESSION_DESKTOP=KDE
+ExecStart=/usr/bin/sleep infinity
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

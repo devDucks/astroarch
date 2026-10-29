@@ -314,6 +314,9 @@ ln -sfn /home/astronaut/.astroarch/systemd/kiosk-vnc-port.conf /home/astronaut-k
 # manager (astronaut-kiosk lingers, see below). KWin draws on a virtual output, KRdp gives
 # each RDP client an output sized to its window
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-session.service default.target
+# A login session for the kiosk user: without it no password window opens in the kiosk
+cp /home/astronaut/.astroarch/systemd/astroarch-kiosk-login.service /etc/systemd/system/
+ln -sf /etc/systemd/system/astroarch-kiosk-login.service /etc/systemd/system/multi-user.target.wants/astroarch-kiosk-login.service
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-rdp-output.service
 # On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start
 enable_user_unit astronaut-kiosk /home/astronaut/.astroarch/systemd/astroarch-kiosk-layout.service plasma-workspace.target
