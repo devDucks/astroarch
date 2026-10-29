@@ -4,6 +4,9 @@ Description=AstroArch kiosk: headless Plasma session next to the desktop
 
 [Service]
 Environment=XDG_SESSION_TYPE=wayland XDG_CURRENT_DESKTOP=KDE XDG_SESSION_DESKTOP=KDE
+# KDE's password agent registers for the kiosk user's login session
+# (astroarch-kiosk-login.service): wait for it, at most 30 s
+ExecStartPre=/bin/sh -c 'for i in $$(seq 30); do [ -n "$$(loginctl show-user "$$USER" -p Display --value)" ] && exit 0; sleep 1; done; exit 0'
 ExecStart=/usr/lib/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland
 # startplasma exits before the session services have stopped: wait for them, or a restart
 # would start the new session while the old one is still shutting down. KWin stops last

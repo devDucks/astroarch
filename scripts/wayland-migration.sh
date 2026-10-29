@@ -488,6 +488,10 @@ EOF
             ln -sfn "$REPO/systemd/$unit" "/etc/systemd/user/$unit"
         done
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-session.service default.target
+        # A login session for the kiosk user: without it no password window opens in the kiosk
+        install -m644 "$REPO/systemd/astroarch-kiosk-login.service" /etc/systemd/system/astroarch-kiosk-login.service \
+            && systemctl enable astroarch-kiosk-login.service \
+            || step_fail "kiosk login session"
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-rdp-output.service
         # On X11 .xinitrc ran 00-init-layout.sh at the first kiosk start (skipped if it already did)
         enable_user_unit astronaut-kiosk /etc/systemd/user/astroarch-kiosk-layout.service plasma-workspace.target
