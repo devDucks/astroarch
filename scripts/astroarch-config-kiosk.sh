@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# DEPRECATED: replaced by the Kiosk page of the AstroArch Control Center
+# (astroarch-control-center --page kiosk, back end scripts/astroarch-kiosk-setup.sh).
+# Kept for one release for systems without the Control Center, then removed with
+# desktop/astroarch-config-kiosk.desktop
+
 # File paths
 MENU_FILE="/home/astronaut-kiosk/.config/menus/plasma-applications.menu"
 
