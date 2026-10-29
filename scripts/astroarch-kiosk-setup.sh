@@ -301,38 +301,47 @@ apps_state() {
     printf ']\n'
 }
 
-# KStars and PHD2 open from the kiosk menu and icons through astroarch-kiosk-app.sh
-# while the profiles are shared (it checks the main desktop first): a copy of their
-# .desktop file in the kiosk with another Exec, same name, so the menu takes it
+# KStars and PHD2 open from the menus and desktop icons of both users through
+# astroarch-kiosk-app.sh while the profiles are shared: it checks the other desktop
+# first. A copy of their .desktop file in ~/.local/share/applications with another
+# Exec, same name, so the menu takes it. A copy the user made is left alone
+#   write_overrides as_kiosk|as_main DIR
 write_overrides() {
-    local id name desktop command process
-    as_kiosk mkdir -p "$OVERRIDE_DIR" || return
+    local run=$1 dir=$2 id name desktop command process
+    $run mkdir -p "$dir" || { fail "Cannot create $dir"; return; }
     while IFS='|' read -r id name desktop command process; do
         [[ -n $process && -f /usr/share/applications/$desktop ]] || continue
+        [[ -e $dir/$desktop ]] && ! grep -qx "$OVERRIDE_MARK" "$dir/$desktop" && continue
         # The Exec of the [Desktop Entry] only, its field codes (%U) kept
         sed -e "/^\[Desktop Entry\]/,/^\[/s|^Exec=[^ ]*|Exec=$APP_SCRIPT --ask $id|" -e '/^DBusActivatable=/d' -e '/^TryExec=/d' \
             -e "0,/^\[Desktop Entry\]/s||[Desktop Entry]\n$OVERRIDE_MARK|" \
-            "/usr/share/applications/$desktop" | as_kiosk tee "$OVERRIDE_DIR/$desktop" > /dev/null \
-            || fail "Cannot write $OVERRIDE_DIR/$desktop"
+            "/usr/share/applications/$desktop" | $run tee "$dir/$desktop" > /dev/null \
+            || fail "Cannot write $dir/$desktop"
     done < <(apps)
 }
 
+#   remove_overrides DIR
 remove_overrides() {
     local f
-    for f in "$OVERRIDE_DIR"/*.desktop; do
+    for f in "$1"/*.desktop; do
         grep -qx "$OVERRIDE_MARK" "$f" 2>/dev/null && rm -f "$f"
     done
 }
 
-# Desktop icons point to the kiosk copy of the .desktop file when there is one
+# Desktop icons of the apps point to the copy of the .desktop file when there is one
+#   relink_icons as_kiosk|as_main DESKTOP_DIR OVERRIDE_DIR
 relink_icons() {
-    local id name desktop command process icon target
-    while IFS='|' read -r id name desktop command process; do
-        icon=$(desktop_icon "$desktop") || continue
-        target=/usr/share/applications/$desktop
-        [[ -f $OVERRIDE_DIR/$desktop ]] && target=$OVERRIDE_DIR/$desktop
-        [[ $(readlink "$icon") == "$target" ]] || as_kiosk ln -sfn "$target" "$icon"
-    done < <(apps)
+    local run=$1 ddir=$2 odir=$3 icon link id name desktop command process target
+    for icon in "$ddir"/*; do
+        [[ -L $icon ]] || continue
+        link=$(readlink "$icon")
+        while IFS='|' read -r id name desktop command process; do
+            [[ $link == "/usr/share/applications/$desktop" || $link == "$odir/$desktop" ]] || continue
+            target=/usr/share/applications/$desktop
+            grep -qx "$OVERRIDE_MARK" "$odir/$desktop" 2>/dev/null && target=$odir/$desktop
+            [[ $link == "$target" ]] || $run ln -sfn "$target" "$icon" || fail "Cannot update the icon $icon"
+        done < <(apps)
+    done
 }
 
 set_menu() {
@@ -365,7 +374,7 @@ set_app() {
     if [[ $flags == *,desktop,* ]]; then
         if [[ -z $icon ]]; then
             target=/usr/share/applications/$desktop
-            [[ -f $OVERRIDE_DIR/$desktop ]] && target=$OVERRIDE_DIR/$desktop
+            grep -qx "$OVERRIDE_MARK" "$OVERRIDE_DIR/$desktop" 2>/dev/null && target=$OVERRIDE_DIR/$desktop
             as_kiosk mkdir -p "$DESKTOP_DIR" && as_kiosk ln -sfn "$target" "$DESKTOP_DIR/$name" \
                 || fail "Cannot add the $name icon"
         fi
@@ -450,12 +459,16 @@ if [[ -n $profiles ]]; then
     ((${#restart[@]})) && systemctl --user -M "$KIOSK_USER@" stop "${restart[@]}" 2>/dev/null
     if [[ $profiles == shared ]]; then
         share_profiles
-        write_overrides
+        write_overrides as_kiosk "$OVERRIDE_DIR"
+        write_overrides as_main "$MAIN_HOME/.local/share/applications"
     else
         separate_profiles
-        remove_overrides
+        remove_overrides "$OVERRIDE_DIR"
+        remove_overrides "$MAIN_HOME/.local/share/applications"
     fi
-    relink_icons
+    relink_icons as_kiosk "$DESKTOP_DIR" "$OVERRIDE_DIR"
+    relink_icons as_main "$MAIN_HOME/Desktop" "$MAIN_HOME/.local/share/applications"
+    systemd-run --user -M "$MAIN_USER@" --collect -q kbuildsycoca6 > /dev/null 2>&1
     ((${#restart[@]})) && systemctl --user -M "$KIOSK_USER@" start --no-block "${restart[@]}" 2>/dev/null
 fi
 

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Kiosk setup
+Name[de]=Kiosk einrichten
+Name[es]=Configurar el quiosco
+Name[fr]=Configuration du kiosque
+Name[it]=Configura il kiosk
+Comment=Profiles and apps of the kiosk, in the AstroArch Control Center
+Comment[de]=Profile und Programme des Kiosks, im AstroArch-Kontrollzentrum
+Comment[es]=Perfiles y aplicaciones del quiosco, en el Centro de control de AstroArch
+Comment[fr]=Profils et applications du kiosque, dans le Centre de contrôle AstroArch
+Comment[it]=Profili e app del kiosk, nel Centro di controllo AstroArch
+Exec=astroarch-control-center --page kiosk
+Icon=org.astroarch.control-center
+Terminal=false
+Categories=System;Settings;
