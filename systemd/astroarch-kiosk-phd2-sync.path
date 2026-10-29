@@ -1,0 +1,11 @@
+[Unit]
+Description=AstroArch kiosk: watch the PHD2 settings shared with the desktop
+
+[Path]
+# The main user's file and the kiosk's own, see kiosk-phd2-sync.sh
+PathChanged=/home/astronaut/.PHDGuidingV2
+PathChanged=%h/.PHDGuidingV2
+Unit=astroarch-kiosk-phd2-sync.service
+
+[Install]
+WantedBy=default.target
