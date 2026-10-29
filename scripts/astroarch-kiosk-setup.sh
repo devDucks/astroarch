@@ -67,6 +67,8 @@ fail() {
     FAILED=1
 }
 
+# Run from / : the users may not enter the caller's folder
+cd / || exit 3
 as_kiosk() { runuser -u "$KIOSK_USER" -- "$@"; }
 as_main() { runuser -u "$MAIN_USER" -- "$@"; }
 
@@ -102,6 +104,8 @@ profiles_state() {
         is_shared_link "$p" && linked=$((linked + 1))
     done
     sync_enabled && linked=$((linked + 1))
+    # Shared, but the group rights were not set: apply again
+    ((linked == total)) && [[ ! -f $TMPFILES ]] && linked=$((linked - 1))
     if ((linked == total)); then
         echo shared
     elif ((linked == 0)); then
@@ -124,14 +128,20 @@ open_to_group() {
     local p target lines=()
     for p in "${SHARED_LINKS[@]}" "${SYNCED_FILES[@]}"; do
         target=$MAIN_HOME/$p
-        [[ -e $target ]] || continue
-        chmod -R g+rwX "$target" || fail "Cannot open $target to the group"
+        # Never through a link (the kiosk can write in ~/.config and ~/.local), and as
+        # the owner: root changes nothing the main user could not
+        [[ -e $target && ! -L $target ]] || continue
+        # What the kiosk wrote there is the kiosk's, already group writable (default ACL)
+        as_main find "$target" -user "$MAIN_USER" ! -type l -exec chmod g+rwX {} + \
+            || fail "Cannot open $target to the group"
         if [[ -d $target ]]; then
-            find "$target" -type d -exec chmod g+s {} + || fail "Cannot set the group of new files in $target"
+            as_main find "$target" -user "$MAIN_USER" -type d -exec chmod g+s {} + \
+                || fail "Cannot set the group of new files in $target"
             lines+=("A+ $target - - - - default:group::rwx,default:mask::rwx")
-        else
-            # KConfig saves kstarsrc with a lock file next to it
-            chmod g+rwx "$(dirname "$target")" || fail "Cannot open $(dirname "$target") to the group"
+        elif [[ $p == .config/kstarsrc ]]; then
+            # KConfig saves kstarsrc with a lock file next to it. Never the home itself:
+            # sshd and zsh refuse a group-writable home
+            as_main chmod g+rwx "$MAIN_HOME/.config" || fail "Cannot open $MAIN_HOME/.config to the group"
         fi
     done
     {
@@ -141,6 +151,12 @@ open_to_group() {
     } > "$TMPFILES"
     # Not supported in a container build: the file applies at the next boot
     systemd-tmpfiles --create "$TMPFILES" 2>/dev/null || true
+}
+
+# One run of the PHD2 sync, as the kiosk user
+run_sync() {
+    runuser -u "$KIOSK_USER" -- env HOME="$KIOSK_HOME" ASTROARCH_MAIN_USER="$MAIN_USER" \
+        "$REPO/scripts/kiosk-phd2-sync.sh" || fail "Cannot bring the PHD2 settings in step"
 }
 
 enable_sync() {
@@ -182,8 +198,15 @@ share_profiles() {
         k=$KIOSK_HOME/$p
         m=$MAIN_HOME/$p
         is_shared_link "$p" && continue
-        # Already the synced copy
-        [[ -f $k && ! -L $k ]] && cmp -s "$k" "$m" && continue
+        case " ${SYNCED_FILES[*]} " in
+            *" $p "*)
+                # Already shared: bring both copies in step, nothing to move aside
+                if sync_enabled && [[ -f $k && ! -L $k ]]; then
+                    run_sync
+                    continue
+                fi
+                [[ -f $k && ! -L $k ]] && cmp -s "$k" "$m" && continue ;;
+        esac
         # What the kiosk had is moved aside, kept until the profiles are separated again
         if [[ -e $k || -L $k ]]; then
             if [[ -z $aside ]]; then
@@ -205,6 +228,8 @@ share_profiles() {
 
 separate_profiles() {
     local p k aside
+    # Kiosk PHD2 changes not copied yet reach the main user first
+    sync_enabled && run_sync
     disable_sync
     rm -f "$TMPFILES"
     for p in "${SHARED_LINKS[@]}"; do
@@ -284,7 +309,8 @@ write_overrides() {
     as_kiosk mkdir -p "$OVERRIDE_DIR" || return
     while IFS='|' read -r id name desktop command process; do
         [[ -n $process && -f /usr/share/applications/$desktop ]] || continue
-        sed -e "s|^Exec=.*|Exec=$APP_SCRIPT --ask $id|" -e '/^DBusActivatable=/d' -e '/^TryExec=/d' \
+        # The Exec of the [Desktop Entry] only, its field codes (%U) kept
+        sed -e "/^\[Desktop Entry\]/,/^\[/s|^Exec=[^ ]*|Exec=$APP_SCRIPT --ask $id|" -e '/^DBusActivatable=/d' -e '/^TryExec=/d' \
             -e "0,/^\[Desktop Entry\]/s||[Desktop Entry]\n$OVERRIDE_MARK|" \
             "/usr/share/applications/$desktop" | as_kiosk tee "$OVERRIDE_DIR/$desktop" > /dev/null \
             || fail "Cannot write $OVERRIDE_DIR/$desktop"
@@ -412,6 +438,16 @@ if [[ -n $profiles ]]; then
             exit 4
         fi
     done
+    # Reopened by their watchdog in the middle of the switch: stopped meanwhile
+    restart=()
+    for id in kstars phd2; do
+        unit=$(app_unit "$id")
+        if systemctl --user -M "$KIOSK_USER@" is-active --quiet "$unit" 2>/dev/null \
+            || [[ $(systemctl --user -M "$KIOSK_USER@" show -P SubState "$unit" 2>/dev/null) == auto-restart ]]; then
+            restart+=("$unit")
+        fi
+    done
+    ((${#restart[@]})) && systemctl --user -M "$KIOSK_USER@" stop "${restart[@]}" 2>/dev/null
     if [[ $profiles == shared ]]; then
         share_profiles
         write_overrides
@@ -420,6 +456,7 @@ if [[ -n $profiles ]]; then
         remove_overrides
     fi
     relink_icons
+    ((${#restart[@]})) && systemctl --user -M "$KIOSK_USER@" start --no-block "${restart[@]}" 2>/dev/null
 fi
 
 for a in "${app_args[@]}"; do
