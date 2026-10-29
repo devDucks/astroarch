@@ -493,6 +493,7 @@ EOF
     # for every user, with its own icon
     mkdir -p /usr/share/icons/hicolor/scalable/places
     ln -sfn "$REPO/assets/icons/astroarch-astro-data.svg" /usr/share/icons/hicolor/scalable/places/astroarch-astro-data.svg
+    ln -sfn "$REPO/assets/icons/astroarch-astro-data-folder.svg" /usr/share/icons/hicolor/scalable/places/astroarch-astro-data-folder.svg
     gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
     ln -sfn "$REPO/configs/astroarch-astro-data-place.desktop" /etc/xdg/autostart/astroarch-astro-data-place.desktop
 
