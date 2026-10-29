@@ -145,6 +145,10 @@ cp /home/astronaut/.astroarch/configs/50-timedate.rules /etc/polkit-1/rules.d/
 # Copy the systemd unit to create the AP the first boot
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
+# Units applying the optional setup file of the boot partition the first boot
+cp /home/astronaut/.astroarch/systemd/astroarch-prefill.service /etc/systemd/system/
+cp /home/astronaut/.astroarch/systemd/astroarch-prefill-network.service /etc/systemd/system/
+
 # Network and memory tuning
 cp /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d
 
@@ -206,6 +210,8 @@ ln -s /usr/lib/systemd/system/smb.service /etc/systemd/system/multi-user.target.
 # Enable also the AP creation and resize scripts
 ln -s /etc/systemd/system/create_ap.service /etc/systemd/system/multi-user.target.wants/create_ap.service
 ln -s /etc/systemd/system/resize_once.service /etc/systemd/system/multi-user.target.wants/resize_once.service
+ln -s /etc/systemd/system/astroarch-prefill.service /etc/systemd/system/multi-user.target.wants/astroarch-prefill.service
+ln -s /etc/systemd/system/astroarch-prefill-network.service /etc/systemd/system/multi-user.target.wants/astroarch-prefill-network.service
 
 # Take sudoers to the original state
 sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
@@ -259,6 +265,10 @@ ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
 # If we are on a raspberry let's adjust /boot/config.txt
 cp /home/astronaut/.astroarch/configs/config.txt /boot/config.txt
+
+# Optional setup file (hostname, Wi-Fi, language, passwords...) the user can fill in on
+# the boot partition before the first boot, see README "Set up before the first boot"
+cp /home/astronaut/.astroarch/configs/astroarch-setup.txt /boot/astroarch-setup.txt
 
 install -o root -g root -m 644 /home/astronaut/.astroarch/configs/kdeglobals /etc/xdg/
 

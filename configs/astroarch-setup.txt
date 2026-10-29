@@ -1,0 +1,40 @@
+# AstroArch setup file (optional)
+#
+# Fill in what you want AstroArch to set at its FIRST boot, then put the SD card
+# in the Raspberry Pi. Everything here is optional: a line left empty is skipped,
+# and the AstroArch Control Center asks for it as usual.
+#
+# - One setting per line: name=value. Lines that start with # are comments.
+# - Write the value as it is, without quotes (quotes around it are removed).
+# - This file is read only at the first boot. Changing it later does nothing.
+# - After the first boot the passwords are removed from this file, and a note at
+#   the end says what was applied.
+
+# Name of AstroArch on the network: reach it at <name>.local
+# Lowercase letters, digits and "-", up to 63 characters. Image default: astroarch
+hostname=
+
+# Home Wi-Fi network to join. Leave wifi_password empty for an open network.
+# The field hotspot (AstroArch-XXXXXXXX) is still created.
+wifi_ssid=
+wifi_password=
+# Two-letter country code for the Wi-Fi rules of your country, e.g. IT, DE, US, GB
+wifi_country=
+
+# Language of the system, e.g. it_IT, de_DE, fr_FR, en_GB. Image default: en_US
+language=
+
+# Keyboard layout, e.g. it, de, fr, gb, us. Optional variant, e.g. intl (for us)
+keyboard=
+keyboard_variant=
+
+# Time zone, e.g. Europe/Rome, America/New_York. Image default: Europe/London
+timezone=
+
+# New password of the "astronaut" user (log-in, SSH, remote desktop, sudo).
+# Also set for the kiosk user and for the shared folders (Samba).
+# Image default: astro
+password=
+
+# New password of the field hotspot, 8 to 63 characters. Image default: astronomy
+hotspot_password=

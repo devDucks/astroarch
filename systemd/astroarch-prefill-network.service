@@ -1,0 +1,16 @@
+# First boot: the Wi-Fi part of /boot/astroarch-setup.txt (home network, hotspot
+# password), handed over by astroarch-prefill.service in /run. After create_ap.service,
+# which makes the field hotspot
+[Unit]
+Description=Apply the Wi-Fi settings of the AstroArch setup file (first boot)
+After=astroarch-prefill.service create_ap.service NetworkManager.service
+Wants=NetworkManager.service
+ConditionPathExists=/run/astroarch-prefill/network
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/astronaut/.astroarch/scripts/astroarch-prefill.sh network
+TimeoutStartSec=3min
+
+[Install]
+WantedBy=multi-user.target

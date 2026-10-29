@@ -1,0 +1,19 @@
+# First boot: applies /boot/astroarch-setup.txt (hostname, time zone, language, keyboard,
+# Wi-Fi country, passwords). Before logind, so before the desktop, the kiosk and every
+# user manager start with the old language. Runs once: it disables itself and
+# astroarch-prefill-network.service, and the record it leaves stops it running again
+[Unit]
+Description=Apply the AstroArch setup file of the boot partition (first boot)
+RequiresMountsFor=/boot
+Before=systemd-logind.service systemd-user-sessions.service display-manager.service
+Before=smb.service nmb.service avahi-daemon.service create_ap.service
+ConditionPathExists=!/var/lib/astroarch/prefill-applied
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/astronaut/.astroarch/scripts/astroarch-prefill.sh system
+ExecStopPost=/bin/systemctl disable astroarch-prefill.service astroarch-prefill-network.service
+TimeoutStartSec=5min
+
+[Install]
+WantedBy=multi-user.target

@@ -18,6 +18,7 @@ Please find below some (hopefully) useful instructions. If you want to build the
 - [Download](#download)
 - [Why ArchLinux?](#why-archlinux)
 - [Flash the img to an SD](#flash-the-img-to-an-sd)
+- [Set up before the first boot](#set-up-before-the-first-boot)
 - [First boot](#first-boot)
 - [Set timezone](#set-timezone)
 - [Passwords](#passwords)
@@ -105,6 +106,29 @@ But I do. And that’s why we're here.
 # Flash the img to an SD
 If you prefer a GUI, use [balenaEtcher](https://www.balena.io/etcher/) otherwise you can use the unix `dd` to flash it, and if you are using `dd` I think
 there is nothing I shall explain to you :)
+
+# Set up before the first boot
+This is optional. After flashing, the SD card shows a small `BOOT` drive on your computer with a file
+named `astroarch-setup.txt` in it. Open it with any text editor, fill in what you want, save it and put the
+card in the Raspberry Pi. At its first boot AstroArch applies it, so these steps are already done:
+
+| Setting | Example | What it does |
+|---|---|---|
+| `hostname` | `myscope` | Name on the network: reach AstroArch at `myscope.local` |
+| `wifi_ssid`, `wifi_password` | `Home WiFi`, `my wifi password` | Joins your home Wi-Fi (empty password: open network). The field hotspot is still created |
+| `wifi_country` | `IT` | Wi-Fi rules of your country |
+| `language` | `it_IT` | Language of the system |
+| `keyboard`, `keyboard_variant` | `us`, `intl` | Keyboard layout (the variant is optional) |
+| `timezone` | `Europe/Rome` | Time zone |
+| `password` | | New password of `astronaut`, also used for the kiosk user and the shared folders (Samba) |
+| `hotspot_password` | | New password of the field hotspot, 8 to 63 characters |
+
+- Everything is optional: a setting left empty is skipped and the AstroArch Control Center asks for it as
+  usual. Settings that were applied show "Set before first boot" there.
+- Write one `name=value` per line, without quotes. Windows line endings are fine.
+- The file is read only at the first boot: editing it later does nothing.
+- After the first boot the passwords are removed from the file, and a note at its end says what was applied,
+  and why a value was refused (for example a time zone that does not exist).
 
 # First boot
 After you burned the .img file to your SD, you _should_ be able to reach astroarch via VNC, however if you don't see the desktop or you can't connect to it
