@@ -462,6 +462,10 @@ EOF
     # would stop getting frames
     install -m644 "$REPO/configs/powerdevilrc" /etc/xdg/powerdevilrc
 
+    # KWin script for every user: bring windows back inside the screen when it shrinks,
+    # as when an RDP client window is made smaller
+    ln -sfn "$REPO/configs/kwin/astroarch-keep-windows-visible" /usr/share/kwin/scripts/astroarch-keep-windows-visible
+
     # Kiosk: a headless Plasma session next to the desktop, started at boot by
     # the kiosk user manager (linger below). KWin draws on a virtual output,
     # KRdp gives each RDP client an output sized to its window

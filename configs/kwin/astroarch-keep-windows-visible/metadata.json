@@ -1,0 +1,13 @@
+{
+    "KPlugin": {
+        "Id": "astroarch-keep-windows-visible",
+        "Name": "AstroArch: keep windows visible",
+        "Description": "Bring windows back inside the screen when it shrinks, as when an RDP client window is resized",
+        "License": "MIT",
+        "Version": "1.0",
+        "EnabledByDefault": true
+    },
+    "KPackageStructure": "KWin/Script",
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}
