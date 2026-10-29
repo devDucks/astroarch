@@ -261,6 +261,10 @@ su astronaut -c "cp /home/astronaut/.astroarch/configs/kscreenlockerrc /home/ast
 # Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP would stop getting frames
 install -m644 /home/astronaut/.astroarch/configs/powerdevilrc /etc/xdg/powerdevilrc
 
+# KWin script for every user: bring windows back inside the screen when it shrinks,
+# as when an RDP client window is made smaller
+ln -sfn /home/astronaut/.astroarch/configs/kwin/astroarch-keep-windows-visible /usr/share/kwin/scripts/astroarch-keep-windows-visible
+
 # Set a standard TZ to avoid breaking plasma clock widget
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
