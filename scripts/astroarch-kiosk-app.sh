@@ -20,9 +20,10 @@ if [ "$1" = --ask ]; then
 fi
 
 line=$(grep -v '^[[:space:]]*#' "$APPS_LIST" | awk -F'|' -v id="$1" '$1 == id { print; exit }')
+shift
 IFS='|' read -r _ name _ command process <<< "$line"
 if [ -z "$command" ]; then
-    echo "Unknown kiosk app: $1 (see $APPS_LIST)" >&2
+    echo "Unknown kiosk app (see $APPS_LIST)" >&2
     exit 1
 fi
 
@@ -41,4 +42,5 @@ if [ -n "$process" ] && [ "$(id -un)" != "$MAIN_USER" ] && [ -L "$HOME/.local/sh
 fi
 
 read -ra argv <<< "$command"
-exec "${argv[@]}"
+# Files given by the menu (%U) follow the command
+exec "${argv[@]}" "$@"
