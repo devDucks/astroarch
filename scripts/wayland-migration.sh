@@ -464,6 +464,16 @@ EOF
         fi
     done
 
+    # The desktop RDP follows the client window (RemoteAccess); the HDMI seat comes back on disconnect
+    if id astronaut > /dev/null 2>&1 && [ -d /home/astronaut ]; then
+        as_user astronaut mkdir -p /home/astronaut/.config/systemd/user/app-org.kde.krdpserver.service.d \
+            && as_user astronaut ln -sfn "$REPO/configs/krdpserver-desktop.conf" \
+                /home/astronaut/.config/systemd/user/app-org.kde.krdpserver.service.d/desktop.conf \
+            || step_fail "desktop krdp RemoteAccess"
+        ln -sfn "$REPO/systemd/astroarch-rdp-return.service" /etc/systemd/system/astroarch-rdp-return.service
+        systemctl enable astroarch-rdp-return.service || step_fail "enable astroarch-rdp-return.service"
+    fi
+
     # Never dim, turn off or suspend: with nobody at the Pi, VNC and RDP
     # would stop getting frames
     install -m644 "$REPO/configs/powerdevilrc" /etc/xdg/powerdevilrc
