@@ -1,0 +1,10 @@
+[Unit]
+Description=AstroArch kiosk: let the main user read the kiosk settings (for its backup)
+# Also run once when the kiosk user manager starts: it opens the files written before
+
+[Service]
+Type=oneshot
+ExecStart=/home/astronaut/.astroarch/scripts/kiosk-group-read.sh
+
+[Install]
+WantedBy=default.target
