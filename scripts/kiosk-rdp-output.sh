@@ -12,7 +12,8 @@ _fix_outputs() {
 }
 
 _fix_outputs
-# kscreen-console monitor prints lines whenever the outputs change
-kscreen-console monitor 2>&1 | while read -r _; do
+# kscreen-console monitor prints lines whenever the outputs change. Under systemd Qt sends
+# them to the journal instead, so force them onto stderr and into the pipe
+QT_FORCE_STDERR_LOGGING=1 kscreen-console monitor 2>&1 | while read -r _; do
     _fix_outputs
 done
