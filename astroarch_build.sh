@@ -340,7 +340,8 @@ chmod -R 777 /home/astronaut-kiosk
 chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 
 # Minimal desktop
-ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+# The kiosk is set up in the Control Center (Kiosk page)
+ln -snf /home/astronaut/.astroarch/desktop/astroarch-kiosk-setup.desktop /home/astronaut-kiosk/Desktop/Kiosk-setup
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
 
