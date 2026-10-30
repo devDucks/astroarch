@@ -31,7 +31,9 @@ export LC_ALL=C
 
 # Only root can set these (pkexec starts the helper with a clean environment): for tests
 KIOSK_USER=${ASTROARCH_KIOSK_USER:-astronaut-kiosk}
-MAIN_USER=${ASTROARCH_MAIN_USER:-$(getent passwd 1000 | cut -d: -f1)}
+# The main user is the kiosk user's name without "-kiosk" (astroarch_build.sh makes the
+# pair), not "uid 1000": on an Arch Linux ARM base system that is the "alarm" user
+MAIN_USER=${ASTROARCH_MAIN_USER:-${KIOSK_USER%-kiosk}}
 
 # Shared as links, relative to the homes
 SHARED_LINKS=(.local/share/kstars .config/kstarsrc .indi .phd2)

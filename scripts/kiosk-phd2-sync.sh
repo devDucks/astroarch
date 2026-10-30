@@ -6,7 +6,9 @@
 # PHD2 replaces ~/.PHDGuidingV2 at every save, so it cannot be a link like the other
 # shared profiles: each user has a file and the newer one is copied over the other.
 
-MAIN_HOME=$(getent passwd "${ASTROARCH_MAIN_USER:-$(getent passwd 1000 | cut -d: -f1)}" | cut -d: -f6)
+# The main user is the kiosk user's name without "-kiosk", not "uid 1000"
+KIOSK_USER=${ASTROARCH_KIOSK_USER:-astronaut-kiosk}
+MAIN_HOME=$(getent passwd "${ASTROARCH_MAIN_USER:-${KIOSK_USER%-kiosk}}" | cut -d: -f6)
 main=$MAIN_HOME/.PHDGuidingV2
 own=$HOME/.PHDGuidingV2
 

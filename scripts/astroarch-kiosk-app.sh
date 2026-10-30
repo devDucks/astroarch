@@ -10,8 +10,9 @@
 
 REPO="$(dirname "$(readlink -f "$0")")/.."
 APPS_LIST="$REPO/configs/kiosk/apps.list"
-MAIN_USER=${ASTROARCH_MAIN_USER:-$(getent passwd 1000 | cut -d: -f1)}
 KIOSK_USER=${ASTROARCH_KIOSK_USER:-astronaut-kiosk}
+# The main user is the kiosk user's name without "-kiosk", not "uid 1000"
+MAIN_USER=${ASTROARCH_MAIN_USER:-${KIOSK_USER%-kiosk}}
 ICON="$REPO/assets/icons/novnc-icon.svg"
 
 ask=0
