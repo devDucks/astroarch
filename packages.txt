@@ -1,0 +1,93 @@
+# The packages of AstroArch, one per line. Read by astroarch_build.sh and by the image
+# build (dockerfiles/Dockerfile.astroarch in devDucks/ArchLinuxARM), so a package added
+# here is in both. The kernel is not here: it depends on the board.
+
+# Desktop (Plasma 6, Wayland)
+plasma-desktop
+plasma-login-manager
+plasma-nm
+plasma-systemmonitor
+kscreen
+konsole
+dolphin
+kate
+ksystemlog
+discover
+kwalletmanager
+kgpg
+kdialog
+knewstuff
+knotifyconfig
+kplotting
+breeze-icons
+hicolor-icon-theme
+gnu-free-fonts
+qt5-quickcontrols
+qt6-datavis3d
+qt6-serialbus
+qt6-serialport
+qt6-websockets
+qt6ct
+qtkeychain-qt6
+packagekit-qt6
+flatpak
+firefox
+
+# Audio
+pipewire-jack
+wireplumber
+
+# Remote access
+krdp
+tigervnc
+novnc
+websockify
+openssh
+
+# Network
+networkmanager
+network-manager-applet
+networkmanager-qt
+dhcp
+dhcpcd
+dnsmasq
+iw
+samba
+
+# Astronomy
+kstars
+phd2
+stellarsolver
+astrometry.net
+gsc
+xplanet
+indi-3rdparty-libs
+indi-3rdparty-drivers
+indiserver-ui
+astro_dmx
+gpsd
+chrony
+
+# AstroArch packages ([astromatto])
+astroarch-onboarding
+astroarch-bridge
+astroarch-status-notifications
+astromonitor
+
+# System and tools
+base-devel
+zsh
+paru
+pacman-contrib
+uboot-tools
+usbutils
+i2c-tools
+cloud-guest-utils
+udisks2
+fuse2
+openssl
+rsync
+jq
+neofetch
+fortune-mod
+cowsay
