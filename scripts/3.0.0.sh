@@ -13,3 +13,10 @@ fi
 # Network and disk tuning (BBR with fq, larger TCP receive buffers, larger write cache)
 sudo install -m644 /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d/99-sysctl.conf
 sudo sysctl --system > /dev/null
+
+# The back end of the Control Center's Kiosk page (helper, polkit action and rule,
+# PHD2 sync and settings-read units). The image build and the Wayland migration run it;
+# this is for systems already on Wayland
+if id astronaut-kiosk > /dev/null 2>&1 && [ -z "$(pacman -Qq plasma-x11-session 2> /dev/null)" ]; then
+    sudo bash /home/astronaut/.astroarch/scripts/install-kiosk-setup.sh
+fi

@@ -329,9 +329,6 @@ cp /home/astronaut/.astroarch/configs/kiosk/astroarch-kiosk.png /home/astronaut-
 # Add menu
 cp -r /home/astronaut/.astroarch/configs/kiosk/menus /home/astronaut-kiosk/.config/
 
-# Copy kstars folders
-cp -R /home/astronaut/.local/share/kstars /home/astronaut-kiosk/.local/share/
-
 su astronaut-kiosk -c "cat <<EOF >/home/astronaut-kiosk/.config/plasmanotifyrc
 [DoNotDisturb]
 WhenFullscreen=false
@@ -343,7 +340,8 @@ chmod -R 777 /home/astronaut-kiosk
 chown -R astronaut-kiosk:astronaut-kiosk /home/astronaut-kiosk
 
 # Minimal desktop
-ln -snf /home/astronaut/.astroarch/desktop/astroarch-config-kiosk.desktop /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+# The kiosk is set up in the Control Center (Kiosk page)
+ln -snf /home/astronaut/.astroarch/desktop/astroarch-kiosk-setup.desktop /home/astronaut-kiosk/Desktop/Kiosk-setup
 ln -snf /home/astronaut/.astroarch/desktop/org.kde.konsole.desktop /home/astronaut-kiosk/Desktop/Konsole
 ln -snf /home/astronaut/.astroarch/desktop/update-astroarch-kiosk.desktop /home/astronaut-kiosk/Desktop/update-astroarch
 
@@ -359,6 +357,12 @@ chmod -R go-w /home/astronaut /home/astronaut-kiosk
 # Give astronaut-kiosk rwx on the astronaut home, must run after any chmod
 # since chmod -R go-w above strips the group-write bit it grants
 bash /home/astronaut/.astroarch/scripts/kiosk-home-acl.sh
+
+# The kiosk uses the KStars, INDI and PHD2 profiles of astronaut by default (the
+# Control Center's Kiosk page can give it its own). After kiosk-home-acl.sh: the
+# helper opens the shared profiles to the group again
+bash /home/astronaut/.astroarch/scripts/install-kiosk-setup.sh
+/usr/lib/astroarch/astroarch-kiosk-setup apply --profiles shared
 
 # Copy the screensaver config, by default it is off
 # Must run after kiosk-home-acl.sh, which is what grants astronaut-kiosk
