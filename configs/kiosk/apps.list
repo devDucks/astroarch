@@ -1,0 +1,14 @@
+# The apps the kiosk can open, one per line: to offer another app, add a line.
+# Read by scripts/astroarch-kiosk-app.sh (starts them) and scripts/astroarch-kiosk-setup.sh
+# (desktop icon, menu, start with the kiosk, reopen when closed: the Control Center's Kiosk page).
+#
+# id|name|desktop file in /usr/share/applications|command|process
+#
+# id:      [a-z0-9-] only, it names the unit astroarch-kiosk-app@<id>.service
+# process: name for pgrep -x, set for the apps that use the profiles the kiosk can share with
+#          the main desktop (KStars, PHD2): while they are shared, the kiosk does not open
+#          the app when it is already open on the main desktop
+kstars|KStars|org.kde.kstars.desktop|kstars|kstars
+phd2|PHD2|phd2.desktop|phd2|phd2.bin
+astrodmx|AstroDMx Capture|astrodmx_capture.desktop|/opt/AstroDMx-Capture/bin/AstroDMx-Capture|
+xgps|xgps|xgps.desktop|xgps|

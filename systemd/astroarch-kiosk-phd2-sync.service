@@ -1,0 +1,11 @@
+[Unit]
+Description=AstroArch kiosk: keep the PHD2 settings in step with the desktop
+# Enabled by astroarch-kiosk-setup while the kiosk shares the desktop profiles; also
+# run once when the kiosk user manager starts, for what changed meanwhile
+
+[Service]
+Type=oneshot
+ExecStart=/home/astronaut/.astroarch/scripts/kiosk-phd2-sync.sh
+
+[Install]
+WantedBy=default.target
