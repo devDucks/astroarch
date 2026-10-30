@@ -9,3 +9,7 @@ if id astronaut-kiosk > /dev/null 2>&1 && [ -z "$(pacman -Qq plasma-x11-session 
     sudo install -m644 /home/astronaut/.astroarch/systemd/astroarch-kiosk-login.service /etc/systemd/system/
     sudo systemctl enable --now astroarch-kiosk-login.service
 fi
+
+# Network and disk tuning (BBR with fq, larger TCP receive buffers, larger write cache)
+sudo install -m644 /home/astronaut/.astroarch/configs/99-sysctl.conf /etc/sysctl.d/99-sysctl.conf
+sudo sysctl --system > /dev/null
