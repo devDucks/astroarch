@@ -517,6 +517,14 @@ EOF
             && as_user astronaut-kiosk ln -sfn "$REPO/configs/kiosk/krdpserver-kiosk.conf" "$kdir/app-org.kde.krdpserver.service.d/kiosk.conf" \
             || step_fail "headless kiosk session"
         install -m644 "$REPO/configs/kiosk/45-allow-shutdown-kiosk.rules" /etc/polkit-1/rules.d/45-allow-shutdown-kiosk.rules
+        # Back end of the Control Center's Kiosk page. The kiosk keeps its own profiles
+        # here: sharing those of astronaut is offered in that page
+        bash "$REPO/scripts/install-kiosk-setup.sh" || step_fail "kiosk setup helper"
+        # The kiosk desktop icon opens the Control Center on its Kiosk page instead of
+        # astroarch-config-kiosk.sh (kept for one release, then removed)
+        rm -f /home/astronaut-kiosk/Desktop/Astroarch-config-Kiosk
+        as_user astronaut-kiosk ln -snf "$REPO/desktop/astroarch-kiosk-setup.desktop" /home/astronaut-kiosk/Desktop/Kiosk-setup \
+            || step_fail "kiosk setup icon"
 
         # Kiosk apps: keep the automatic launch and watchdog chosen in the old
         # .xinitrc as astroarch-kiosk-app@<app> units. Step 4 moved it to the

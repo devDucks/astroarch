@@ -1,0 +1,11 @@
+[Unit]
+Description=AstroArch kiosk: watch for settings the main user's backup cannot read
+
+[Path]
+# KDE saves ~/.config/*rc and PHD2 ~/.PHDGuidingV2 by writing a new file
+PathChanged=%h/.config
+PathChanged=%h
+Unit=astroarch-kiosk-group-read.service
+
+[Install]
+WantedBy=default.target
