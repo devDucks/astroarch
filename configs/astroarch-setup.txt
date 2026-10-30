@@ -5,7 +5,8 @@
 # and the AstroArch Control Center asks for it as usual.
 #
 # - One setting per line: name=value. Lines that start with # are comments.
-# - Write the value as it is, without quotes (quotes around it are removed).
+# - Write the value as it is, without quotes (quotes around it are removed, and so
+#   are spaces at the start and at the end).
 # - This file is read only at the first boot. Changing it later does nothing.
 # - After the first boot the passwords are removed from this file, and a note at
 #   the end says what was applied.
