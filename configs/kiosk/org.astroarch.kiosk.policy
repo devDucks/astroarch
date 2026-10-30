@@ -5,8 +5,8 @@
 <policyconfig>
   <vendor>AstroArch</vendor>
   <!-- The Kiosk page of the AstroArch Control Center: scripts/astroarch-kiosk-setup.sh,
-       installed at the path below. 45-astroarch-kiosk-setup.rules lets the two
-       AstroArch users run it without a password -->
+       installed at the path below. It asks for the password (kept for a few minutes):
+       the kiosk session has a polkit agent too (astroarch-kiosk-login.service) -->
   <action id="org.astroarch.kiosk.setup">
     <description>Set up the AstroArch kiosk desktop</description>
     <message>Authentication is required to change the profiles and apps of the kiosk desktop</message>

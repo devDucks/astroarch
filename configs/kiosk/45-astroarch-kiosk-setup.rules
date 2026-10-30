@@ -1,9 +1,0 @@
-// The Kiosk page of the AstroArch Control Center changes the kiosk profiles and apps
-// through pkexec. The headless kiosk session has no polkit agent to ask a password, and
-// either user may set up the kiosk: allow it without one, as for shutting down
-polkit.addRule(function(action, subject) {
-    if (action.id == "org.astroarch.kiosk.setup" &&
-        (subject.user == "astronaut" || subject.user == "astronaut-kiosk")) {
-        return polkit.Result.YES;
-    }
-});
