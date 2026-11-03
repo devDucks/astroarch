@@ -223,6 +223,9 @@ while [ "$VALID_SPACE" = false ]; do
     )
 
     EXCLUSIONS+=(--exclude="$ABS_DEST")
+    # The desktop slideshow and the kiosk wallpaper read their images from
+    # ~/Pictures/wallpapers: keep them even when Pictures is excluded below
+    EXCLUSIONS+=(--include='/home/*/Pictures/wallpapers/***')
 
     ask_for_exclusions
 
