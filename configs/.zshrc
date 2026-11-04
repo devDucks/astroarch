@@ -107,17 +107,26 @@ function update-astroarch()
 
     NEW_VER=$(cat /home/$USER/.astroarch/configs/.astroarch.version)
 
-    if [[ "$OLD_VER" != "$NEW_VER" ]]; then
-        zsh /home/$USER/.astroarch/scripts/$NEW_VER.sh
-        if [[ $? -ne 0 ]]; then
-            # Revert to the commit stored before the pull
-            cd /home/$USER/.astroarch
-            git reset --hard "$CURRENT_COMMIT"
-            cd - > /dev/null 2>&1
-            notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "Script '$SCRIPT_VER' failed. Reverted to previous state."
-        fi
+    # The migrations. astroarch-updates runs each script of scripts/migrations that has not
+    # completed yet and records every run (astroarch-updates status). Without it (the
+    # pacman -Syu below installs it), the script of the new version, as before
+    local MIGRATION_OK=1
+    if command -v astroarch-updates > /dev/null; then
+        astroarch-updates update --scripts-dir /home/$USER/.astroarch/scripts/migrations || MIGRATION_OK=0
+    elif [[ "$OLD_VER" != "$NEW_VER" ]]; then
+        local MIGRATION=/home/$USER/.astroarch/scripts/$NEW_VER.sh
+        [[ -f $MIGRATION ]] || MIGRATION=/home/$USER/.astroarch/scripts/migrations/$NEW_VER.sh
+        zsh $MIGRATION || MIGRATION_OK=0
+    fi
+    if [[ $MIGRATION_OK -eq 0 ]]; then
+        # Revert to the commit stored before the pull
+        cd /home/$USER/.astroarch
+        git reset --hard "$CURRENT_COMMIT"
+        cd - > /dev/null 2>&1
+        notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "❌ The migration to AstroArch $NEW_VER failed. Reverted to the previous version."
+    elif [[ "$OLD_VER" != "$NEW_VER" ]]; then
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' 'All scripts applied successfully'
-    fi;
+    fi
 
     # Plasma 6.8 has no X11 session: an X11 system can't be upgraded any more.
     # A new 3.0 image is the recommended way, the switch in place is an opt-in.
