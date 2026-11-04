@@ -127,7 +127,7 @@ function update-astroarch()
 
 Recommended: install the AstroArch 3.0 image (https://releases.astroarch.me/latest) and set it up again.
 
-Otherwise this system can switch to the Wayland desktop in place, AT YOUR OWN RISK. Have a backup first: the one offered at the start of this update, or a copy of the SD card. The desktop closes (KStars, PHD2 and INDI stop), the switch takes 10 to 30 minutes and the system reboots by itself. Do not power it off meanwhile.
+Otherwise this system can switch to the Wayland desktop in place, AT YOUR OWN RISK. Have a backup first: choose “Not now”, run backup-astroarch, then update-astroarch again; or make a copy of the SD card. The desktop closes (KStars, PHD2 and INDI stop), the switch takes 10 to 30 minutes and the system reboots by itself. Do not power it off meanwhile.
 
 Afterwards VNC (port 5900) and RDP (port 3389) reach the desktop as before. The kiosk, if you use it, moves to RDP port 3390 and VNC port 5901."
         local WL_GO=0
