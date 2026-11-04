@@ -174,7 +174,7 @@ The following are some useful commands that you can run from the terminal so you
  - `restore-astroarch` => Full recovery of the system
 
 # Backup and Restore
-You can back up the entire system using the `backup-astroarch` command or the `astroarch-tweak-tool` utility. You can perform a backup before updating with `update-astroarch`. 
+You can back up the entire system using the `backup-astroarch` command or the `astroarch-tweak-tool` utility.
 
 Use a disk with at least 64 GB of storage if the backup location is on your AstroArch disk.
 

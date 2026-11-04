@@ -84,8 +84,6 @@ function backup-astroarch() {
 
 function update-astroarch()
 {
-    backup-astroarch
-
     # Store actual version
     OLD_VER=$(cat /home/$USER/.astroarch.version)
 
