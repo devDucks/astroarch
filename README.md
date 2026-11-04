@@ -170,28 +170,20 @@ The following are some useful commands that you can run from the terminal so you
  - `astro-rollback-full` => rollback automatically indi and kstars to the previous version
  - `use-astro-bleeding-edge` => install bleeding edge packages for Kstars and INDI
  - `use-astro-stable` => install stable  packages for Kstars and INDI
- - `backup-astroarch` => perform a full system backup
- - `restore-astroarch` => Full recovery of the system
+ - `backup-astroarch` => perform a full system backup, with the settings chosen in the Control Center
+ - `restore-astroarch` => restore the whole system from one of those backups
 
 # Backup and Restore
-You can back up the entire system using the `backup-astroarch` command or the `astroarch-tweak-tool` utility.
+The system backup is set up in the AstroArch Control Center, page **Data backup**, card **System**: where it goes (this disk or an external drive) and which folders it leaves out. Each backup is a read-only snapshot in one image file, `astroarch-backup.btrfs`; the last ones are kept. Use a disk with at least 64 GB of storage if the backup location is on your AstroArch disk.
 
-Use a disk with at least 64 GB of storage if the backup location is on your AstroArch disk.
+Once it is set up, a backup can be made from the same page or from a terminal, also over SSH:
+ - `backup-astroarch` makes a system backup with those settings (`sudo` asks your password)
+ - `restore-astroarch` lists the snapshots, asks which one, offers a safety backup of the current system first, and asks you to type `RESTORE`; the whole system is then restored and the computer restarts by itself. `restore-astroarch --dest FOLDER` reads the backup in another folder (the one that holds `astroarch-backup.btrfs`, e.g. on an external drive).
 
-You can choose from several options stored in the /home/astronaut/.backup_dest file for your future backups:
- - Yes (perform a backup)
- - Yes, do not ask again (perform the backup without prompting)
- - No (do not perform the backup)
- - No, do not ask again (do not perform this backup again)
- 
-If you selected “Do not ask again” and change your mind, open the .backup_dest file and change the value to AUTO_CHOICE="Ask"
+`update-astroarch` does not make a backup: make one before an update if you want a way back.
 
-To restore your files, use the `restore-astroarch` command or the `astroarch-tweak-tool` utility.
+The Control Center's **Restore** page restores the whole system too, or only your profiles, settings and images from any backup.
 
-If you no longer have access to your system, back up your folder to another disk if it is on your AstroArch disk.
-Perform a fresh, updated installation, run the restore command, and specify the location of your backup folder.
- 
- 
 # Connecting via browser (noVNC)
 By default `AstroArch` will start a hotspot called `AstroArch`, to connect to that WiFi network use the password `astronomy`
 
