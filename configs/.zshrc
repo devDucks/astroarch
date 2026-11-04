@@ -74,12 +74,25 @@ function astro-rollback-kstars()
     rm -rf ~/.rollback/*
 }
 
-function restore-astroarch() {
-    bash "$HOME/.astroarch/scripts/restore-astroarch.sh"
+# System backup and full restore from a terminal (also over SSH), with astroarch-backup of
+# astroarch-tools: same snapshots as its window. Where the backup goes and which folders it
+# leaves out are chosen in the Control Center (Data backup, System)
+function backup-astroarch() {
+    if ! command -v astroarch-backup > /dev/null; then
+        echo "❌ astroarch-backup is not installed (package astroarch-tools)"
+        return 1
+    fi
+    astroarch-backup --system-backup
 }
 
-function backup-astroarch() {
-    bash "$HOME/.astroarch/scripts/backup-astroarch.sh"
+# restore-astroarch [--dest FOLDER]: FOLDER holds astroarch-backup.btrfs (default: the
+# place of the last system backup)
+function restore-astroarch() {
+    if ! command -v astroarch-backup > /dev/null; then
+        echo "❌ astroarch-backup is not installed (package astroarch-tools)"
+        return 1
+    fi
+    astroarch-backup --system-restore "$@"
 }
 
 function update-astroarch()

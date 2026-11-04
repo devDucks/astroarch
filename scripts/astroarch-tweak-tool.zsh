@@ -94,24 +94,20 @@ case $result in
         esac
         ;;
     7)
+        # Backup and restore are pages of the Control Center (astroarch-tools); from a
+        # terminal: backup-astroarch / restore-astroarch
         backup_astroarch=$(kdialog --combobox " Select backup / restore" "Backup" "Restore" --title "AstroArch Backup / Restore")
         case $backup_astroarch in
-            Backup)
-                backup-astroarch
-                if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Backup' 'Completed'
-                else
-                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Backup' 'Returns an error'
-                fi
-                ;;
-            Restore)
-                restore-astroarch
-                if [ $? -eq 0 ] ; then
-                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Restore' 'Completed'
-                else
-                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Restore' 'Returns an error'
-                fi
-                ;;
+            Backup) page=backup ;;
+            Restore) page=restore ;;
+            *) page="" ;;
         esac
+        if [[ -n "$page" ]]; then
+            if command -v astroarch-control-center > /dev/null; then
+                astroarch-control-center --page $page --single &!
+            else
+                notify-send --app-name 'AstroArch' --icon="/$HOME/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Backup / Restore' 'The AstroArch Control Center is not installed (package astroarch-tools)'
+            fi
+        fi
         ;;
 esac
