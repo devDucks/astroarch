@@ -287,8 +287,16 @@ Switch this system in place now?" && WL_GO=1
         fi
     fi
 
+    # AstroArch's own tools (astroarch-updates runs the migrations, astroarch-tools is the
+    # Control Center and backup-astroarch): installed on the systems that miss them, in the
+    # same transaction as the full upgrade (no partial upgrade), once the repo has them
+    local AA_TOOLS=()
+    for pkg in astroarch-updates astroarch-tools; do
+        pacman -Si $pkg > /dev/null 2>&1 && AA_TOOLS+=($pkg)
+    done
+
     # Now upgrade all system packages, but ask user to choose in case of conflicts/choices
-    sudo pacman -Syu --noconfirm
+    sudo pacman -Syu --noconfirm --needed $AA_TOOLS
 
     if [ $? -eq 0 ]; then
         notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'Update AstroArch' "✅ Successful update"
