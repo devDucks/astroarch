@@ -58,6 +58,13 @@ pacman -S wget sudo git --noconfirm
 useradd -G wheel -m astronaut
 echo "astronaut:astro" | chpasswd
 
+# The user's folders, before any package is installed: a package's install script runs as
+# root and would create the missing parents (Pictures, Desktop, .config) owned by root
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/graphical-session.target.wants"
+su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
+su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
+su astronaut -c "mkdir -p /home/astronaut/Desktop"
+
 # Pull the brain repo, this will be used for scripting out the final image
 su astronaut -c "git clone https://github.com/devDucks/astroarch.git /home/astronaut/.astroarch"
 
@@ -82,10 +89,6 @@ usermod -aG uucp,sys,network,power,audio,input,lp,storage,video,users astronaut
 
 # Make all necessary folders
 mkdir -p /etc/plasmalogin.conf.d
-su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/graphical-session.target.wants"
-su astronaut -c "mkdir -p /home/astronaut/.config/systemd/user/default.target.wants"
-su astronaut -c "mkdir -p /home/astronaut/Pictures/wallpapers"
-su astronaut -c "mkdir -p /home/astronaut/Desktop"
 
 # install oh-my-zsh and set the default shell to zsh
 chsh -s /usr/bin/zsh astronaut
