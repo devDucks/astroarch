@@ -232,11 +232,9 @@ su astronaut -c "ln -snf /usr/share/applications/phd2.desktop /home/astronaut/De
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/update-astroarch.desktop /home/astronaut/Desktop/update-astroarch"
 su astronaut -c "ln -snf /home/astronaut/.astroarch/desktop/astroarch-tweak-tool.desktop /home/astronaut/Desktop/AstroArch-Tweak-Tool"
 su astronaut -c "ln -snf /usr/share/applications/org.astroarch.control-center.desktop /home/astronaut/Desktop/AstroArch-Control-Center"
-su astronaut -c "ln -snf /usr/share/astroarch_onboarding/desktop/AstroArch-onboarding.desktop /home/astronaut/Desktop/AstroArch-onboarding"
 
 # Make the icons executable so there will be no ! on the first boot
 chmod +x /home/astronaut/Desktop/update-astroarch
-chmod +x /home/astronaut/Desktop/AstroArch-onboarding
 chmod +x /home/astronaut/Desktop/AstroArch-Tweak-Tool
 
 # Remove actual novnc icons

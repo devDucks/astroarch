@@ -71,7 +71,6 @@ gpsd
 chrony
 
 # AstroArch packages ([astromatto])
-astroarch-onboarding
 astroarch-bridge
 astroarch-status-notifications
 astromonitor
