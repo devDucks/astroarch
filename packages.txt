@@ -22,6 +22,8 @@ kplotting
 breeze-icons
 hicolor-icon-theme
 gnu-free-fonts
+# Chinese, Japanese and Korean text (5 MB)
+wqy-microhei
 qt5-quickcontrols
 qt6-datavis3d
 qt6-serialbus
@@ -73,6 +75,8 @@ astroarch-onboarding
 astroarch-bridge
 astroarch-status-notifications
 astromonitor
+astroarch-tools
+astroarch-updates
 
 # System and tools
 base-devel
