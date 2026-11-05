@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AstroArch Control Center
+Comment=Opens the AstroArch setup at login, until it is hidden
+Exec=astroarch-control-center --autostart
+Icon=org.astroarch.control-center
+NoDisplay=true
+X-KDE-autostart-phase=2
