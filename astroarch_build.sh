@@ -393,6 +393,10 @@ touch /var/lib/systemd/linger/astronaut-kiosk
 chown root:root /var/lib/systemd/linger/astronaut-kiosk
 chmod 644 /var/lib/systemd/linger/astronaut-kiosk
 
+# The base image (ghcr.io/devducks/archlinuxarm) lets root log in over SSH with a password
+# (and root's password is alarm): back to Arch's default, root only with a key
+rm -f /etc/ssh/sshd_config.d/10-root-password.conf
+
 # Override cmdline.txt
 echo "root=UUID=$(blkid -s UUID -o value /dev/vda2) rw rootwait console=tty1 fsck.repair=yes video=HDMI-A-1:1920x1080M@60D" > /boot/cmdline.txt
 
