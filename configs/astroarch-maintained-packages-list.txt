@@ -1,5 +1,4 @@
 # List of important packages maintained in the AstroArch repository for dependency checks
-astroarch-onboarding
 kstars
 indi-3rdparty-drivers
 indi-3rdparty-libs

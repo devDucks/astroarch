@@ -14,5 +14,4 @@ rm /home/astronaut/.config/autostart/plasmasystemsettings.sh.desktop
 rm /home/astronaut/.config/autostart/update-astroarch.sh.desktop
 
 systemctl disable clear-install-astroarch.timer
-systemctl disable astroarch-onboarding.timer
 

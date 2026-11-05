@@ -368,7 +368,7 @@ EOF
 >For non-PD power supplies, or those not recognized as such, the Raspberry Pi considers them to provide 3 A. It then limits the current to 0.6 A and USB boot is disabled by default. See:
 >https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#differences-on-raspberry-pi-5
 >
->You must add the parameter `usb_max_current_enable=1` to the config.txt file if you are not using the official power supply or a PD-certified power supply. During initial setup with AstroArch-onboarding, in the Power supplies panel, select <mark>Power supply without USBC-C PD</mark>
+>You must add the parameter `usb_max_current_enable=1` to the config.txt file if you are not using the official power supply or a PD-certified power supply.
 
 # Software available
 the following software will be available, by category
@@ -501,7 +501,6 @@ AstroArch is actually in a stable state, however, should you find any issue plea
 
 # Tips
 
-- If you restart AstroArch-onboarding, it will not retain your configuration except for the locale settings (language, location, and keyboard). You must  make your choices again, otherwise it will use the default configuration
 - If you are not comfortable with command lines for the “Useful commands” section, use <mark>AstroArch Tweak Tool</mark>
 - If you need help from someone else, simply install the <mark>RustDesk</mark> software. This will allow the other person who has the same software with the ID and one-time password you provide to connect to your Raspberry Pi (easy and secure)
 - The <mark>xgps</mark> software in the Applications panel under “Utilities” allows you to view information from your GPS device
