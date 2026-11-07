@@ -6,7 +6,7 @@ function _check_astroarch-bridge_installed()
     else
 	echo "📦 astroarch-brige packages not installed, installing them now..."
 	notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'astroarch-bridge' "📦 astroarch-bridge packages not installed, installing them now..."
-	yes | LC_ALL=en_US.UTF-8 sudo pacman -S astroarch-bridge
+	sudo pacman -S --noconfirm astroarch-bridge
     echo "✅ astroarch-bridge packages installed!"
     notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'astroarch-bridge' "✅ astroarch-bridge packages installed!"
     fi
@@ -49,7 +49,7 @@ function astroarch-bridge_remove()
 {
     rm -f /home/astronaut/.config/systemd/user/default.target.wants/astroarch-bridge.service
     su astronaut-kiosk -c "rm -f /home/astronaut-kiosk/.config/systemd/user/default.target.wants/astroarch-bridge.service"
-    yes | LC_ALL=en_US.UTF-8 sudo pacman -Rcs astroarch-bridge
+    sudo pacman -Rcs --noconfirm astroarch-bridge
     echo "🗑️ astroarch-bridge remove"
     notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'astroarch-bridge' "🗑️ astroarch-bridge remove"
 }
