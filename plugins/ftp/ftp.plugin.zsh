@@ -6,7 +6,7 @@ function _check_vsftpd_installed()
     else
 	echo "📦 FTP packages not installed, installing them now..."
 	notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "📦 FTP packages not installed, installing them now..."
-	yes | LC_ALL=en_US.UTF-8 sudo pacman -S vsftpd
+	sudo pacman -S --noconfirm vsftpd
 	sudo sed -i 's/#write_enable=YES/write_enable=YES/g' /etc/vsftpd.conf
     sudo sed -i 's/#local_enable=YES/local_enable=YES/g' /etc/vsftpd.conf
     sudo sed -i 's/#local_umask=022/local_umask=022/g' /etc/vsftpd.conf
@@ -46,7 +46,7 @@ function ftp_off()
 function ftp_remove()
 {
     sudo systemctl disable vsftpd.service --now
-    yes | LC_ALL=en_US.UTF-8 sudo pacman -Rcs vsftpd
+    sudo pacman -Rcs --noconfirm vsftpd
     sudo rm /etc/vsftpd.chroot_list
     echo "🗑️ FTP server remove"
     notify-send --app-name 'AstroArch' --icon="/home/astronaut/.astroarch/assets/icons/novnc-icon.svg" -t 10000 'FTP' "🗑️ FTP server remove"
