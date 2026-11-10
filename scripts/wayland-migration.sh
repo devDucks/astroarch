@@ -489,6 +489,14 @@ EOF
     # as when an RDP client window is made smaller
     ln -sfn "$REPO/configs/kwin/astroarch-keep-windows-visible" /usr/share/kwin/scripts/astroarch-keep-windows-visible
 
+    # The shared data folder in the Places panel of Dolphin and of the file dialogs,
+    # for every user, with its own icon
+    mkdir -p /usr/share/icons/hicolor/scalable/places
+    ln -sfn "$REPO/assets/icons/astroarch-astro-data.svg" /usr/share/icons/hicolor/scalable/places/astroarch-astro-data.svg
+    ln -sfn "$REPO/assets/icons/astroarch-astro-data-folder.svg" /usr/share/icons/hicolor/scalable/places/astroarch-astro-data-folder.svg
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+    ln -sfn "$REPO/configs/astroarch-astro-data-place.desktop" /etc/xdg/autostart/astroarch-astro-data-place.desktop
+
     # Kiosk: a headless Plasma session next to the desktop, started at boot by
     # the kiosk user manager (linger below). KWin draws on a virtual output,
     # KRdp gives each RDP client an output sized to its window

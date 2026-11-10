@@ -258,6 +258,14 @@ install -m644 /home/astronaut/.astroarch/configs/powerdevilrc /etc/xdg/powerdevi
 # as when an RDP client window is made smaller
 ln -sfn /home/astronaut/.astroarch/configs/kwin/astroarch-keep-windows-visible /usr/share/kwin/scripts/astroarch-keep-windows-visible
 
+# The shared data folder in the Places panel of Dolphin and of the file dialogs,
+# for every user, with its own icon
+mkdir -p /usr/share/icons/hicolor/scalable/places
+ln -sfn /home/astronaut/.astroarch/assets/icons/astroarch-astro-data.svg /usr/share/icons/hicolor/scalable/places/astroarch-astro-data.svg
+ln -sfn /home/astronaut/.astroarch/assets/icons/astroarch-astro-data-folder.svg /usr/share/icons/hicolor/scalable/places/astroarch-astro-data-folder.svg
+gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+ln -sfn /home/astronaut/.astroarch/configs/astroarch-astro-data-place.desktop /etc/xdg/autostart/astroarch-astro-data-place.desktop
+
 # Set a standard TZ to avoid breaking plasma clock widget
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 
