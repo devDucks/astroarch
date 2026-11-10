@@ -44,3 +44,12 @@ sudo ln -sfn "$REPO/configs/astroarch-astro-data-place.desktop" /etc/xdg/autosta
 if [ -n "$WAYLAND_DISPLAY" ] && [ -d /srv/astro-data ]; then
     bash "$REPO/scripts/astro-data-place.sh" || true
 fi
+
+# The NAS shares of the Control Center's data backup: unmounted at shutdown only after the
+# user sessions (and a backup still running in them) are stopped. Without this order the
+# unmount failed while a backup ran, the network went down and the shutdown waited for the
+# server forever. New shares get it from astroarch-tools; this fixes the ones already added
+if grep -q '^# astroarch-backup nas ' /etc/fstab; then
+    sudo sed -i '/^# astroarch-backup nas /{n;/x-systemd\.before=remote-fs\.target/!s/x-systemd\.automount/&,x-systemd.before=remote-fs.target/}' /etc/fstab
+    sudo systemctl daemon-reload
+fi
