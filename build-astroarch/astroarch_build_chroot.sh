@@ -162,6 +162,15 @@ cp /home/astronaut/.astroarch/configs/99-polkit-power.rules /etc/polkit-1/rules.
 # Copy the systemd unit to create AP / resize
 cp /home/astronaut/.astroarch/systemd/create_ap.service /etc/systemd/system/
 
+# Units applying the optional setup file of the boot partition the first boot
+cp /home/astronaut/.astroarch/systemd/astroarch-prefill.service /etc/systemd/system/
+cp /home/astronaut/.astroarch/systemd/astroarch-prefill-network.service /etc/systemd/system/
+systemctl enable astroarch-prefill.service astroarch-prefill-network.service
+
+# Optional setup file (hostname, Wi-Fi, language, passwords...) the user can fill in on
+# the boot partition before the first boot, see README "Set up before the first boot"
+cp /home/astronaut/.astroarch/configs/astroarch-setup.txt /boot/astroarch-setup.txt
+
 # Copy the config for kwinrc
 su astronaut -c "cp /home/astronaut/.astroarch/configs/kwinrc /home/astronaut/.config"
 
